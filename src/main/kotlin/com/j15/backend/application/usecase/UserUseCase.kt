@@ -31,6 +31,10 @@ class UserUseCase(private val userRepository: UserRepository) {
         userRepository.findByEmail(email)?.let {
             throw IllegalArgumentException("このメールアドレスは既に登録されています")
         }
+        // ユーザー名の重複チェックも追加
+        userRepository.findByUsername(username)?.let {
+            throw IllegalArgumentException("このユーザー名は既に使用されています")
+        }
 
         val user = User(username = username, email = email, passwordHash = passwordHash)
         return userRepository.save(user)
