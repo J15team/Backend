@@ -5,9 +5,10 @@ import java.time.Instant
 
 @Entity
 @Table(name = "users")
-data class User(
+class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     val userId: Long? = null,
 
     @Column(unique = true, nullable = false, length = 20)
@@ -16,9 +17,9 @@ data class User(
     @Column(unique = true, nullable = false, length = 255)
     val email: String,
 
-    @Column(nullable = false, length = 255)
+    @Column(name = "password_hash", nullable = false, length = 255)
     val passwordHash: String,
 
-    @Column(nullable = false)
-    val createdAt: Instant = Instant.now()
+    @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
+    val createdAt: Instant
 )

@@ -18,4 +18,3 @@ CREATE TABLE users (
 );
 
 -- 検索最適化のためのインデックスを追加
-CREATE INDEX idx_users_email ON users(email);

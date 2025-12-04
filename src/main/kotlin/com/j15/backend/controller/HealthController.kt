@@ -14,7 +14,7 @@ class HealthController {
     fun healthCheck(): ResponseEntity<HealthResponse> {
         return ResponseEntity.ok(
                 HealthResponse(
-                        status = "200",
+                        status = "UP",
                         message = "Backend service is running",
                         timestamp = LocalDateTime.now().toString()
                 )
