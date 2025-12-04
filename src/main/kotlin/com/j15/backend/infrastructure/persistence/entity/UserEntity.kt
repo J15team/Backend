@@ -11,9 +11,9 @@ class UserEntity(
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Column(name = "user_id")
         val userId: Long? = null,
-        @Column(unique = true, nullable = false, length = 20) val username: String,
-        @Column(unique = true, nullable = false, length = 255) val email: String,
-        @Column(name = "password_hash", nullable = false, length = 255) val passwordHash: String,
+        @Column(unique = true, nullable = false, length = 20) var username: String,
+        @Column(unique = true, nullable = false, length = 255) var email: String,
+        @Column(name = "password_hash", nullable = false, length = 255) var passwordHash: String,
         @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
         val createdAt: Instant? = null
 )
