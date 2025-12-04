@@ -4,6 +4,7 @@ server:
 spring:
   application:
     name: backend
+  # ローカル開発用のデフォルト設定（本番環境では環境変数で上書きされる）
   datasource:
     url: jdbc:postgresql://localhost:5432/app_db
     username: user
