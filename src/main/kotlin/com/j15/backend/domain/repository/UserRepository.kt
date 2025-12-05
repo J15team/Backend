@@ -6,6 +6,7 @@ import com.j15.backend.domain.model.User
 interface UserRepository {
     fun findById(id: Long): User?
     fun findByEmail(email: String): User?
+    fun findByUsername(username: String): User?
     fun findAll(): List<User>
     fun save(user: User): User
     fun delete(user: User)

@@ -17,6 +17,10 @@ class UserRepositoryImpl(private val jpaUserRepository: JpaUserRepository) : Use
         return jpaUserRepository.findByEmail(email)?.toDomain()
     }
 
+    override fun findByUsername(username: String): User? {
+        return jpaUserRepository.findByUsername(username)?.toDomain()
+    }
+
     override fun findAll(): List<User> {
         return jpaUserRepository.findAll().map { it.toDomain() }
     }
