@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 /** Spring Data JPA リポジトリ（インフラ層） JpaRepositoryを継承したデータアクセス用インターフェース */
 interface JpaUserRepository : JpaRepository<UserEntity, Long> {
     fun findByEmail(email: String): UserEntity?
+    fun findByUsername(username: String): UserEntity?
 }
