@@ -21,7 +21,7 @@ data class UserProgressResponse(
                     progressPercentage = userProgress.calculateProgressPercentage(),
                     clearedCount = userProgress.getClearedCount(),
                     remainingCount = userProgress.getRemainingCount(),
-                    totalSections = com.j15.backend.domain.model.section.Section.TOTAL_SECTIONS,
+                    totalSections = userProgress.totalSections, // UserProgressから取得
                     isAllCleared = userProgress.isAllCleared(),
                     nextSectionId = userProgress.suggestNextSection()?.value,
                     clearedSections =
