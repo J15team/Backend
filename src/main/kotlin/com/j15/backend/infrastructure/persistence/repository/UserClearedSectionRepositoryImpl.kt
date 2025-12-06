@@ -3,6 +3,7 @@ package com.j15.backend.infrastructure.persistence.repository
 import com.j15.backend.domain.model.progress.UserClearedSection
 import com.j15.backend.domain.model.progress.UserClearedSectionId
 import com.j15.backend.domain.model.section.SectionId
+import com.j15.backend.domain.model.subject.SubjectId
 import com.j15.backend.domain.model.user.UserId
 import com.j15.backend.domain.repository.UserClearedSectionRepository
 import com.j15.backend.infrastructure.persistence.converter.UserClearedSectionConverter
@@ -27,20 +28,38 @@ class UserClearedSectionRepositoryImpl(
                 .orElse(null)
     }
 
-    override fun findByUserId(userId: UserId): List<UserClearedSection> {
-        return jpaUserClearedSectionRepository.findByUserId(userId.value).map {
-            UserClearedSectionConverter.toDomain(it)
-        }
+    override fun findByUserIdAndSubjectId(
+            userId: UserId,
+            subjectId: SubjectId
+    ): List<UserClearedSection> {
+        return jpaUserClearedSectionRepository.findByUserIdAndSubjectId(
+                        userId.value,
+                        subjectId.value
+                )
+                .map { UserClearedSectionConverter.toDomain(it) }
     }
 
-    override fun existsByUserIdAndSectionId(userId: UserId, sectionId: SectionId): Boolean {
-        return jpaUserClearedSectionRepository.existsByUserIdAndSectionId(
+    override fun existsByUserIdAndSubjectIdAndSectionId(
+            userId: UserId,
+            subjectId: SubjectId,
+            sectionId: SectionId
+    ): Boolean {
+        return jpaUserClearedSectionRepository.existsByUserIdAndSubjectIdAndSectionId(
                 userId.value,
+                subjectId.value,
                 sectionId.value
         )
     }
 
-    override fun deleteByUserIdAndSectionId(userId: UserId, sectionId: SectionId) {
-        jpaUserClearedSectionRepository.deleteByUserIdAndSectionId(userId.value, sectionId.value)
+    override fun deleteByUserIdAndSubjectIdAndSectionId(
+            userId: UserId,
+            subjectId: SubjectId,
+            sectionId: SectionId
+    ) {
+        jpaUserClearedSectionRepository.deleteByUserIdAndSubjectIdAndSectionId(
+                userId.value,
+                subjectId.value,
+                sectionId.value
+        )
     }
 }

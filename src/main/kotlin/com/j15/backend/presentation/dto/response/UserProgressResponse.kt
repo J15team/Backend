@@ -6,6 +6,7 @@ import java.time.Instant
 // 進捗状態レスポンスDTO
 data class UserProgressResponse(
         val userId: String,
+        val subjectId: Long,
         val progressPercentage: Int,
         val clearedCount: Int,
         val remainingCount: Int,
@@ -18,10 +19,11 @@ data class UserProgressResponse(
         fun from(userProgress: UserProgress): UserProgressResponse {
             return UserProgressResponse(
                     userId = userProgress.userId.toString(),
+                    subjectId = userProgress.subjectId.value,
                     progressPercentage = userProgress.calculateProgressPercentage(),
                     clearedCount = userProgress.getClearedCount(),
                     remainingCount = userProgress.getRemainingCount(),
-                    totalSections = com.j15.backend.domain.model.section.Section.TOTAL_SECTIONS,
+                    totalSections = userProgress.totalSections, // 実際にDBに登録されているセクション総数
                     isAllCleared = userProgress.isAllCleared(),
                     nextSectionId = userProgress.suggestNextSection()?.value,
                     clearedSections =

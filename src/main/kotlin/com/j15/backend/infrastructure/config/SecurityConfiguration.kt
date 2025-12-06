@@ -23,6 +23,8 @@ class SecurityConfiguration {
             auth.requestMatchers(
                             "/api/auth/**",
                             "/api/users/signup",
+                            "/api/health",
+                            "/api/subjects/**",
                             "/api/sections/**",
                             "/api/progress/**"
                     )
