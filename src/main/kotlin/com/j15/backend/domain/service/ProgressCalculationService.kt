@@ -3,14 +3,20 @@ package com.j15.backend.domain.service
 import com.j15.backend.domain.model.progress.UserClearedSection
 import com.j15.backend.domain.model.progress.UserProgress
 import com.j15.backend.domain.model.section.SectionId
+import com.j15.backend.domain.model.subject.SubjectId
 import com.j15.backend.domain.model.user.UserId
 
 // 進捗管理ドメインサービス
 class ProgressCalculationService {
 
-    /** ユーザー進捗状態を構築 */
-    fun buildUserProgress(userId: UserId, clearedSections: List<UserClearedSection>): UserProgress {
-        return UserProgress(userId, clearedSections)
+    /** ユーザー進捗状態を構築（題材ごと） */
+    fun buildUserProgress(
+            userId: UserId,
+            subjectId: SubjectId,
+            clearedSections: List<UserClearedSection>,
+            totalSections: Int
+    ): UserProgress {
+        return UserProgress(userId, subjectId, clearedSections, totalSections)
     }
 
     /** セクション完了の重複チェック 同じユーザーが同じセクションを重複して完了できないようにする */

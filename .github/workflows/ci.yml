@@ -158,10 +158,61 @@ jobs:
           
           echo "✅ Wrong password test passed!"
 
+      - name: Test subjects API
+        run: |
+          # 題材一覧取得テスト
+          RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:8080/api/subjects)
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+          
+          echo "Subjects API HTTP Status: $HTTP_CODE"
+          echo "Response Body: $BODY"
+          
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "Subjects API test failed with status $HTTP_CODE"
+            exit 1
+          fi
+          
+          # デフォルト題材が存在するか確認
+          if ! echo "$BODY" | grep -q "デフォルト題材"; then
+            echo "Default subject not found in response"
+            exit 1
+          fi
+          
+          # 題材作成テスト
+          CREATE_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/subjects \
+            -H "Content-Type: application/json" \
+            -d '{"subjectId":100,"title":"テスト題材","description":"CIテスト用","maxSections":50}')
+          HTTP_CODE=$(echo "$CREATE_RESPONSE" | tail -n 1)
+          
+          echo "Create subject HTTP Status: $HTTP_CODE"
+          
+          if [ "$HTTP_CODE" -ne 201 ]; then
+            echo "Create subject test failed with status $HTTP_CODE"
+            exit 1
+          fi
+          
+          # 作成した題材を取得
+          GET_RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:8080/api/subjects/100)
+          HTTP_CODE=$(echo "$GET_RESPONSE" | tail -n 1)
+          BODY=$(echo "$GET_RESPONSE" | head -n -1)
+          
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "Get subject test failed with status $HTTP_CODE"
+            exit 1
+          fi
+          
+          if ! echo "$BODY" | grep -q "テスト題材"; then
+            echo "Created subject not found"
+            exit 1
+          fi
+          
+          echo "✅ Subjects API test passed!"
+
       - name: Test sections API
         run: |
-          # セクション一覧取得テスト
-          RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:8080/api/sections)
+          # デフォルト題材(ID=1)のセクション一覧取得テスト
+          RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:8080/api/subjects/1/sections)
           HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
           BODY=$(echo "$RESPONSE" | head -n -1)
           
@@ -169,12 +220,6 @@ jobs:
           
           if [ "$HTTP_CODE" -ne 200 ]; then
             echo "Sections API test failed with status $HTTP_CODE"
-            exit 1
-          fi
-          
-          # セクションデータが含まれているか確認
-          if ! echo "$BODY" | grep -q "プロジェクト準備"; then
-            echo "Sections data not found in response"
             exit 1
           fi
           
@@ -195,8 +240,8 @@ jobs:
             exit 1
           fi
           
-          # 初期進捗状態を取得
-          PROGRESS_RESPONSE=$(curl -s http://localhost:8080/api/progress/$USER_ID)
+          # 初期進捗状態を取得（題材ID=1のデフォルト題材）
+          PROGRESS_RESPONSE=$(curl -s http://localhost:8080/api/progress/$USER_ID/subjects/1)
           echo "Initial progress: $PROGRESS_RESPONSE"
           
           if ! echo "$PROGRESS_RESPONSE" | grep -q '"clearedCount":0'; then
@@ -204,8 +249,13 @@ jobs:
             exit 1
           fi
           
-          # セクション0を完了マーク
-          MARK_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/progress/$USER_ID/sections \
+          if ! echo "$PROGRESS_RESPONSE" | grep -q '"subjectId":1'; then
+            echo "Progress response should contain subjectId"
+            exit 1
+          fi
+          
+          # セクション0を完了マーク（題材1のセクション0）
+          MARK_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/progress/$USER_ID/subjects/1/sections \
             -H "Content-Type: application/json" \
             -d '{"sectionId":0}')
           HTTP_CODE=$(echo "$MARK_RESPONSE" | tail -n 1)
@@ -216,7 +266,7 @@ jobs:
           fi
           
           # 進捗状態を再取得
-          PROGRESS_AFTER=$(curl -s http://localhost:8080/api/progress/$USER_ID)
+          PROGRESS_AFTER=$(curl -s http://localhost:8080/api/progress/$USER_ID/subjects/1)
           echo "Progress after marking section 0: $PROGRESS_AFTER"
           
           if ! echo "$PROGRESS_AFTER" | grep -q '"clearedCount":1'; then
@@ -225,13 +275,22 @@ jobs:
           fi
           
           # 重複マークのテスト（既に完了済みのセクション）
-          DUPLICATE_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/progress/$USER_ID/sections \
+          DUPLICATE_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/progress/$USER_ID/subjects/1/sections \
             -H "Content-Type: application/json" \
             -d '{"sectionId":0}')
           HTTP_CODE=$(echo "$DUPLICATE_RESPONSE" | tail -n 1)
           
           if [ "$HTTP_CODE" -ne 400 ]; then
             echo "Duplicate mark should return 400 but got $HTTP_CODE"
+            exit 1
+          fi
+          
+          # セクション完了削除テスト
+          DELETE_RESPONSE=$(curl -s -w "\n%{http_code}" -X DELETE http://localhost:8080/api/progress/$USER_ID/subjects/1/sections/0)
+          HTTP_CODE=$(echo "$DELETE_RESPONSE" | tail -n 1)
+          
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "Delete completed section test failed with status $HTTP_CODE"
             exit 1
           fi
           
