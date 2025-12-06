@@ -14,7 +14,12 @@ data class UserProgress(
         val totalSections: Int // 題材の最大セクション数
 ) {
 
-    /** 進捗率を計算（0~100の整数パーセンテージ） 小数点以下は切り捨て 全完了時は必ず100%を返す 動的なセクション数に対応 */
+    /**
+     * 進捗率を計算（0~100の整数パーセンテージ）
+     * 小数点以下は切り捨て
+     * 全完了時は必ず100%を返す
+     * 動的なセクション数に対応
+     */
     fun calculateProgressPercentage(): Int {
         if (totalSections == 0) {
             return 0
