@@ -13,6 +13,17 @@ import org.springframework.transaction.annotation.Transactional
 class SubjectUseCase(private val subjectRepository: SubjectRepository) {
 
     /**
+     * maxSectionsパラメータのバリデーション
+     * @param maxSections 検証する最大セクション数
+     * @throws IllegalArgumentException バリデーションに失敗した場合
+     */
+    private fun validateMaxSections(maxSections: Int) {
+        require(maxSections in Subject.MIN_MAX_SECTIONS..Subject.MAX_MAX_SECTIONS) {
+            "最大セクション数は${Subject.MIN_MAX_SECTIONS}以上${Subject.MAX_MAX_SECTIONS}以下である必要があります"
+        }
+    }
+
+    /**
      * 題材を作成
      * @param subjectId 題材ID（Long値）
      * @param title タイトル
@@ -27,6 +38,7 @@ class SubjectUseCase(private val subjectRepository: SubjectRepository) {
             maxSections: Int
     ): Subject {
         validateSubjectInput(title, maxSections)
+
 
         val subject =
                 Subject(
@@ -59,7 +71,6 @@ class SubjectUseCase(private val subjectRepository: SubjectRepository) {
         val existing =
                 subjectRepository.findById(id)
                         ?: throw IllegalArgumentException("題材が見つかりません: $subjectId")
-
         validateSubjectInput(title, maxSections)
 
         val updated =

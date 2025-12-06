@@ -13,7 +13,9 @@ data class Subject(
 ) {
     init {
         require(title.isNotBlank()) { "題材のタイトルは空にできません" }
-        require(maxSections > 0) { "最大セクション数は1以上である必要があります" }
+        require(maxSections in MIN_MAX_SECTIONS..MAX_MAX_SECTIONS) {
+            "最大セクション数は${MIN_MAX_SECTIONS}以上${MAX_MAX_SECTIONS}以下である必要があります"
+        }
     }
 
     companion object {
