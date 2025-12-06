@@ -2,6 +2,7 @@ package com.j15.backend.infrastructure.persistence.repository
 
 import com.j15.backend.domain.model.section.Section
 import com.j15.backend.domain.model.section.SectionId
+import com.j15.backend.domain.model.subject.SubjectId
 import com.j15.backend.domain.repository.SectionRepository
 import com.j15.backend.infrastructure.persistence.converter.SectionConverter
 import com.j15.backend.infrastructure.persistence.jpa.JpaSectionRepository
@@ -11,15 +12,15 @@ import org.springframework.stereotype.Repository
 class SectionRepositoryImpl(private val jpaSectionRepository: JpaSectionRepository) :
         SectionRepository {
 
-    override fun findById(sectionId: SectionId): Section? {
-        return jpaSectionRepository
-                .findById(sectionId.value)
-                .map { SectionConverter.toDomain(it) }
-                .orElse(null)
+    override fun findById(subjectId: SubjectId, sectionId: SectionId): Section? {
+        return jpaSectionRepository.findBySubjectIdAndSectionId(subjectId.value, sectionId.value)
+                ?.let { SectionConverter.toDomain(it) }
     }
 
-    override fun findAll(): List<Section> {
-        return jpaSectionRepository.findAll().map { SectionConverter.toDomain(it) }
+    override fun findAllBySubjectId(subjectId: SubjectId): List<Section> {
+        return jpaSectionRepository.findBySubjectId(subjectId.value).map {
+            SectionConverter.toDomain(it)
+        }
     }
 
     override fun save(section: Section): Section {
@@ -28,11 +29,12 @@ class SectionRepositoryImpl(private val jpaSectionRepository: JpaSectionReposito
         return SectionConverter.toDomain(saved)
     }
 
-    override fun existsById(sectionId: SectionId): Boolean {
-        return jpaSectionRepository.existsById(sectionId.value)
+    override fun existsById(subjectId: SubjectId, sectionId: SectionId): Boolean {
+        return jpaSectionRepository.findBySubjectIdAndSectionId(subjectId.value, sectionId.value) !=
+                null
     }
 
-    override fun count(): Int {
-        return jpaSectionRepository.count().toInt()
+    override fun countBySubjectId(subjectId: SubjectId): Int {
+        return jpaSectionRepository.countBySubjectId(subjectId.value).toInt()
     }
 }

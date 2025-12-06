@@ -10,8 +10,8 @@ import java.util.UUID
         uniqueConstraints =
                 [
                         UniqueConstraint(
-                                name = "uk_user_section",
-                                columnNames = ["user_id", "section_id"]
+                                name = "uk_user_subject_section",
+                                columnNames = ["user_id", "subject_id", "section_id"]
                         )]
 )
 data class UserClearedSectionEntity(
@@ -20,6 +20,7 @@ data class UserClearedSectionEntity(
         @Column(name = "user_cleared_section_id")
         val userClearedSectionId: Int? = null,
         @Column(name = "user_id", nullable = false) val userId: UUID = UUID.randomUUID(),
+        @Column(name = "subject_id", nullable = false) val subjectId: Long = 0L,
         @Column(name = "section_id", nullable = false) val sectionId: Int = 0,
         @Column(name = "completed_at", nullable = false) val completedAt: Instant = Instant.now()
 )
