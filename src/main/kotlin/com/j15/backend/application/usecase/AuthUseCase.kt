@@ -17,7 +17,17 @@ class AuthUseCase(
     fun authenticate(email: String, plainPassword: String): User {
         val emailVo = Email(email)
         val user = userRepository.findByEmail(emailVo)
-        if (user == null || !passwordHashService.verify(plainPassword, user.passwordHash.value)) {
+        
+        // タイミング攻撃を防ぐため、ユーザーが存在しない場合でもパスワード検証を実行
+        val isPasswordValid = if (user != null) {
+            passwordHashService.verify(plainPassword, user.passwordHash.value)
+        } else {
+            // ダミーのハッシュで検証を実行してタイミングを一定に保つ
+            passwordHashService.verify(plainPassword, "\$2a\$10\$dummyhashvaluetomaintaintiming1234567890123456789012")
+            false
+        }
+        
+        if (user == null || !isPasswordValid) {
             throw IllegalArgumentException("メールアドレスまたはパスワードが正しくありません")
         }
         return user
