@@ -13,17 +13,4 @@ data class UserClearedSection(
         val subjectId: SubjectId,
         val sectionId: SectionId,
         val completedAt: Instant = Instant.now()
-) {
-    companion object {
-        // 新規作成用（IDはDBで自動採番）
-        fun create(userId: UserId, subjectId: SubjectId, sectionId: SectionId): UserClearedSection {
-            return UserClearedSection(
-                    userClearedSectionId = null,
-                    userId = userId,
-                    subjectId = subjectId,
-                    sectionId = sectionId,
-                    completedAt = Instant.now()
-            )
-        }
-    }
-}
+)
