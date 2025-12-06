@@ -170,7 +170,7 @@ GET /api/progress/{userId}
 ```json
 {
   "userId": "a4153a84-6ab1-45f2-a7ee-8522e3f050ed",
-  "progressPercentage": 1.98,
+  "progressPercentage": 1,
   "clearedCount": 2,
   "remainingCount": 99,
   "totalSections": 101,
@@ -184,6 +184,8 @@ GET /api/progress/{userId}
   ]
 }
 ```
+
+**注意**: `progressPercentage` は0~100の整数値です。全セクション完了時は必ず100%を返します。
 
 #### セクション完了マーク
 
