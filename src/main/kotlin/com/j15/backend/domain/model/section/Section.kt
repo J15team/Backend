@@ -10,6 +10,5 @@ data class Section(val sectionId: SectionId, val title: String, val description:
     companion object {
         const val MIN_SECTION_ID = 0
         const val MAX_SECTION_ID = 100
-        const val TOTAL_SECTIONS = MAX_SECTION_ID + 1 // 0~100で101個
     }
 }

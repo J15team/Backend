@@ -9,4 +9,5 @@ interface SectionRepository {
     fun findAll(): List<Section>
     fun save(section: Section): Section
     fun existsById(sectionId: SectionId): Boolean
+    fun count(): Int // セクション総数を取得
 }
