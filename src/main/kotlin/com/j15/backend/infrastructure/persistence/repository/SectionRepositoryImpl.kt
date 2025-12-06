@@ -31,4 +31,8 @@ class SectionRepositoryImpl(private val jpaSectionRepository: JpaSectionReposito
     override fun existsById(sectionId: SectionId): Boolean {
         return jpaSectionRepository.existsById(sectionId.value)
     }
+
+    override fun count(): Int {
+        return jpaSectionRepository.count().toInt()
+    }
 }

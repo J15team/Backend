@@ -7,17 +7,12 @@ import com.j15.backend.domain.model.user.UserId
 // ユーザー進捗状態（集約ルート）
 // ユーザーのセクション完了状態を管理し、進捗率を計算する
 data class UserProgress(
-    val userId: UserId,
-    val clearedSections: List<UserClearedSection>,
-    val totalSections: Int // DBから取得した実際のセクション総数
+        val userId: UserId,
+        val clearedSections: List<UserClearedSection>,
+        val totalSections: Int // DBから取得した実際のセクション総数
 ) {
 
-    /**
-     * 進捗率を計算（0~100の整数パーセンテージ）
-     * 小数点以下は切り捨て
-     * 全完了時は必ず100%を返す
-     * 動的なセクション数に対応
-     */
+    /** 進捗率を計算（0~100の整数パーセンテージ） 小数点以下は切り捨て 全完了時は必ず100%を返す 動的なセクション数に対応 */
     fun calculateProgressPercentage(): Int {
         if (totalSections == 0) {
             return 0
