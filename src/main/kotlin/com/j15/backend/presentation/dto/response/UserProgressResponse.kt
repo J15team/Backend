@@ -6,7 +6,7 @@ import java.time.Instant
 // 進捗状態レスポンスDTO
 data class UserProgressResponse(
         val userId: String,
-        val progressPercentage: Double,
+        val progressPercentage: Int,
         val clearedCount: Int,
         val remainingCount: Int,
         val totalSections: Int,

@@ -8,16 +8,18 @@ import com.j15.backend.domain.model.user.UserId
 // ユーザーのセクション完了状態を管理し、進捗率を計算する
 data class UserProgress(val userId: UserId, val clearedSections: List<UserClearedSection>) {
 
-    /** 進捗率を計算（0.0~100.0のパーセンテージ） */
-    fun calculateProgressPercentage(): Double {
-        if (clearedSections.isEmpty()) {
-            return 0.0
-        }
-
+    /** 進捗率を計算（0~100の整数パーセンテージ） 小数点以下は切り捨て 全完了時は必ず100%を返す */
+    fun calculateProgressPercentage(): Int {
         val clearedCount = clearedSections.size
         val totalSections = Section.TOTAL_SECTIONS
 
-        return (clearedCount.toDouble() / totalSections.toDouble()) * 100.0
+        // 全セクション完了時は必ず100を返す
+        if (clearedCount >= totalSections) {
+            return 100
+        }
+
+        // 未完了の場合は整数除算で切り捨て（0~99の範囲）
+        return (clearedCount * 100) / totalSections
     }
 
     /** 完了済みセクション数 */
