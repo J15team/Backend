@@ -9,8 +9,12 @@ import com.j15.backend.domain.model.user.UserId
 class ProgressCalculationService {
 
     /** ユーザー進捗状態を構築 */
-    fun buildUserProgress(userId: UserId, clearedSections: List<UserClearedSection>): UserProgress {
-        return UserProgress(userId, clearedSections)
+    fun buildUserProgress(
+        userId: UserId,
+        clearedSections: List<UserClearedSection>,
+        totalSections: Int
+    ): UserProgress {
+        return UserProgress(userId, clearedSections, totalSections)
     }
 
     /** セクション完了の重複チェック 同じユーザーが同じセクションを重複して完了できないようにする */
