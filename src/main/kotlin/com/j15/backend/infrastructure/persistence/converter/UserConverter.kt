@@ -12,11 +12,11 @@ object UserConverter {
     // エンティティからドメインモデルへの変換
     fun toDomain(entity: UserEntity): User {
         return User(
-                userId = UserId(entity.userId!!),
+                userId = UserId(entity.userId ?: throw IllegalStateException("userId must not be null")),
                 username = Username(entity.username),
                 email = Email(entity.email),
                 passwordHash = PasswordHash(entity.passwordHash),
-                createdAt = entity.createdAt!!
+                createdAt = entity.createdAt ?: throw IllegalStateException("createdAt must not be null")
         )
     }
 
