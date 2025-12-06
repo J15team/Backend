@@ -63,6 +63,7 @@ jobs:
           
           if [ "$HTTP_CODE" -ne 201 ]; then
             echo "Signup test failed with status $HTTP_CODE"
+            echo "Response body: $BODY"
             docker compose logs backend
             exit 1
           fi
