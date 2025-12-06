@@ -4,6 +4,7 @@ import com.j15.backend.domain.model.progress.UserClearedSection
 import com.j15.backend.domain.model.progress.UserProgress
 import com.j15.backend.domain.model.section.SectionId
 import com.j15.backend.domain.model.user.UserId
+import com.j15.backend.domain.repository.SectionRepository
 import com.j15.backend.domain.repository.UserClearedSectionRepository
 import com.j15.backend.domain.service.ProgressCalculationService
 import org.springframework.stereotype.Service
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class ProgressUseCase(
         private val userClearedSectionRepository: UserClearedSectionRepository,
+        private val sectionRepository: SectionRepository,
         private val progressCalculationService: ProgressCalculationService
 ) {
 
@@ -41,7 +43,8 @@ class ProgressUseCase(
     @Transactional(readOnly = true)
     fun getUserProgress(userId: UserId): UserProgress {
         val clearedSections = userClearedSectionRepository.findByUserId(userId)
-        return progressCalculationService.buildUserProgress(userId, clearedSections)
+        val totalSections = sectionRepository.count() // DB登録セクション総数を動的に取得
+        return progressCalculationService.buildUserProgress(userId, clearedSections, totalSections)
     }
 
     /** 特定セクションの完了状態をチェック */

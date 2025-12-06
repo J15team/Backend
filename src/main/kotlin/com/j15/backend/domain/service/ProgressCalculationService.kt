@@ -10,9 +10,9 @@ class ProgressCalculationService {
 
     /** ユーザー進捗状態を構築 */
     fun buildUserProgress(
-        userId: UserId,
-        clearedSections: List<UserClearedSection>,
-        totalSections: Int
+            userId: UserId,
+            clearedSections: List<UserClearedSection>,
+            totalSections: Int
     ): UserProgress {
         return UserProgress(userId, clearedSections, totalSections)
     }
