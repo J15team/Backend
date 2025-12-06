@@ -8,14 +8,14 @@ import com.j15.backend.domain.repository.UserRepository
 class UserDuplicationCheckService(private val userRepository: UserRepository) {
     // メールアドレスが使用可能かチェック
     fun checkEmailAvailable(email: Email) {
-        if (userRepository.findByEmail(email) != null) {
+        if (userRepository.existsByEmail(email)) {
             throw IllegalArgumentException("このメールアドレスは既に登録されています")
         }
     }
 
     // ユーザー名が使用可能かチェック
     fun checkUsernameAvailable(username: Username) {
-        if (userRepository.findByUsername(username) != null) {
+        if (userRepository.existsByUsername(username)) {
             throw IllegalArgumentException("このユーザー名は既に使用されています")
         }
     }
