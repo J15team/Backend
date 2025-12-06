@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size
 // ユーザー登録リクエストDTO
 data class RegisterUserRequest(
         @field:NotBlank(message = "ユーザー名は必須です")
-        @field:Size(min = 1, max = 20, message = "ユーザー名は1〜20文字で入力してください")
+        @field:Size(min = 3, max = 20, message = "ユーザー名は3〜20文字で入力してください")
         val username: String,
         @field:NotBlank(message = "メールアドレスは必須です")
         @field:Email(message = "有効なメールアドレスを入力してください")
