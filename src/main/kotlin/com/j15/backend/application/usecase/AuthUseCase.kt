@@ -14,6 +14,10 @@ class AuthUseCase(
     private val userRepository: UserRepository,
     private val passwordHashService: PasswordHashService
 ) {
+    // タイミング攻撃を防ぐための有効なダミーBCryptハッシュ
+    // "dummy_password"のBCryptハッシュ値
+    private val dummyHash = "\$2a\$10\$N9qo8uLOickgx2ZMRZoMye.DOH7R4rE/pqKQf9p1mT4cXQF7lXjvC"
+    
     fun authenticate(email: String, plainPassword: String): User {
         val emailVo = Email(email)
         val user = userRepository.findByEmail(emailVo)
@@ -23,7 +27,7 @@ class AuthUseCase(
             passwordHashService.verify(plainPassword, user.passwordHash.value)
         } else {
             // ダミーのハッシュで検証を実行してタイミングを一定に保つ
-            passwordHashService.verify(plainPassword, "\$2a\$10\$dummyhashvaluetomaintaintiming1234567890123456789012")
+            passwordHashService.verify(plainPassword, dummyHash)
             false
         }
         

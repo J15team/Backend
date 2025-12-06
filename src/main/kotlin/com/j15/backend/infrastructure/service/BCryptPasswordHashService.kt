@@ -14,6 +14,11 @@ class BCryptPasswordHashService(
     }
 
     override fun verify(plainPassword: String, hashedPassword: String): Boolean {
-        return passwordEncoder.matches(plainPassword, hashedPassword)
+        return try {
+            passwordEncoder.matches(plainPassword, hashedPassword)
+        } catch (e: Exception) {
+            // 不正なハッシュ形式の場合もタイミング攻撃を防ぐため例外を隠蔽
+            false
+        }
     }
 }
