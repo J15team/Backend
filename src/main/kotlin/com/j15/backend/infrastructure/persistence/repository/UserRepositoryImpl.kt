@@ -21,21 +21,14 @@ class UserRepositoryImpl(private val jpaUserRepository: JpaUserRepository) : Use
         return jpaUserRepository.findByEmail(email.value)?.toDomain()
     }
 
-    override fun findByUsername(username: Username): User? {
-        return jpaUserRepository.findByUsername(username.value)?.toDomain()
-    }
+    override fun existsByEmail(email: Email): Boolean = jpaUserRepository.existsByEmail(email.value)
 
-    override fun findAll(): List<User> {
-        return jpaUserRepository.findAll().map { it.toDomain() }
-    }
+    override fun existsByUsername(username: Username): Boolean =
+            jpaUserRepository.existsByUsername(username.value)
 
     override fun save(user: User): User {
         val entity = user.toEntity()
         return jpaUserRepository.save(entity).toDomain()
-    }
-
-    override fun delete(user: User) {
-        user.userId.let { jpaUserRepository.deleteById(it.value) }
     }
 
     override fun deleteById(id: UserId) {

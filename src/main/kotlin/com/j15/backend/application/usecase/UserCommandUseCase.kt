@@ -6,36 +6,25 @@ import com.j15.backend.domain.model.user.User
 import com.j15.backend.domain.model.user.UserId
 import com.j15.backend.domain.model.user.Username
 import com.j15.backend.domain.repository.UserRepository
+import com.j15.backend.domain.service.UserDuplicationCheckService
 import java.security.MessageDigest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-// ユーザーのアプリケーションサービス
+// ユーザー登録・削除などコマンド系ユースケース
 @Service
-@Transactional(readOnly = true)
-class UserUseCase(private val userRepository: UserRepository) {
-    // ユーザーをIDで取得
-    fun findById(id: String): User? = userRepository.findById(UserId(id))
-
-    // メールアドレスでユーザーを取得
-    fun findByEmail(email: String): User? = userRepository.findByEmail(Email(email))
-
-    // 全ユーザーを取得
-    fun findAll(): List<User> = userRepository.findAll()
-
-    // ユーザーを登録
+class UserCommandUseCase(
+        private val userRepository: UserRepository,
+        private val duplicationCheckService: UserDuplicationCheckService
+) {
     @Transactional
     fun register(command: RegisterUserCommand): User {
         val emailVo = Email(command.email)
         val usernameVo = Username(command.username)
         val passwordHash = PasswordHash(hashPassword(command.plainPassword))
 
-        userRepository.findByEmail(emailVo)?.let {
-            throw IllegalArgumentException("このメールアドレスは既に登録されています")
-        }
-        userRepository.findByUsername(usernameVo)?.let {
-            throw IllegalArgumentException("このユーザー名は既に使用されています")
-        }
+        duplicationCheckService.checkEmailAvailable(emailVo)
+        duplicationCheckService.checkUsernameAvailable(usernameVo)
 
         val user =
                 User(
@@ -47,7 +36,6 @@ class UserUseCase(private val userRepository: UserRepository) {
         return userRepository.save(user)
     }
 
-    // ユーザーを削除
     @Transactional
     fun delete(id: String) {
         userRepository.deleteById(UserId(id))
