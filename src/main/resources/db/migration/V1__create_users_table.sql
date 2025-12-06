@@ -1,8 +1,11 @@
 -- V1__create_users_table.sql: ユーザーテーブルを作成する
 
+-- UUID生成に必要
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
 CREATE TABLE users (
-    -- 主キー: BIGSERIAL（PostgreSQLの自動採番で、LONG型に対応）
-    user_id BIGSERIAL PRIMARY KEY,
+    -- 主キー: UUID（アプリ側のVOに合わせる）
+    user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     -- ユーザー名: NOT NULL (NULL不可), UNIQUE (一意)
     username VARCHAR(20) NOT NULL UNIQUE,

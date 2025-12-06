@@ -1,6 +1,7 @@
 package com.j15.backend.infrastructure.persistence.repository
 
 import com.j15.backend.domain.model.user.Email
+import com.j15.backend.domain.model.user.PasswordHash
 import com.j15.backend.domain.model.user.User
 import com.j15.backend.domain.model.user.UserId
 import com.j15.backend.domain.model.user.Username
@@ -47,6 +48,7 @@ class UserRepositoryImpl(private val jpaUserRepository: JpaUserRepository) : Use
                 userId = UserId(this.userId!!),
                 username = Username(this.username),
                 email = Email(this.email),
+                passwordHash = PasswordHash(this.passwordHash),
                 createdAt = this.createdAt!!
         )
     }
@@ -56,6 +58,7 @@ class UserRepositoryImpl(private val jpaUserRepository: JpaUserRepository) : Use
                 userId = this.userId.value,
                 username = this.username.value,
                 email = this.email.value,
+                passwordHash = this.passwordHash.value,
                 createdAt = this.createdAt
         )
     }

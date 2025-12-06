@@ -7,6 +7,6 @@ data class User(
         val userId: UserId,
         val username: Username,
         val email: Email,
+        val passwordHash: PasswordHash,
         val createdAt: Instant = Instant.now()
-// val passwordHash: PasswordHash // 後ほど実装
 )
