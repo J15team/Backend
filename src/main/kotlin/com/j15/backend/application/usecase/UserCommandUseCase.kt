@@ -6,8 +6,8 @@ import com.j15.backend.domain.model.user.User
 import com.j15.backend.domain.model.user.UserId
 import com.j15.backend.domain.model.user.Username
 import com.j15.backend.domain.repository.UserRepository
+import com.j15.backend.domain.service.PasswordHashService
 import com.j15.backend.domain.service.UserDuplicationCheckService
-import java.security.MessageDigest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -15,13 +15,14 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class UserCommandUseCase(
         private val userRepository: UserRepository,
-        private val duplicationCheckService: UserDuplicationCheckService
+        private val duplicationCheckService: UserDuplicationCheckService,
+        private val passwordHashService: PasswordHashService
 ) {
     @Transactional
     fun register(command: RegisterUserCommand): User {
         val emailVo = Email(command.email)
         val usernameVo = Username(command.username)
-        val passwordHash = PasswordHash(hashPassword(command.plainPassword))
+        val passwordHash = PasswordHash(passwordHashService.hash(command.plainPassword))
 
         duplicationCheckService.checkEmailAvailable(emailVo)
         duplicationCheckService.checkUsernameAvailable(usernameVo)
@@ -39,12 +40,6 @@ class UserCommandUseCase(
     @Transactional
     fun delete(id: String) {
         userRepository.deleteById(UserId(id))
-    }
-
-    private fun hashPassword(raw: String): String {
-        val md = MessageDigest.getInstance("SHA-256")
-        val digest = md.digest(raw.toByteArray())
-        return digest.joinToString("") { "%02x".format(it) }
     }
 }
 

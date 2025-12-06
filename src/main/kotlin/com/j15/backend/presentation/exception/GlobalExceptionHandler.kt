@@ -1,6 +1,7 @@
 package com.j15.backend.presentation.exception
 
 import com.j15.backend.presentation.dto.response.ErrorResponse
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.FieldError
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 // グローバル例外ハンドラー
 @RestControllerAdvice
 class GlobalExceptionHandler {
+    private val logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
     // バリデーションエラー
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidationException(
@@ -43,6 +45,7 @@ class GlobalExceptionHandler {
     // その他の例外
     @ExceptionHandler(Exception::class)
     fun handleGeneralException(ex: Exception): ResponseEntity<ErrorResponse> {
+        logger.error("Unexpected error occurred", ex)
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(
                         ErrorResponse(
