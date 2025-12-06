@@ -19,14 +19,14 @@ class SecurityConfiguration {
 
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
-        http
-            .csrf { it.disable() }
-            .authorizeHttpRequests { auth ->
-                auth
-                    .requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers("/actuator/**").permitAll()
-                    .anyRequest().authenticated()
-            }
+        http.csrf { it.disable() }.authorizeHttpRequests { auth ->
+            auth.requestMatchers("/api/auth/**", "/api/users/signup")
+                    .permitAll()
+                    .requestMatchers("/actuator/**")
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated()
+        }
         return http.build()
     }
 }
