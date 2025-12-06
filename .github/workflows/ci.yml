@@ -158,6 +158,85 @@ jobs:
           
           echo "✅ Wrong password test passed!"
 
+      - name: Test sections API
+        run: |
+          # セクション一覧取得テスト
+          RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:8080/api/sections)
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+          
+          echo "Sections API HTTP Status: $HTTP_CODE"
+          
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "Sections API test failed with status $HTTP_CODE"
+            exit 1
+          fi
+          
+          # セクションデータが含まれているか確認
+          if ! echo "$BODY" | grep -q "プロジェクト準備"; then
+            echo "Sections data not found in response"
+            exit 1
+          fi
+          
+          echo "✅ Sections API test passed!"
+
+      - name: Test progress management
+        run: |
+          # 新しいユーザーを作成
+          SIGNUP_RESPONSE=$(curl -s -X POST http://localhost:8080/api/users/signup \
+            -H "Content-Type: application/json" \
+            -d '{"username":"progressuser","email":"progress@example.com","password":"password123"}')
+          
+          USER_ID=$(echo "$SIGNUP_RESPONSE" | grep -o '"userId":"[^"]*"' | cut -d'"' -f4)
+          echo "Created user with ID: $USER_ID"
+          
+          if [ -z "$USER_ID" ]; then
+            echo "Failed to extract user ID"
+            exit 1
+          fi
+          
+          # 初期進捗状態を取得
+          PROGRESS_RESPONSE=$(curl -s http://localhost:8080/api/progress/$USER_ID)
+          echo "Initial progress: $PROGRESS_RESPONSE"
+          
+          if ! echo "$PROGRESS_RESPONSE" | grep -q '"clearedCount":0'; then
+            echo "Initial progress should have 0 cleared sections"
+            exit 1
+          fi
+          
+          # セクション0を完了マーク
+          MARK_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/progress/$USER_ID/sections \
+            -H "Content-Type: application/json" \
+            -d '{"sectionId":0}')
+          HTTP_CODE=$(echo "$MARK_RESPONSE" | tail -n 1)
+          
+          if [ "$HTTP_CODE" -ne 201 ]; then
+            echo "Mark section failed with status $HTTP_CODE"
+            exit 1
+          fi
+          
+          # 進捗状態を再取得
+          PROGRESS_AFTER=$(curl -s http://localhost:8080/api/progress/$USER_ID)
+          echo "Progress after marking section 0: $PROGRESS_AFTER"
+          
+          if ! echo "$PROGRESS_AFTER" | grep -q '"clearedCount":1'; then
+            echo "Progress should have 1 cleared section"
+            exit 1
+          fi
+          
+          # 重複マークのテスト（既に完了済みのセクション）
+          DUPLICATE_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/progress/$USER_ID/sections \
+            -H "Content-Type: application/json" \
+            -d '{"sectionId":0}')
+          HTTP_CODE=$(echo "$DUPLICATE_RESPONSE" | tail -n 1)
+          
+          if [ "$HTTP_CODE" -ne 400 ]; then
+            echo "Duplicate mark should return 400 but got $HTTP_CODE"
+            exit 1
+          fi
+          
+          echo "✅ Progress management test passed!"
+
       - name: Show logs on failure
         if: failure()
         run: docker compose logs
