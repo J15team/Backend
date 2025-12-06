@@ -33,7 +33,7 @@ jobs:
         run: ./gradlew build --no-daemon -x test
 
       - name: Start services with Docker Compose
-        run: docker-compose up -d
+        run: docker compose up -d
 
       - name: Wait for application to start
         run: |
@@ -47,7 +47,7 @@ jobs:
             sleep 2
           done
           echo "Application failed to start"
-          docker-compose logs
+          docker compose logs
           exit 1
 
       - name: Test signup endpoint
@@ -63,7 +63,7 @@ jobs:
           
           if [ "$HTTP_CODE" -ne 201 ]; then
             echo "Signup test failed with status $HTTP_CODE"
-            docker-compose logs backend
+            docker compose logs backend
             exit 1
           fi
           
@@ -159,11 +159,11 @@ jobs:
 
       - name: Show logs on failure
         if: failure()
-        run: docker-compose logs
+        run: docker compose logs
 
       - name: Stop services
         if: always()
-        run: docker-compose down -v
+        run: docker compose down -v
 
       - name: Upload build artifacts
         if: success()
