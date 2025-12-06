@@ -1,0 +1,174 @@
+name: CI Build and E2E Test
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build --no-daemon -x test
+
+      - name: Start services with Docker Compose
+        run: docker-compose up -d
+
+      - name: Wait for application to start
+        run: |
+          echo "Waiting for application to start..."
+          for i in {1..60}; do
+            if curl -s http://localhost:8080/actuator/health > /dev/null; then
+              echo "Application is ready!"
+              exit 0
+            fi
+            echo "Waiting... ($i/60)"
+            sleep 2
+          done
+          echo "Application failed to start"
+          docker-compose logs
+          exit 1
+
+      - name: Test signup endpoint
+        run: |
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/users/signup \
+            -H "Content-Type: application/json" \
+            -d '{"username":"testuser","email":"test@example.com","password":"testpass123"}')
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+          
+          echo "HTTP Status: $HTTP_CODE"
+          echo "Response Body: $BODY"
+          
+          if [ "$HTTP_CODE" -ne 201 ]; then
+            echo "Signup test failed with status $HTTP_CODE"
+            docker-compose logs backend
+            exit 1
+          fi
+          
+          echo "✅ Signup test passed!"
+
+      - name: Test signin endpoint
+        run: |
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/auth/signin \
+            -H "Content-Type: application/json" \
+            -d '{"email":"test@example.com","password":"testpass123"}')
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+          
+          echo "HTTP Status: $HTTP_CODE"
+          echo "Response Body: $BODY"
+          
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "Signin test failed with status $HTTP_CODE"
+            exit 1
+          fi
+          
+          if ! echo "$BODY" | grep -q "testuser"; then
+            echo "Signin response does not contain expected username"
+            exit 1
+          fi
+          
+          echo "✅ Signin test passed!"
+
+      - name: Test validation errors
+        run: |
+          # 無効なメールアドレスでのサインアップテスト
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/users/signup \
+            -H "Content-Type: application/json" \
+            -d '{"username":"testuser2","email":"invalid-email","password":"testpass123"}')
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
+          
+          echo "Validation test HTTP Status: $HTTP_CODE"
+          
+          if [ "$HTTP_CODE" -ne 400 ]; then
+            echo "Validation test failed - expected 400 but got $HTTP_CODE"
+            exit 1
+          fi
+          
+          echo "✅ Validation test passed!"
+
+      - name: Test duplicate email
+        run: |
+          # 重複したメールアドレスでのサインアップテスト
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/users/signup \
+            -H "Content-Type: application/json" \
+            -d '{"username":"testuser3","email":"test@example.com","password":"testpass123"}')
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+          
+          echo "Duplicate email test HTTP Status: $HTTP_CODE"
+          echo "Response Body: $BODY"
+          
+          if [ "$HTTP_CODE" -ne 400 ]; then
+            echo "Duplicate email test failed - expected 400 but got $HTTP_CODE"
+            exit 1
+          fi
+          
+          if ! echo "$BODY" | grep -q "このメールアドレスは既に登録されています"; then
+            echo "Duplicate email error message not found"
+            exit 1
+          fi
+          
+          echo "✅ Duplicate email test passed!"
+
+      - name: Test wrong password
+        run: |
+          # 誤ったパスワードでのログインテスト
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/auth/signin \
+            -H "Content-Type: application/json" \
+            -d '{"email":"test@example.com","password":"wrongpassword"}')
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+          
+          echo "Wrong password test HTTP Status: $HTTP_CODE"
+          echo "Response Body: $BODY"
+          
+          if [ "$HTTP_CODE" -ne 400 ]; then
+            echo "Wrong password test failed - expected 400 but got $HTTP_CODE"
+            exit 1
+          fi
+          
+          if ! echo "$BODY" | grep -q "パスワードが正しくありません"; then
+            echo "Wrong password error message not found"
+            exit 1
+          fi
+          
+          echo "✅ Wrong password test passed!"
+
+      - name: Show logs on failure
+        if: failure()
+        run: docker-compose logs
+
+      - name: Stop services
+        if: always()
+        run: docker-compose down -v
+
+      - name: Upload build artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: build/libs/*.jar
+
