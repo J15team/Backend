@@ -65,7 +65,7 @@ class ProgressUseCase(
 
         val clearedSections =
                 userClearedSectionRepository.findByUserIdAndSubjectId(userId, subjectId)
-        val totalSections = subject.maxSections // 題材で定義された最大セクション数を使用
+        val totalSections = sectionRepository.countBySubjectId(subjectId) // 実際にDBに登録されているセクション総数を使用
 
         return progressCalculationService.buildUserProgress(
                 userId,
