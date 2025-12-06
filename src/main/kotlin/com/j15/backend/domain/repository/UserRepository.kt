@@ -1,14 +1,17 @@
 package com.j15.backend.domain.repository
 
-import com.j15.backend.domain.model.User
+import com.j15.backend.domain.model.user.Email
+import com.j15.backend.domain.model.user.User
+import com.j15.backend.domain.model.user.UserId
+import com.j15.backend.domain.model.user.Username
 
-/** ユーザーリポジトリインターフェース（ドメイン層） 永続化の実装詳細から独立したインターフェース */
+// ユーザーリポジトリインターフェース（ドメイン層）
 interface UserRepository {
-    fun findById(id: Long): User?
-    fun findByEmail(email: String): User?
-    fun findByUsername(username: String): User?
+    fun findById(id: UserId): User?
+    fun findByEmail(email: Email): User?
+    fun findByUsername(username: Username): User?
     fun findAll(): List<User>
     fun save(user: User): User
     fun delete(user: User)
-    fun deleteById(id: Long)
+    fun deleteById(id: UserId)
 }

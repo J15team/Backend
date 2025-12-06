@@ -1,24 +1,27 @@
 package com.j15.backend.infrastructure.persistence.repository
 
-import com.j15.backend.domain.model.User
+import com.j15.backend.domain.model.user.Email
+import com.j15.backend.domain.model.user.User
+import com.j15.backend.domain.model.user.UserId
+import com.j15.backend.domain.model.user.Username
 import com.j15.backend.domain.repository.UserRepository
 import com.j15.backend.infrastructure.persistence.entity.UserEntity
 import org.springframework.stereotype.Repository
 
-/** ユーザーリポジトリ実装（インフラ層） ドメイン層のインターフェースを実装し、JPAを使用して永続化 */
+// ユーザーリポジトリ実装（インフラ層）
 @Repository
 class UserRepositoryImpl(private val jpaUserRepository: JpaUserRepository) : UserRepository {
 
-    override fun findById(id: Long): User? {
-        return jpaUserRepository.findById(id).map { it.toDomain() }.orElse(null)
+    override fun findById(id: UserId): User? {
+        return jpaUserRepository.findById(id.value).map { it.toDomain() }.orElse(null)
     }
 
-    override fun findByEmail(email: String): User? {
-        return jpaUserRepository.findByEmail(email)?.toDomain()
+    override fun findByEmail(email: Email): User? {
+        return jpaUserRepository.findByEmail(email.value)?.toDomain()
     }
 
-    override fun findByUsername(username: String): User? {
-        return jpaUserRepository.findByUsername(username)?.toDomain()
+    override fun findByUsername(username: Username): User? {
+        return jpaUserRepository.findByUsername(username.value)?.toDomain()
     }
 
     override fun findAll(): List<User> {
@@ -31,30 +34,28 @@ class UserRepositoryImpl(private val jpaUserRepository: JpaUserRepository) : Use
     }
 
     override fun delete(user: User) {
-        user.userId?.let { jpaUserRepository.deleteById(it) }
+        user.userId.let { jpaUserRepository.deleteById(it.value) }
     }
 
-    override fun deleteById(id: Long) {
-        jpaUserRepository.deleteById(id)
+    override fun deleteById(id: UserId) {
+        jpaUserRepository.deleteById(id.value)
     }
 
     // ドメインモデルとエンティティの変換
     private fun UserEntity.toDomain(): User {
         return User(
-                userId = this.userId,
-                username = this.username,
-                email = this.email,
-                passwordHash = this.passwordHash,
-                createdAt = this.createdAt
+                userId = UserId(this.userId!!),
+                username = Username(this.username),
+                email = Email(this.email),
+                createdAt = this.createdAt!!
         )
     }
 
     private fun User.toEntity(): UserEntity {
         return UserEntity(
-                userId = this.userId,
-                username = this.username,
-                email = this.email,
-                passwordHash = this.passwordHash,
+                userId = this.userId.value,
+                username = this.username.value,
+                email = this.email.value,
                 createdAt = this.createdAt
         )
     }
