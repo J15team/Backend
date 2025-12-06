@@ -66,11 +66,20 @@ curl http://localhost:8080/api/health
 ./gradlew build
 ```
 
-### テスト実行
+### テスト
+
+テストはDocker Compose環境でのE2Eテストのみ実行されます。
 
 ```bash
-./gradlew test
+# アプリケーションを起動
+docker-compose up -d
+
+# APIの動作確認
+curl http://localhost:8080/api/health
+curl http://localhost:8080/api/sections
 ```
+
+CI/CDではGitHub Actionsで自動的にE2Eテストが実行されます。
 
 ## API エンドポイント
 
@@ -125,6 +134,80 @@ GET /actuator/health
 GET /actuator/info
 ```
 
+### 進捗管理
+
+#### 全セクション一覧取得
+
+```
+GET /api/sections
+```
+
+レスポンス例:
+
+```json
+[
+  {
+    "sectionId": 0,
+    "title": "プロジェクト準備",
+    "description": "アプリ開発の準備段階"
+  },
+  {
+    "sectionId": 1,
+    "title": "環境構築",
+    "description": "開発環境のセットアップ"
+  }
+]
+```
+
+#### ユーザー進捗状態取得
+
+```
+GET /api/progress/{userId}
+```
+
+レスポンス例:
+
+```json
+{
+  "userId": "a4153a84-6ab1-45f2-a7ee-8522e3f050ed",
+  "progressPercentage": 1.98,
+  "clearedCount": 2,
+  "remainingCount": 99,
+  "totalSections": 101,
+  "isAllCleared": false,
+  "nextSectionId": 2,
+  "clearedSections": [
+    {
+      "sectionId": 0,
+      "completedAt": "2025-12-06T11:06:06.412403Z"
+    }
+  ]
+}
+```
+
+#### セクション完了マーク
+
+```
+POST /api/progress/{userId}/sections
+Content-Type: application/json
+
+{
+  "sectionId": 0
+}
+```
+
+#### セクション完了状態チェック
+
+```
+GET /api/progress/{userId}/sections/{sectionId}
+```
+
+#### セクション完了削除（デバッグ用）
+
+```
+DELETE /api/progress/{userId}/sections/{sectionId}
+```
+
 ## データベース
 
 ### マイグレーション
@@ -134,16 +217,29 @@ Flywayを使用してデータベースマイグレーションを管理して�
 マイグレーションファイルは `src/main/resources/db/migration/` に配置されています。
 
 - `V1__create_users_table.sql` - ユーザーテーブルの作成
+- `V2__create_sections_and_progress_tables.sql` - セクションと進捗管理テーブルの作成
 
 ### ER図
 
 ```
 users
 ├── user_id (UUID, PK)
-├── username (VARCHAR)
+├── username (VARCHAR, UNIQUE)
 ├── email (VARCHAR, UNIQUE)
 ├── password_hash (VARCHAR)
 └── created_at (TIMESTAMP)
+
+sections
+├── section_id (INTEGER, PK) ← 0~100の進捗ステップ
+├── title (VARCHAR)
+└── description (TEXT)
+
+user_cleared_sections
+├── user_cleared_section_id (SERIAL, PK)
+├── user_id (UUID, FK → users)
+├── section_id (INTEGER, FK → sections)
+├── completed_at (TIMESTAMP)
+└── UNIQUE(user_id, section_id) ← 重複防止
 ```
 
 ## 開発ガイドライン
@@ -166,6 +262,10 @@ GitHub Actionsを使用してCI/CDパイプラインを構築しています。
 
 - **トリガー**: `main`, `develop` へのプッシュ、全てのPull Request
 - **テスト**: Docker Composeを使用したE2Eテスト
+  - サインアップ・サインイン機能
+  - バリデーション・エラーハンドリング
+  - セクション一覧取得
+  - 進捗管理フロー（完了マーク・進捗取得・重複チェック）
 - **除外**: `*.md`, `docs/**` のみの変更時はCIをスキップ
 
 ワークフローファイル: `.github/workflows/ci.yml`
@@ -188,6 +288,9 @@ src/
 │   │       ├── BackendApplication.kt
 │   │       ├── domain/              # ドメイン層
 │   │       │   ├── model/
+│   │       │   │   ├── user/        # ユーザー関連モデル
+│   │       │   │   ├── section/     # セクション関連モデル
+│   │       │   │   └── progress/    # 進捗管理モデル
 │   │       │   ├── repository/
 │   │       │   └── service/
 │   │       ├── application/         # アプリケーション層
@@ -195,16 +298,23 @@ src/
 │   │       ├── infrastructure/      # インフラ層
 │   │       │   ├── config/
 │   │       │   ├── persistence/
+│   │       │   │   ├── entity/
+│   │       │   │   ├── jpa/
+│   │       │   │   ├── repository/
+│   │       │   │   └── converter/
 │   │       │   └── service/
 │   │       └── presentation/        # プレゼンテーション層
 │   │           ├── controller/
 │   │           ├── dto/
+│   │           │   ├── request/
+│   │           │   └── response/
 │   │           └── exception/
 │   └── resources/
 │       ├── application.yml
 │       └── db/migration/
-└── test/
-    └── kotlin/
+└── .github/
+    └── workflows/
+        └── ci.yml                   # E2Eテスト定義
 ```
 
 ## トラブルシューティング
