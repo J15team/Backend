@@ -37,8 +37,8 @@ class SubjectUseCase(private val subjectRepository: SubjectRepository) {
             description: String?,
             maxSections: Int
     ): Subject {
-        require(title.isNotBlank()) { "タイトルは必須です" }
-        validateMaxSections(maxSections)
+        validateSubjectInput(title, maxSections)
+
 
         val subject =
                 Subject(
@@ -71,9 +71,7 @@ class SubjectUseCase(private val subjectRepository: SubjectRepository) {
         val existing =
                 subjectRepository.findById(id)
                         ?: throw IllegalArgumentException("題材が見つかりません: $subjectId")
-
-        require(title.isNotBlank()) { "タイトルは必須です" }
-        validateMaxSections(maxSections)
+        validateSubjectInput(title, maxSections)
 
         val updated =
                 existing.copy(title = title, description = description, maxSections = maxSections)
@@ -110,5 +108,18 @@ class SubjectUseCase(private val subjectRepository: SubjectRepository) {
             throw IllegalArgumentException("題材が見つかりません: $subjectId")
         }
         subjectRepository.deleteById(id)
+    }
+
+    /**
+     * 題材の入力値を検証
+     * @param title タイトル
+     * @param maxSections 最大セクション数
+     * @throws IllegalArgumentException バリデーションエラー時
+     */
+    private fun validateSubjectInput(title: String, maxSections: Int) {
+        require(title.isNotBlank()) { "タイトルは必須です" }
+        require(maxSections in Subject.MIN_MAX_SECTIONS..Subject.MAX_MAX_SECTIONS) {
+            "最大セクション数は${Subject.MIN_MAX_SECTIONS}以上${Subject.MAX_MAX_SECTIONS}以下である必要があります"
+        }
     }
 }

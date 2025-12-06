@@ -23,7 +23,7 @@ data class UserProgressResponse(
                     progressPercentage = userProgress.calculateProgressPercentage(),
                     clearedCount = userProgress.getClearedCount(),
                     remainingCount = userProgress.getRemainingCount(),
-                    totalSections = userProgress.totalSections, // 題材のmaxSectionsから取得
+                    totalSections = userProgress.totalSections, // 実際にDBに登録されているセクション総数
                     isAllCleared = userProgress.isAllCleared(),
                     nextSectionId = userProgress.suggestNextSection()?.value,
                     clearedSections =
