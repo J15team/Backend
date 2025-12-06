@@ -1,0 +1,54 @@
+package com.j15.backend.presentation.exception
+
+import com.j15.backend.presentation.dto.response.ErrorResponse
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.validation.FieldError
+import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.RestControllerAdvice
+
+// グローバル例外ハンドラー
+@RestControllerAdvice
+class GlobalExceptionHandler {
+    // バリデーションエラー
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleValidationException(
+            ex: MethodArgumentNotValidException
+    ): ResponseEntity<ErrorResponse> {
+        val errors =
+                ex.bindingResult.allErrors.joinToString(", ") { error ->
+                    val fieldName = (error as? FieldError)?.field ?: "field"
+                    val errorMessage = error.defaultMessage ?: "invalid"
+                    "$fieldName: $errorMessage"
+                }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse(message = errors, status = HttpStatus.BAD_REQUEST.value()))
+    }
+
+    // ビジネスロジックエラー（IllegalArgumentException）
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handleIllegalArgumentException(
+            ex: IllegalArgumentException
+    ): ResponseEntity<ErrorResponse> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(
+                        ErrorResponse(
+                                message = ex.message ?: "不正なリクエストです",
+                                status = HttpStatus.BAD_REQUEST.value()
+                        )
+                )
+    }
+
+    // その他の例外
+    @ExceptionHandler(Exception::class)
+    fun handleGeneralException(ex: Exception): ResponseEntity<ErrorResponse> {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(
+                        ErrorResponse(
+                                message = "サーバーエラーが発生しました",
+                                status = HttpStatus.INTERNAL_SERVER_ERROR.value()
+                        )
+                )
+    }
+}
