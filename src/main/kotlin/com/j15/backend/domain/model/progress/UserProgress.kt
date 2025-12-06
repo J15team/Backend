@@ -76,10 +76,10 @@ data class UserProgress(
      * 重複チェックを行い、新しい完了記録を追加した集約状態を返す
      *
      * @param sectionId 完了するセクションID
-     * @return 新しい完了記録が追加された集約状態
+     * @return 新しい完了記録が追加された集約状態と新規作成された完了記録のペア
      * @throws IllegalArgumentException セクションが既に完了している場合
      */
-    fun markSectionAsCleared(sectionId: SectionId): Result<UserProgress> {
+    fun markSectionAsCleared(sectionId: SectionId): Result<Pair<UserProgress, UserClearedSection>> {
         return runCatching {
             // 重複チェック（集約の不変条件）
             require(!isSectionCleared(sectionId)) {
@@ -95,8 +95,9 @@ data class UserProgress(
                 completedAt = Instant.now()
             )
 
-            // 新しい集約状態を返す（イミュータブル）
-            copy(clearedSections = clearedSections + newCleared)
+            // 新しい集約状態と新規作成された完了記録を返す（イミュータブル）
+            val updatedProgress = copy(clearedSections = clearedSections + newCleared)
+            updatedProgress to newCleared
         }
     }
 
