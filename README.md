@@ -46,7 +46,7 @@ git clone https://github.com/J15team/Backend.git
 cd backend
 ```
 
-2. Docker Composeで起動
+1. Docker Composeで起動
 
 ```bash
 docker-compose up -d
@@ -54,7 +54,7 @@ docker-compose up -d
 
 アプリケーションは `http://localhost:8080` で起動します。
 
-3. 動作確認
+1. 動作確認
 
 ```bash
 curl http://localhost:8080/api/health
@@ -83,134 +83,67 @@ CI/CDではGitHub Actionsで自動的にE2Eテストが実行されます。
 
 ## API エンドポイント
 
-### ヘルスチェック
+詳細なAPI仕様については [API仕様書](./docs/API.md) を参照してください。
 
-```
-GET /api/health
-```
+### 概要
 
-### 認証
+- **認証API**: サインアップ、サインイン
+- **セクションAPI**: セクション一覧取得、セクション詳細取得
+- **進捗管理API**: 進捗状態取得、セクション完了マーク、完了状態チェック、完了削除
+- **ヘルスチェックAPI**: アプリケーション稼働状態確認
+
+### 主要エンドポイント一覧
+
+| カテゴリ | メソッド | エンドポイント | 説明 |
+|---------|---------|---------------|------|
+| 認証 | POST | `/api/users/signup` | 新規ユーザー登録 |
+| 認証 | POST | `/api/auth/signin` | ログイン |
+| セクション | GET | `/api/sections` | 全セクション一覧 |
+| セクション | GET | `/api/sections/{sectionId}` | セクション詳細 |
+| 進捗 | GET | `/api/progress/{userId}` | ユーザー進捗取得 |
+| 進捗 | POST | `/api/progress/{userId}/sections` | セクション完了マーク |
+| 進捗 | GET | `/api/progress/{userId}/sections/{sectionId}` | 完了状態チェック |
+| 進捗 | DELETE | `/api/progress/{userId}/sections/{sectionId}` | 完了削除 |
+| ヘルスチェック | GET | `/api/health` | 稼働状態確認 |
+
+### クイックスタート例
 
 #### サインアップ
 
-```
-POST /api/users/signup
-Content-Type: application/json
-
-{
-  "username": "testuser",
-  "email": "test@example.com",
-  "password": "password123"
-}
+```bash
+curl -X POST http://localhost:8080/api/users/signup \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "testuser",
+    "email": "test@example.com",
+    "password": "password123"
+  }'
 ```
 
 #### サインイン
 
-```
-POST /api/auth/signin
-Content-Type: application/json
-
-{
-  "email": "test@example.com",
-  "password": "password123"
-}
-```
-
-レスポンス例:
-
-```json
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "userId": "123e4567-e89b-12d3-a456-426614174000",
-  "username": "testuser",
-  "email": "test@example.com"
-}
+```bash
+curl -X POST http://localhost:8080/api/auth/signin \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "test@example.com",
+    "password": "password123"
+  }'
 ```
 
-### Actuator
+#### セクション一覧取得
 
-```
-GET /actuator/health
-GET /actuator/info
-```
-
-### 進捗管理
-
-#### 全セクション一覧取得
-
-```
-GET /api/sections
+```bash
+curl http://localhost:8080/api/sections
 ```
 
-レスポンス例:
+#### 進捗状態取得
 
-```json
-[
-  {
-    "sectionId": 0,
-    "title": "プロジェクト準備",
-    "description": "アプリ開発の準備段階"
-  },
-  {
-    "sectionId": 1,
-    "title": "環境構築",
-    "description": "開発環境のセットアップ"
-  }
-]
-```
+```bash
+curl http://localhost:8080/api/progress/{userId}
+詳細なリクエスト/レスポンス形式、エラーハンドリング、バリデーションルールについては [API仕様書](./docs/API.md) を参照してください。
 
-#### ユーザー進捗状態取得
-
-```
-GET /api/progress/{userId}
-```
-
-レスポンス例:
-
-```json
-{
-  "userId": "a4153a84-6ab1-45f2-a7ee-8522e3f050ed",
-  "progressPercentage": 1,
-  "clearedCount": 2,
-  "remainingCount": 99,
-  "totalSections": 101,
-  "isAllCleared": false,
-  "nextSectionId": 2,
-  "clearedSections": [
-    {
-      "sectionId": 0,
-      "completedAt": "2025-12-06T11:06:06.412403Z"
-    }
-  ]
-}
-```
-
-**注意**: `progressPercentage` は0~100の整数値です。全セクション完了時は必ず100%を返します。
-
-#### セクション完了マーク
-
-```
-POST /api/progress/{userId}/sections
-Content-Type: application/json
-
-{
-  "sectionId": 0
-}
-```
-
-#### セクション完了状態チェック
-
-```
-GET /api/progress/{userId}/sections/{sectionId}
-```
-
-#### セクション完了削除（デバッグ用）
-
-```
-DELETE /api/progress/{userId}/sections/{sectionId}
-```
-
-## データベース
+## データベース設計
 
 ### マイグレーション
 
@@ -223,7 +156,7 @@ Flywayを使用してデータベースマイグレーションを管理して�
 
 ### ER図
 
-```
+```text
 users
 ├── user_id (UUID, PK)
 ├── username (VARCHAR, UNIQUE)
@@ -282,7 +215,7 @@ GitHub Actionsを使用してCI/CDパイプラインを構築しています。
 
 ## ディレクトリ構造
 
-```
+```text
 src/
 ├── main/
 │   ├── kotlin/
@@ -318,6 +251,27 @@ src/
     └── workflows/
         └── ci.yml                   # E2Eテスト定義
 ```
+
+## 将来実装予定の機能
+
+### セクション動的管理API
+
+現在、セクションはデータベースマイグレーションによる静的管理のみ対応していますが、将来的に以下の動的管理APIの実装を予定しています。
+
+**予定機能:**
+
+- セクション新規登録 (`POST /api/sections`)
+- セクション更新 (`PUT /api/sections/{sectionId}`)
+- セクション削除 (`DELETE /api/sections/{sectionId}`)
+
+**実装時の考慮事項:**
+
+- 管理者権限の実装
+- 既存進捗データとの整合性保持
+- セクション順序管理
+- 監査ログ機能
+
+詳細は [API仕様書 - 将来実装予定](./docs/API.md#将来実装予定-セクション管理api) を参照してください。
 
 ## トラブルシューティング
 
