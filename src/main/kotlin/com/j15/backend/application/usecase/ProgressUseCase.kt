@@ -8,7 +8,6 @@ import com.j15.backend.domain.model.user.UserId
 import com.j15.backend.domain.repository.SectionRepository
 import com.j15.backend.domain.repository.SubjectRepository
 import com.j15.backend.domain.repository.UserClearedSectionRepository
-import com.j15.backend.domain.service.ProgressCalculationService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -18,8 +17,7 @@ import org.springframework.transaction.annotation.Transactional
 class ProgressUseCase(
         private val userClearedSectionRepository: UserClearedSectionRepository,
         private val sectionRepository: SectionRepository,
-        private val subjectRepository: SubjectRepository,
-        private val progressCalculationService: ProgressCalculationService
+        private val subjectRepository: SubjectRepository
 ) {
 
     /** セクション完了を記録 フロントエンドから完了通知を受け取り、DB に永続化 */
@@ -29,29 +27,15 @@ class ProgressUseCase(
             sectionId: SectionId
     ): Result<UserClearedSection> {
         return runCatching {
-            // 題材の存在確認
-            val subject =
-                    subjectRepository.findById(subjectId)
-                            ?: throw IllegalArgumentException("題材が見つかりません: ${subjectId.value}")
+            // 1. 集約を取得
+            val progress = getUserProgress(userId, subjectId)
 
-            // セクションIDの妥当性検証
-            progressCalculationService.validateSectionId(sectionId).getOrThrow()
+            // 2. 集約に操作を委譲（不変条件は集約が保証）
+            val updatedProgress = progress.markSectionAsCleared(sectionId).getOrThrow()
 
-            // 既に完了済みかチェック
-            val alreadyCleared =
-                    userClearedSectionRepository.existsByUserIdAndSubjectIdAndSectionId(
-                            userId,
-                            subjectId,
-                            sectionId
-                    )
-
-            if (alreadyCleared) {
-                throw IllegalStateException("セクション ${sectionId.value} は既に完了しています")
-            }
-
-            // 完了記録を保存
-            val clearedSection = UserClearedSection.create(userId, subjectId, sectionId)
-            userClearedSectionRepository.save(clearedSection)
+            // 3. 新しく追加された完了記録のみを永続化
+            val newCleared = updatedProgress.clearedSections.last()
+            userClearedSectionRepository.save(newCleared)
         }
     }
 
@@ -67,7 +51,8 @@ class ProgressUseCase(
                 userClearedSectionRepository.findByUserIdAndSubjectId(userId, subjectId)
         val totalSections = sectionRepository.countBySubjectId(subjectId) // 実際にDBに登録されているセクション総数を使用
 
-        return progressCalculationService.buildUserProgress(
+        // ファクトリメソッドを使用
+        return UserProgress.create(
                 userId,
                 subjectId,
                 clearedSections,
@@ -92,6 +77,13 @@ class ProgressUseCase(
             sectionId: SectionId
     ): Result<Unit> {
         return runCatching {
+            // 1. 集約を取得
+            val progress = getUserProgress(userId, subjectId)
+
+            // 2. 集約に操作を委譲（不変条件は集約が保証）
+            progress.unmarkSectionAsCleared(sectionId).getOrThrow()
+
+            // 3. 完了記録を削除
             userClearedSectionRepository.deleteByUserIdAndSubjectIdAndSectionId(
                     userId,
                     subjectId,
