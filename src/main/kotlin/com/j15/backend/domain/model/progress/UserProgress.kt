@@ -76,8 +76,8 @@ data class UserProgress(
      * 重複チェックを行い、新しい完了記録を追加した集約状態を返す
      *
      * @param sectionId 完了するセクションID
-     * @return 新しい完了記録が追加された集約状態と新規作成された完了記録のペア
-     * @throws IllegalArgumentException セクションが既に完了している場合
+     * @return 新しい完了記録が追加された集約状態と新規作成された完了記録のペア。
+     *         セクションが既に完了している場合は失敗を含む Result を返す
      */
     fun markSectionAsCleared(sectionId: SectionId): Result<Pair<UserProgress, UserClearedSection>> {
         return runCatching {
@@ -106,8 +106,8 @@ data class UserProgress(
      * 指定されたセクションの完了記録を削除した集約状態を返す
      *
      * @param sectionId 取り消すセクションID
-     * @return 完了記録が削除された集約状態
-     * @throws IllegalArgumentException セクションが完了していない場合
+     * @return 完了記録が削除された集約状態。
+     *         セクションが完了していない場合は失敗を含む Result を返す
      */
     fun unmarkSectionAsCleared(sectionId: SectionId): Result<UserProgress> {
         return runCatching {

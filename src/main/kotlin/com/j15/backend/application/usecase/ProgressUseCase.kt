@@ -31,7 +31,7 @@ class ProgressUseCase(
             val progress = getUserProgress(userId, subjectId)
 
             // 2. 集約に操作を委譲（不変条件は集約が保証）
-            val (_, newCleared) = progress.markSectionAsCleared(sectionId).getOrThrow()
+            val (updatedProgress, newCleared) = progress.markSectionAsCleared(sectionId).getOrThrow()
 
             // 3. 新しく追加された完了記録のみを永続化
             userClearedSectionRepository.save(newCleared)
@@ -80,7 +80,7 @@ class ProgressUseCase(
             val progress = getUserProgress(userId, subjectId)
 
             // 2. 集約に操作を委譲（不変条件は集約が保証）
-            progress.unmarkSectionAsCleared(sectionId).getOrThrow()
+            val updatedProgress = progress.unmarkSectionAsCleared(sectionId).getOrThrow()
 
             // 3. 完了記録を削除
             userClearedSectionRepository.deleteByUserIdAndSubjectIdAndSectionId(
