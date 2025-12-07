@@ -311,24 +311,3 @@ jobs:
         with:
           name: build-artifacts
           path: build/libs/*.jar
-
-  # PRがmain向けでCIが成功したら自動マージ
-  auto-merge:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.base_ref == 'main'
-    permissions:
-      contents: write
-      pull-requests: write
-    steps:
-      - name: Auto merge PR
-        uses: actions/github-script@v7
-        with:
-          script: |
-            await github.rest.pulls.merge({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number,
-              merge_method: 'squash'
-            });
-            console.log('✅ PR auto-merged to main');
