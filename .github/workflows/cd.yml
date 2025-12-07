@@ -109,25 +109,37 @@ jobs:
       - name: Deploy to ECS
         id: deploy-ecs
         run: |
+          NEW_TASK_DEF="${{ steps.update-task.outputs.new_task_def }}"
           aws ecs update-service \
             --cluster $ECS_CLUSTER \
             --service $ECS_SERVICE \
-            --task-definition ${{ steps.update-task.outputs.new_task_def }} \
+            --task-definition $NEW_TASK_DEF \
             --force-new-deployment
-          for i in {1..30}; do
-            TASK_ARN=$(aws ecs list-tasks \
+
+          echo "Waiting for new task with definition: $NEW_TASK_DEF"
+
+          for i in {1..60}; do
+            # 全てのRUNNINGタスクを取得
+            TASK_ARNS=$(aws ecs list-tasks \
               --cluster $ECS_CLUSTER \
               --service-name $ECS_SERVICE \
               --desired-status RUNNING \
-              --query 'taskArns[0]' \
+              --query 'taskArns' \
               --output text)
-            if [ "$TASK_ARN" != "None" ] && [ -n "$TASK_ARN" ]; then
-              TASK_STATUS=$(aws ecs describe-tasks \
+            
+            for TASK_ARN in $TASK_ARNS; do
+              # タスクの詳細を取得
+              TASK_INFO=$(aws ecs describe-tasks \
                 --cluster $ECS_CLUSTER \
                 --tasks $TASK_ARN \
-                --query 'tasks[0].lastStatus' \
-                --output text)
-              if [ "$TASK_STATUS" == "RUNNING" ]; then
+                --query 'tasks[0].{def:taskDefinitionArn,status:lastStatus}' \
+                --output json)
+              
+              TASK_DEF=$(echo $TASK_INFO | jq -r '.def')
+              TASK_STATUS=$(echo $TASK_INFO | jq -r '.status')
+              
+              # 新しいタスク定義のタスクかつRUNNINGか確認
+              if [ "$TASK_DEF" == "$NEW_TASK_DEF" ] && [ "$TASK_STATUS" == "RUNNING" ]; then
                 ENI_ID=$(aws ecs describe-tasks \
                   --cluster $ECS_CLUSTER \
                   --tasks $TASK_ARN \
@@ -138,13 +150,17 @@ jobs:
                   --query 'NetworkInterfaces[0].Association.PublicIp' \
                   --output text)
                 if [ -n "$NEW_IP" ] && [ "$NEW_IP" != "None" ]; then
+                  echo "Found new task with IP: $NEW_IP"
                   echo "new_ip=$NEW_IP" >> $GITHUB_OUTPUT
                   exit 0
                 fi
               fi
-            fi
+            done
+            
+            echo "Waiting for new task... ($i/60)"
             sleep 10
           done
+          echo "Timeout waiting for new task"
           exit 1
 
       - name: Update API Gateway
