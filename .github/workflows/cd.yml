@@ -12,7 +12,7 @@ env:
   ECR_REPOSITORY: j15-backend-dev
   ECS_CLUSTER: j15-backend-cluster-dev
   ECS_SERVICE: j15-backend-service-dev
-  ECS_TASK_FAMILY: j15-backend-task-dev
+  ECS_TASK_FAMILY: j15-backend-dev
 
 jobs:
   deploy:
