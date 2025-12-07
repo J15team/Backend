@@ -201,5 +201,14 @@ jobs:
       - name: Summary
         if: success()
         run: |
-          echo "Deployment successful!"
-          echo "Image: ${{ steps.build-image.outputs.image }}"
+          API_URL=$(aws apigatewayv2 get-api \
+            --api-id $API_GATEWAY_ID \
+            --query 'ApiEndpoint' \
+            --output text)
+          echo "## 🚀 デプロイ完了" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| 項目 | 値 |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-----|" >> $GITHUB_STEP_SUMMARY
+          echo "| API URL | $API_URL |" >> $GITHUB_STEP_SUMMARY
+          echo "| Image | \`${{ steps.build-image.outputs.image }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Task IP | ${{ steps.deploy-ecs.outputs.new_ip }} |" >> $GITHUB_STEP_SUMMARY
