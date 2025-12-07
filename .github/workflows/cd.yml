@@ -13,12 +13,12 @@ env:
   ECS_CLUSTER: j15-backend-cluster-dev
   ECS_SERVICE: j15-backend-service-dev
   ECS_TASK_FAMILY: j15-backend-task-dev
-  API_GATEWAY_ID: ${{ secrets.API_GATEWAY_ID }}
-  VPC_LINK_ID: ${{ secrets.VPC_LINK_ID }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      API_GATEWAY_ID: ${{ secrets.API_GATEWAY_ID }}
 
     steps:
       - name: Checkout code
@@ -31,47 +31,34 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # ========== チェックポイント1: 現在の状態を保存 ==========
       - name: Save current state for rollback
         id: save-state
         run: |
-          echo "📸 Saving current state for potential rollback..."
-
-          # 現在のタスク定義ARNを保存
+          echo "Saving current state for potential rollback..."
           CURRENT_TASK_DEF=$(aws ecs describe-services \
-            --cluster ${{ env.ECS_CLUSTER }} \
-            --services ${{ env.ECS_SERVICE }} \
+            --cluster $ECS_CLUSTER \
+            --services $ECS_SERVICE \
             --query 'services[0].taskDefinition' \
             --output text)
           echo "current_task_def=$CURRENT_TASK_DEF" >> $GITHUB_OUTPUT
-
-          # 現在のタスクIPを保存
           CURRENT_TASK_ARN=$(aws ecs list-tasks \
-            --cluster ${{ env.ECS_CLUSTER }} \
-            --service-name ${{ env.ECS_SERVICE }} \
+            --cluster $ECS_CLUSTER \
+            --service-name $ECS_SERVICE \
             --query 'taskArns[0]' \
             --output text)
-
           if [ "$CURRENT_TASK_ARN" != "None" ] && [ -n "$CURRENT_TASK_ARN" ]; then
-            CURRENT_IP=$(aws ecs describe-tasks \
-              --cluster ${{ env.ECS_CLUSTER }} \
+            ENI_ID=$(aws ecs describe-tasks \
+              --cluster $ECS_CLUSTER \
               --tasks $CURRENT_TASK_ARN \
-              --query 'tasks[0].attachments[0].details[?name==`privateIPv4Address`].value' \
+              --query 'tasks[0].attachments[0].details[?name==`networkInterfaceId`].value' \
+              --output text)
+            CURRENT_IP=$(aws ec2 describe-network-interfaces \
+              --network-interface-ids $ENI_ID \
+              --query 'NetworkInterfaces[0].Association.PublicIp' \
               --output text)
             echo "current_ip=$CURRENT_IP" >> $GITHUB_OUTPUT
-            echo "current_task_arn=$CURRENT_TASK_ARN" >> $GITHUB_OUTPUT
           fi
 
-          # 現在のAPI Gateway統合URIを保存
-          CURRENT_INTEGRATION=$(aws apigatewayv2 get-integrations \
-            --api-id ${{ env.API_GATEWAY_ID }} \
-            --query 'Items[0].IntegrationUri' \
-            --output text 2>/dev/null || echo "")
-          echo "current_integration=$CURRENT_INTEGRATION" >> $GITHUB_OUTPUT
-
-          echo "✅ State saved: TaskDef=$CURRENT_TASK_DEF, IP=$CURRENT_IP"
-
-      # ========== ECRにプッシュ ==========
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
@@ -79,9 +66,9 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          distribution: "temurin"
+          distribution: temurin
           java-version: "21"
-          cache: "gradle"
+          cache: gradle
 
       - name: Build application
         run: |
@@ -94,200 +81,125 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           IMAGE_TAG="${{ github.sha }}"
-          FULL_IMAGE="${ECR_REGISTRY}/${{ env.ECR_REPOSITORY }}:${IMAGE_TAG}"
-
+          FULL_IMAGE="${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}"
           docker build --platform linux/amd64 -t $FULL_IMAGE .
           docker push $FULL_IMAGE
-
-          # latestタグも更新
-          docker tag $FULL_IMAGE ${ECR_REGISTRY}/${{ env.ECR_REPOSITORY }}:latest
-          docker push ${ECR_REGISTRY}/${{ env.ECR_REPOSITORY }}:latest
-
+          docker tag $FULL_IMAGE ${ECR_REGISTRY}/${ECR_REPOSITORY}:latest
+          docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:latest
           echo "image=$FULL_IMAGE" >> $GITHUB_OUTPUT
-          echo "✅ Image pushed: $FULL_IMAGE"
 
-      # ========== ECSタスク更新 ==========
       - name: Update ECS task definition
         id: update-task
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
-          # 現在のタスク定義を取得
           aws ecs describe-task-definition \
-            --task-definition ${{ env.ECS_TASK_FAMILY }} \
+            --task-definition $ECS_TASK_FAMILY \
             --query 'taskDefinition' > current-task-def.json
-
-          # 新しいイメージURIで更新
-          NEW_IMAGE="${ECR_REGISTRY}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}"
-
+          NEW_IMAGE="${ECR_REGISTRY}/${ECR_REPOSITORY}:${{ github.sha }}"
           jq --arg IMAGE "$NEW_IMAGE" \
-            '.containerDefinitions[0].image = $IMAGE | 
-             del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' \
+            '.containerDefinitions[0].image = $IMAGE | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' \
             current-task-def.json > new-task-def.json
-
-          # 新しいタスク定義を登録
           NEW_TASK_DEF_ARN=$(aws ecs register-task-definition \
             --cli-input-json file://new-task-def.json \
             --query 'taskDefinition.taskDefinitionArn' \
             --output text)
-
           echo "new_task_def=$NEW_TASK_DEF_ARN" >> $GITHUB_OUTPUT
-          echo "✅ New task definition: $NEW_TASK_DEF_ARN"
 
       - name: Deploy to ECS
         id: deploy-ecs
         run: |
-          # サービスを更新
           aws ecs update-service \
-            --cluster ${{ env.ECS_CLUSTER }} \
-            --service ${{ env.ECS_SERVICE }} \
+            --cluster $ECS_CLUSTER \
+            --service $ECS_SERVICE \
             --task-definition ${{ steps.update-task.outputs.new_task_def }} \
             --force-new-deployment
-
-          echo "⏳ Waiting for new task to start..."
-
-          # 新しいタスクが起動するまで待機（最大5分）
           for i in {1..30}; do
             TASK_ARN=$(aws ecs list-tasks \
-              --cluster ${{ env.ECS_CLUSTER }} \
-              --service-name ${{ env.ECS_SERVICE }} \
+              --cluster $ECS_CLUSTER \
+              --service-name $ECS_SERVICE \
               --desired-status RUNNING \
               --query 'taskArns[0]' \
               --output text)
-            
             if [ "$TASK_ARN" != "None" ] && [ -n "$TASK_ARN" ]; then
-              # タスクの状態を確認
               TASK_STATUS=$(aws ecs describe-tasks \
-                --cluster ${{ env.ECS_CLUSTER }} \
+                --cluster $ECS_CLUSTER \
                 --tasks $TASK_ARN \
                 --query 'tasks[0].lastStatus' \
                 --output text)
-              
               if [ "$TASK_STATUS" == "RUNNING" ]; then
-                # 新しいタスクのIPを取得
-                NEW_IP=$(aws ecs describe-tasks \
-                  --cluster ${{ env.ECS_CLUSTER }} \
+                ENI_ID=$(aws ecs describe-tasks \
+                  --cluster $ECS_CLUSTER \
                   --tasks $TASK_ARN \
-                  --query 'tasks[0].attachments[0].details[?name==`privateIPv4Address`].value' \
+                  --query 'tasks[0].attachments[0].details[?name==`networkInterfaceId`].value' \
                   --output text)
-                
+                NEW_IP=$(aws ec2 describe-network-interfaces \
+                  --network-interface-ids $ENI_ID \
+                  --query 'NetworkInterfaces[0].Association.PublicIp' \
+                  --output text)
                 if [ -n "$NEW_IP" ] && [ "$NEW_IP" != "None" ]; then
                   echo "new_ip=$NEW_IP" >> $GITHUB_OUTPUT
-                  echo "new_task_arn=$TASK_ARN" >> $GITHUB_OUTPUT
-                  echo "✅ New task running with IP: $NEW_IP"
                   exit 0
                 fi
               fi
             fi
-            
-            echo "Waiting for task... ($i/30)"
             sleep 10
           done
-
-          echo "❌ Timeout waiting for new task"
           exit 1
 
-      # ========== API Gateway更新 ==========
-      - name: Update API Gateway integration
-        id: update-apigw
+      - name: Update API Gateway
         run: |
           NEW_IP="${{ steps.deploy-ecs.outputs.new_ip }}"
-
-          # 統合IDを取得
           INTEGRATION_ID=$(aws apigatewayv2 get-integrations \
-            --api-id ${{ env.API_GATEWAY_ID }} \
+            --api-id $API_GATEWAY_ID \
             --query 'Items[0].IntegrationId' \
             --output text)
-
-          # 統合URIを更新
           aws apigatewayv2 update-integration \
-            --api-id ${{ env.API_GATEWAY_ID }} \
+            --api-id $API_GATEWAY_ID \
             --integration-id $INTEGRATION_ID \
             --integration-uri "http://${NEW_IP}:8080/{proxy}"
 
-          echo "integration_id=$INTEGRATION_ID" >> $GITHUB_OUTPUT
-          echo "✅ API Gateway updated to point to $NEW_IP"
-
-      # ========== ヘルスチェック ==========
       - name: Health check
-        id: health-check
         run: |
-          # API GatewayのURLを取得
           API_URL=$(aws apigatewayv2 get-api \
-            --api-id ${{ env.API_GATEWAY_ID }} \
+            --api-id $API_GATEWAY_ID \
             --query 'ApiEndpoint' \
             --output text)
-
-          echo "🔍 Running health check on $API_URL"
-
-          # アプリケーションが起動するまで待機
           sleep 30
-
-          # ヘルスチェック（最大10回リトライ）
           for i in {1..10}; do
             HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "${API_URL}/actuator/health" --max-time 10 || echo "000")
-            
             if [ "$HTTP_CODE" == "200" ]; then
-              echo "✅ Health check passed!"
-              echo "status=success" >> $GITHUB_OUTPUT
               exit 0
             fi
-            
-            echo "Health check attempt $i/10 - HTTP $HTTP_CODE"
             sleep 15
           done
-
-          echo "❌ Health check failed"
-          echo "status=failed" >> $GITHUB_OUTPUT
           exit 1
 
-      # ========== ロールバック（ヘルスチェック失敗時） ==========
       - name: Rollback on failure
         if: failure() && steps.save-state.outputs.current_task_def != ''
         run: |
-          echo "🔄 Rolling back to previous state..."
-
           PREV_TASK_DEF="${{ steps.save-state.outputs.current_task_def }}"
           PREV_IP="${{ steps.save-state.outputs.current_ip }}"
-
-          # ECSサービスを前のタスク定義に戻す
           if [ -n "$PREV_TASK_DEF" ] && [ "$PREV_TASK_DEF" != "None" ]; then
-            echo "Rolling back ECS to: $PREV_TASK_DEF"
             aws ecs update-service \
-              --cluster ${{ env.ECS_CLUSTER }} \
-              --service ${{ env.ECS_SERVICE }} \
+              --cluster $ECS_CLUSTER \
+              --service $ECS_SERVICE \
               --task-definition $PREV_TASK_DEF \
               --force-new-deployment
           fi
-
-          # API Gatewayを前のIPに戻す
           if [ -n "$PREV_IP" ] && [ "$PREV_IP" != "None" ]; then
             INTEGRATION_ID=$(aws apigatewayv2 get-integrations \
-              --api-id ${{ env.API_GATEWAY_ID }} \
+              --api-id $API_GATEWAY_ID \
               --query 'Items[0].IntegrationId' \
               --output text)
-            
-            echo "Rolling back API Gateway to IP: $PREV_IP"
             aws apigatewayv2 update-integration \
-              --api-id ${{ env.API_GATEWAY_ID }} \
+              --api-id $API_GATEWAY_ID \
               --integration-id $INTEGRATION_ID \
               --integration-uri "http://${PREV_IP}:8080/{proxy}"
           fi
 
-          echo "✅ Rollback completed"
-
-      # ========== 完了通知 ==========
-      - name: Deployment summary
+      - name: Summary
         if: success()
         run: |
-          API_URL=$(aws apigatewayv2 get-api \
-            --api-id ${{ env.API_GATEWAY_ID }} \
-            --query 'ApiEndpoint' \
-            --output text)
-
-          echo "🎉 Deployment successful!"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "📦 Image: ${{ steps.build-image.outputs.image }}"
-          echo "🔧 Task Definition: ${{ steps.update-task.outputs.new_task_def }}"
-          echo "🌐 API URL: $API_URL"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Deployment successful!"
+          echo "Image: ${{ steps.build-image.outputs.image }}"
