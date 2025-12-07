@@ -1,4 +1,4 @@
-package com.j15.backend.presentation.controller
+package com.j15.backend.presentation.controller.auth
 
 import com.j15.backend.application.usecase.RegisterUserCommand
 import com.j15.backend.application.usecase.UserCommandUseCase
@@ -8,14 +8,14 @@ import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
-// ユーザー登録API
+/** ユーザー登録コントローラー 責務: 新規ユーザーの登録 */
 @RestController
 @RequestMapping("/api/users")
-class UserController(private val userCommandUseCase: UserCommandUseCase) {
-    // ユーザー登録
+class SignUpController(private val userCommandUseCase: UserCommandUseCase) {
+
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
-    fun register(@Valid @RequestBody request: RegisterUserRequest): UserResponse {
+    fun signUp(@Valid @RequestBody request: RegisterUserRequest): UserResponse {
         val command =
                 RegisterUserCommand(
                         username = request.username,
