@@ -26,6 +26,9 @@ logs/
 .DS_Store
 Thumbs.db
 
+# Draw.io backup files
+*.kiro
+
 # Environment
 .env
 .env.local
@@ -35,3 +38,7 @@ Thumbs.db
 
 # Kotlin compiler
 kotlin-js-store/
+
+# AWS Deployment Scripts
+scripts/
+.aws-infrastructure-ids

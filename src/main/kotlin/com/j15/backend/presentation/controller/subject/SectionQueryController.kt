@@ -1,4 +1,4 @@
-package com.j15.backend.presentation.controller
+package com.j15.backend.presentation.controller.subject
 
 import com.j15.backend.application.usecase.SectionUseCase
 import com.j15.backend.domain.model.section.SectionId
@@ -7,11 +7,11 @@ import com.j15.backend.presentation.dto.response.SectionResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
+/** セクション照会コントローラー 責務: セクション情報の取得（一覧・詳細） */
 @RestController
 @RequestMapping("/api/subjects/{subjectId}/sections")
-class SectionController(private val sectionUseCase: SectionUseCase) {
+class SectionQueryController(private val sectionUseCase: SectionUseCase) {
 
-    /** 特定題材の全セクション一覧を取得 フロントエンドが利用可能な全セクション情報を返す */
     @GetMapping
     fun getAllSections(@PathVariable subjectId: Long): ResponseEntity<List<SectionResponse>> {
         return try {
@@ -23,7 +23,6 @@ class SectionController(private val sectionUseCase: SectionUseCase) {
         }
     }
 
-    /** 特定セクションの詳細を取得 */
     @GetMapping("/{sectionId}")
     fun getSectionById(
             @PathVariable subjectId: Long,

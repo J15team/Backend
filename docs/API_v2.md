@@ -4,17 +4,25 @@
 
 - [概要](#概要)
 - [共通仕様](#共通仕様)
-- [認証API](#認証api)
-- [題材管理API](#題材管理api)
-- [セクション管理API](#セクション管理api)
-- [進捗管理API](#進捗管理api)
+- [認証 API](#認証api)
+- [題材管理 API](#題材管理api)
+- [セクション管理 API](#セクション管理api)
+- [進捗管理 API](#進捗管理api)
 - [エラーレスポンス](#エラーレスポンス)
 
 ---
 
 ## 概要
 
-### ベースURL
+### ベース URL
+
+**本番環境 (AWS)**
+
+```
+https://zu9mkxoir4.execute-api.ap-northeast-1.amazonaws.com
+```
+
+**ローカル開発環境**
 
 ```
 http://localhost:8080
@@ -22,7 +30,7 @@ http://localhost:8080
 
 ### 認証
 
-現在、認証は基本的な検証のみ実装されています。将来的にJWTトークン認証を実装予定です。
+現在、認証は基本的な検証のみ実装されています。将来的に JWT トークン認証を実装予定です。
 
 ---
 
@@ -40,21 +48,21 @@ ISO 8601 形式（UTC）を使用します。
 例: "2025-12-06T10:00:00Z"
 ```
 
-### HTTPステータスコード
+### HTTP ステータスコード
 
-| コード | 説明 |
-|--------|------|
-| 200 | 成功（取得・更新・削除） |
-| 201 | 成功（作成） |
-| 204 | 成功（レスポンスボディなし） |
-| 400 | リクエストが不正 |
-| 404 | リソースが見つからない |
-| 409 | リソースの競合（重複など） |
-| 500 | サーバーエラー |
+| コード | 説明                         |
+| ------ | ---------------------------- |
+| 200    | 成功（取得・更新・削除）     |
+| 201    | 成功（作成）                 |
+| 204    | 成功（レスポンスボディなし） |
+| 400    | リクエストが不正             |
+| 404    | リソースが見つからない       |
+| 409    | リソースの競合（重複など）   |
+| 500    | サーバーエラー               |
 
 ---
 
-## 認証API
+## 認証 API
 
 ### サインアップ
 
@@ -84,11 +92,11 @@ Content-Type: application/json
 }
 ```
 
-| フィールド | 型 | 必須 | 説明 | バリデーション |
-|-----------|-----|------|------|---------------|
-| username | string | ○ | ユーザー名 | 3~50文字、英数字とアンダースコアのみ |
-| email | string | ○ | メールアドレス | メール形式、一意制約 |
-| password | string | ○ | パスワード | 8文字以上 |
+| フィールド | 型     | 必須 | 説明           | バリデーション                        |
+| ---------- | ------ | ---- | -------------- | ------------------------------------- |
+| username   | string | ○    | ユーザー名     | 3~50 文字、英数字とアンダースコアのみ |
+| email      | string | ○    | メールアドレス | メール形式、一意制約                  |
+| password   | string | ○    | パスワード     | 8 文字以上                            |
 
 **レスポンス**
 
@@ -137,10 +145,10 @@ Content-Type: application/json
 }
 ```
 
-| フィールド | 型 | 必須 | 説明 |
-|-----------|-----|------|------|
-| email | string | ○ | メールアドレス |
-| password | string | ○ | パスワード |
+| フィールド | 型     | 必須 | 説明           |
+| ---------- | ------ | ---- | -------------- |
+| email      | string | ○    | メールアドレス |
+| password   | string | ○    | パスワード     |
 
 **レスポンス**
 
@@ -160,7 +168,7 @@ Content-Type: application/json
 
 ---
 
-## 題材管理API
+## 題材管理 API
 
 題材（学習プロジェクト）を管理します。各題材には複数のセクションが属します。
 
@@ -213,9 +221,9 @@ GET /api/subjects/{subjectId}
 
 **パスパラメータ**
 
-| パラメータ | 型 | 説明 |
-|-----------|-----|------|
-| subjectId | long | 題材ID |
+| パラメータ | 型   | 説明    |
+| ---------- | ---- | ------- |
+| subjectId  | long | 題材 ID |
 
 **レスポンス**
 
@@ -266,12 +274,12 @@ Content-Type: application/json
 }
 ```
 
-| フィールド | 型 | 必須 | 説明 | バリデーション |
-|-----------|-----|------|------|---------------|
-| subjectId | long | ○ | 題材ID | 一意制約 |
-| title | string | ○ | 題材のタイトル | 1文字以上 |
-| description | string | × | 題材の説明 | - |
-| maxSections | int | ○ | 最大セクション数 | 1~1000 |
+| フィールド  | 型     | 必須 | 説明             | バリデーション |
+| ----------- | ------ | ---- | ---------------- | -------------- |
+| subjectId   | long   | ○    | 題材 ID          | 一意制約       |
+| title       | string | ○    | 題材のタイトル   | 1 文字以上     |
+| description | string | ×    | 題材の説明       | -              |
+| maxSections | int    | ○    | 最大セクション数 | 1~1000         |
 
 **レスポンス**
 
@@ -290,7 +298,7 @@ Content-Type: application/json
 **エラー**
 
 - **400 Bad Request**: バリデーションエラー
-- **409 Conflict**: 題材IDが既に存在
+- **409 Conflict**: 題材 ID が既に存在
 
 ---
 
@@ -306,9 +314,9 @@ PUT /api/subjects/{subjectId}
 
 **パスパラメータ**
 
-| パラメータ | 型 | 説明 |
-|-----------|-----|------|
-| subjectId | long | 題材ID |
+| パラメータ | 型   | 説明    |
+| ---------- | ---- | ------- |
+| subjectId  | long | 題材 ID |
 
 **リクエストヘッダー**
 
@@ -326,11 +334,11 @@ Content-Type: application/json
 }
 ```
 
-| フィールド | 型 | 必須 | 説明 | バリデーション |
-|-----------|-----|------|------|---------------|
-| title | string | ○ | 題材のタイトル | 1文字以上 |
-| description | string | × | 題材の説明 | - |
-| maxSections | int | ○ | 最大セクション数 | 1~1000 |
+| フィールド  | 型     | 必須 | 説明             | バリデーション |
+| ----------- | ------ | ---- | ---------------- | -------------- |
+| title       | string | ○    | 題材のタイトル   | 1 文字以上     |
+| description | string | ×    | 題材の説明       | -              |
+| maxSections | int    | ○    | 最大セクション数 | 1~1000         |
 
 **レスポンス**
 
@@ -365,9 +373,9 @@ DELETE /api/subjects/{subjectId}
 
 **パスパラメータ**
 
-| パラメータ | 型 | 説明 |
-|-----------|-----|------|
-| subjectId | long | 題材ID |
+| パラメータ | 型   | 説明    |
+| ---------- | ---- | ------- |
+| subjectId  | long | 題材 ID |
 
 **レスポンス**
 
@@ -381,7 +389,7 @@ DELETE /api/subjects/{subjectId}
 
 ---
 
-## セクション管理API
+## セクション管理 API
 
 各題材に属するセクション（学習ステップ）を管理します。
 
@@ -397,9 +405,9 @@ GET /api/subjects/{subjectId}/sections
 
 **パスパラメータ**
 
-| パラメータ | 型 | 説明 |
-|-----------|-----|------|
-| subjectId | long | 題材ID |
+| パラメータ | 型   | 説明    |
+| ---------- | ---- | ------- |
+| subjectId  | long | 題材 ID |
 
 **レスポンス**
 
@@ -440,10 +448,10 @@ GET /api/subjects/{subjectId}/sections/{sectionId}
 
 **パスパラメータ**
 
-| パラメータ | 型 | 説明 |
-|-----------|-----|------|
-| subjectId | long | 題材ID |
-| sectionId | int | セクションID（0~100） |
+| パラメータ | 型   | 説明                   |
+| ---------- | ---- | ---------------------- |
+| subjectId  | long | 題材 ID                |
+| sectionId  | int  | セクション ID（0~100） |
 
 **レスポンス**
 
@@ -464,7 +472,7 @@ GET /api/subjects/{subjectId}/sections/{sectionId}
 
 ---
 
-## 進捗管理API
+## 進捗管理 API
 
 ユーザーの学習進捗を管理します。各ユーザーが題材ごとに完了したセクションを記録・取得できます。
 
@@ -480,10 +488,10 @@ GET /api/progress/{userId}/subjects/{subjectId}
 
 **パスパラメータ**
 
-| パラメータ | 型 | 説明 |
-|-----------|-----|------|
-| userId | UUID string | ユーザーID |
-| subjectId | long | 題材ID |
+| パラメータ | 型          | 説明        |
+| ---------- | ----------- | ----------- |
+| userId     | UUID string | ユーザー ID |
+| subjectId  | long        | 題材 ID     |
 
 **レスポンス**
 
@@ -514,17 +522,17 @@ GET /api/progress/{userId}/subjects/{subjectId}
 
 **レスポンスフィールド説明**
 
-| フィールド | 型 | 説明 |
-|-----------|-----|------|
-| userId | string | ユーザーID（UUID形式） |
-| subjectId | long | 題材ID |
-| progressPercentage | int | 進捗率（0~100%）小数点以下切り捨て |
-| clearedCount | int | 完了済みセクション数 |
-| remainingCount | int | 未完了セクション数 |
-| totalSections | int | 題材の総セクション数（maxSections） |
-| isAllCleared | boolean | 全セクション完了しているか |
-| nextSectionId | int or null | 次に完了すべきセクションID（全完了時はnull） |
-| clearedSections | array | 完了済みセクションの詳細リスト |
+| フィールド         | 型          | 説明                                           |
+| ------------------ | ----------- | ---------------------------------------------- |
+| userId             | string      | ユーザー ID（UUID 形式）                       |
+| subjectId          | long        | 題材 ID                                        |
+| progressPercentage | int         | 進捗率（0~100%）小数点以下切り捨て             |
+| clearedCount       | int         | 完了済みセクション数                           |
+| remainingCount     | int         | 未完了セクション数                             |
+| totalSections      | int         | 題材の総セクション数（maxSections）            |
+| isAllCleared       | boolean     | 全セクション完了しているか                     |
+| nextSectionId      | int or null | 次に完了すべきセクション ID（全完了時は null） |
+| clearedSections    | array       | 完了済みセクションの詳細リスト                 |
 
 **エラー**
 
@@ -561,10 +569,10 @@ POST /api/progress/{userId}/subjects/{subjectId}/sections
 
 **パスパラメータ**
 
-| パラメータ | 型 | 説明 |
-|-----------|-----|------|
-| userId | UUID string | ユーザーID |
-| subjectId | long | 題材ID |
+| パラメータ | 型          | 説明        |
+| ---------- | ----------- | ----------- |
+| userId     | UUID string | ユーザー ID |
+| subjectId  | long        | 題材 ID     |
 
 **リクエストヘッダー**
 
@@ -580,9 +588,9 @@ Content-Type: application/json
 }
 ```
 
-| フィールド | 型 | 必須 | 説明 | バリデーション |
-|-----------|-----|------|------|---------------|
-| sectionId | int | ○ | セクションID | 0~100 |
+| フィールド | 型  | 必須 | 説明          | バリデーション |
+| ---------- | --- | ---- | ------------- | -------------- |
+| sectionId  | int | ○    | セクション ID | 0~100          |
 
 **レスポンス**
 
@@ -598,7 +606,7 @@ Content-Type: application/json
 
 **エラー**
 
-- **400 Bad Request**: セクションIDが不正、または既に完了済み
+- **400 Bad Request**: セクション ID が不正、または既に完了済み
   ```json
   {
     "error": "セクション 5 は既に完了しています"
@@ -614,12 +622,12 @@ async function markSectionComplete(sectionId: number) {
   const response = await fetch(
     `/api/progress/${userId}/subjects/${subjectId}/sections`,
     {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sectionId })
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sectionId }),
     }
   );
-  
+
   if (response.status === 201) {
     // 成功: 進捗バーを更新
     refreshProgress();
@@ -645,11 +653,11 @@ GET /api/progress/{userId}/subjects/{subjectId}/sections/{sectionId}
 
 **パスパラメータ**
 
-| パラメータ | 型 | 説明 |
-|-----------|-----|------|
-| userId | UUID string | ユーザーID |
-| subjectId | long | 題材ID |
-| sectionId | int | セクションID（0~100） |
+| パラメータ | 型          | 説明                   |
+| ---------- | ----------- | ---------------------- |
+| userId     | UUID string | ユーザー ID            |
+| subjectId  | long        | 題材 ID                |
+| sectionId  | int         | セクション ID（0~100） |
 
 **レスポンス**
 
@@ -661,9 +669,9 @@ GET /api/progress/{userId}/subjects/{subjectId}/sections/{sectionId}
 }
 ```
 
-| フィールド | 型 | 説明 |
-|-----------|-----|------|
-| isCleared | boolean | true: 完了済み、false: 未完了 |
+| フィールド | 型      | 説明                          |
+| ---------- | ------- | ----------------------------- |
+| isCleared  | boolean | true: 完了済み、false: 未完了 |
 
 **フロントエンド実装例**
 
@@ -676,7 +684,7 @@ const { isCleared } = await result.json();
 
 if (isCleared) {
   // チェックマークを表示
-  <CheckIcon />
+  <CheckIcon />;
 }
 ```
 
@@ -694,11 +702,11 @@ DELETE /api/progress/{userId}/subjects/{subjectId}/sections/{sectionId}
 
 **パスパラメータ**
 
-| パラメータ | 型 | 説明 |
-|-----------|-----|------|
-| userId | UUID string | ユーザーID |
-| subjectId | long | 題材ID |
-| sectionId | int | セクションID（0~100） |
+| パラメータ | 型          | 説明                   |
+| ---------- | ----------- | ---------------------- |
+| userId     | UUID string | ユーザー ID            |
+| subjectId  | long        | 題材 ID                |
+| sectionId  | int         | セクション ID（0~100） |
 
 **レスポンス**
 
@@ -745,14 +753,14 @@ DELETE /api/progress/{userId}/subjects/{subjectId}/sections/{sectionId}
 }
 ```
 
-### HTTPステータスコードとエラー内容
+### HTTP ステータスコードとエラー内容
 
-| ステータスコード | 説明 | よくある原因 |
-|----------------|------|-------------|
-| 400 Bad Request | リクエストが不正 | バリデーションエラー、重複操作 |
-| 404 Not Found | リソースが見つからない | 存在しないID、削除済みリソース |
-| 409 Conflict | リソースの競合 | メールアドレス重複、題材ID重複 |
-| 500 Internal Server Error | サーバーエラー | 予期しないエラー |
+| ステータスコード          | 説明                   | よくある原因                     |
+| ------------------------- | ---------------------- | -------------------------------- |
+| 400 Bad Request           | リクエストが不正       | バリデーションエラー、重複操作   |
+| 404 Not Found             | リソースが見つからない | 存在しない ID、削除済みリソース  |
+| 409 Conflict              | リソースの競合         | メールアドレス重複、題材 ID 重複 |
+| 500 Internal Server Error | サーバーエラー         | 予期しないエラー                 |
 
 ---
 
@@ -765,30 +773,30 @@ DELETE /api/progress/{userId}/subjects/{subjectId}/sections/{sectionId}
 ```typescript
 // サインアップ
 const signup = async (username: string, email: string, password: string) => {
-  const response = await fetch('/api/users/signup', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, email, password })
+  const response = await fetch("/api/users/signup", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, email, password }),
   });
-  
+
   if (response.status === 201) {
     const user = await response.json();
-    localStorage.setItem('userId', user.userId);
+    localStorage.setItem("userId", user.userId);
     return user;
   }
 };
 
 // サインイン
 const signin = async (email: string, password: string) => {
-  const response = await fetch('/api/auth/signin', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password })
+  const response = await fetch("/api/auth/signin", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
   });
-  
+
   if (response.ok) {
     const user = await response.json();
-    localStorage.setItem('userId', user.userId);
+    localStorage.setItem("userId", user.userId);
     return user;
   }
 };
@@ -798,20 +806,18 @@ const signin = async (email: string, password: string) => {
 
 ```typescript
 const fetchSubjects = async () => {
-  const response = await fetch('/api/subjects');
+  const response = await fetch("/api/subjects");
   const subjects = await response.json();
   return subjects;
 };
 
 // 表示
-subjects.map(subject => (
+subjects.map((subject) => (
   <Card key={subject.subjectId}>
     <Title>{subject.title}</Title>
     <Description>{subject.description}</Description>
     <Text>全 {subject.maxSections} セクション</Text>
-    <Button onClick={() => selectSubject(subject.subjectId)}>
-      学習を開始
-    </Button>
+    <Button onClick={() => selectSubject(subject.subjectId)}>学習を開始</Button>
   </Card>
 ));
 ```
@@ -823,11 +829,11 @@ const fetchSectionsWithProgress = async (userId: string, subjectId: number) => {
   // セクション一覧を取得
   const sectionsRes = await fetch(`/api/subjects/${subjectId}/sections`);
   const sections = await sectionsRes.json();
-  
+
   // 進捗を取得
   const progressRes = await fetch(`/api/progress/${userId}/subjects/${subjectId}`);
   const progress = await progressRes.json();
-  
+
   // セクションに完了状態をマージ
   const sectionsWithStatus = sections.map(section => ({
     ...section,
@@ -835,7 +841,7 @@ const fetchSectionsWithProgress = async (userId: string, subjectId: number) => {
       cs => cs.sectionId === section.sectionId
     )
   }));
-  
+
   return { sections: sectionsWithStatus, progress };
 };
 
@@ -862,20 +868,17 @@ const toggleComplete = async (sectionId: number, isCleared: boolean) => {
     // 完了を削除
     await fetch(
       `/api/progress/${userId}/subjects/${subjectId}/sections/${sectionId}`,
-      { method: 'DELETE' }
+      { method: "DELETE" }
     );
   } else {
     // 完了をマーク
-    await fetch(
-      `/api/progress/${userId}/subjects/${subjectId}/sections`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sectionId })
-      }
-    );
+    await fetch(`/api/progress/${userId}/subjects/${subjectId}/sections`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sectionId }),
+    });
   }
-  
+
   // 進捗を再取得
   refreshProgress();
 };
@@ -890,12 +893,12 @@ const createSubject = async (data: {
   description: string;
   maxSections: number;
 }) => {
-  const response = await fetch('/api/subjects', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
+  const response = await fetch("/api/subjects", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
   });
-  
+
   if (response.status === 201) {
     const subject = await response.json();
     return subject;
@@ -905,12 +908,12 @@ const createSubject = async (data: {
 
 ### データ取得タイミングの推奨
 
-| 画面 | 取得するデータ | タイミング |
-|------|--------------|----------|
-| ホーム画面 | 題材一覧 | マウント時 |
-| 題材詳細画面 | セクション一覧、進捗状態 | 題材選択時 |
-| セクション完了後 | 進捗状態 | 完了ボタン押下後 |
-| ページ遷移時 | なし | キャッシュを活用 |
+| 画面             | 取得するデータ           | タイミング       |
+| ---------------- | ------------------------ | ---------------- |
+| ホーム画面       | 題材一覧                 | マウント時       |
+| 題材詳細画面     | セクション一覧、進捗状態 | 題材選択時       |
+| セクション完了後 | 進捗状態                 | 完了ボタン押下後 |
+| ページ遷移時     | なし                     | キャッシュを活用 |
 
 ### エラーハンドリング
 
@@ -918,15 +921,15 @@ const createSubject = async (data: {
 const apiCall = async (url: string, options?: RequestInit) => {
   try {
     const response = await fetch(url, options);
-    
+
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'エラーが発生しました');
+      throw new Error(error.error || "エラーが発生しました");
     }
-    
+
     return await response.json();
   } catch (error) {
-    console.error('API Error:', error);
+    console.error("API Error:", error);
     // ユーザーにエラーメッセージを表示
     showErrorToast(error.message);
     throw error;
@@ -941,16 +944,16 @@ const apiCall = async (url: string, options?: RequestInit) => {
 ### 進捗率計算について
 
 - **計算式**: `(完了セクション数 × 100) ÷ 題材の最大セクション数`
-- **小数点処理**: 切り捨て（0~99の範囲）
-- **全完了時**: 必ず100%を返す
-- **例**: 16セクション完了、最大101セクション → `(16 × 100) ÷ 101 = 15%`
+- **小数点処理**: 切り捨て（0~99 の範囲）
+- **全完了時**: 必ず 100%を返す
+- **例**: 16 セクション完了、最大 101 セクション → `(16 × 100) ÷ 101 = 15%`
 
-### セクションIDの範囲
+### セクション ID の範囲
 
 - **最小**: 0
 - **最大**: 100
-- 各題材は0から始まる連番である必要はありません
-- フロントエンド側で任意のセクションIDを使用可能
+- 各題材は 0 から始まる連番である必要はありません
+- フロントエンド側で任意のセクション ID を使用可能
 
 ### 題材とセクションの関係
 
@@ -965,14 +968,15 @@ Subject (題材)
 ```
 
 - 各題材は独立したセクション群を持つ
-- セクションIDは題材内でのみ一意
-- 異なる題材で同じセクションIDを使用可能
+- セクション ID は題材内でのみ一意
+- 異なる題材で同じセクション ID を使用可能
 
 ---
 
 ## 変更履歴
 
-| バージョン | 日付 | 変更内容 |
-|----------|------|---------|
-| 2.0 | 2025-12-06 | 題材ベースの構造に変更、進捗管理API更新 |
-| 1.0 | 2025-12-05 | 初版作成 |
+| バージョン | 日付       | 変更内容                                           |
+| ---------- | ---------- | -------------------------------------------------- |
+| 2.1        | 2025-12-07 | AWS 本番環境エンドポイント追加 (API Gateway HTTPS) |
+| 2.0        | 2025-12-06 | 題材ベースの構造に変更、進捗管理 API 更新          |
+| 1.0        | 2025-12-05 | 初版作成                                           |
