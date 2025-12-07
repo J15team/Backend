@@ -2,14 +2,15 @@ name: CI Build and E2E Test
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [develop]
     paths-ignore:
-      - '**.md'
-      - 'docs/**'
+      - "**.md"
+      - "docs/**"
   pull_request:
+    branches: [main]
     paths-ignore:
-      - '**.md'
-      - 'docs/**'
+      - "**.md"
+      - "docs/**"
 
 jobs:
   build-and-test:
@@ -22,9 +23,9 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '21'
-          cache: 'gradle'
+          distribution: "temurin"
+          java-version: "21"
+          cache: "gradle"
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -57,17 +58,17 @@ jobs:
             -d '{"username":"testuser","email":"test@example.com","password":"testpass123"}')
           HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
           BODY=$(echo "$RESPONSE" | head -n -1)
-          
+
           echo "HTTP Status: $HTTP_CODE"
           echo "Response Body: $BODY"
-          
+
           if [ "$HTTP_CODE" -ne 201 ]; then
             echo "Signup test failed with status $HTTP_CODE"
             echo "Response body: $BODY"
             docker compose logs backend
             exit 1
           fi
-          
+
           echo "✅ Signup test passed!"
 
       - name: Test signin endpoint
@@ -77,20 +78,20 @@ jobs:
             -d '{"email":"test@example.com","password":"testpass123"}')
           HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
           BODY=$(echo "$RESPONSE" | head -n -1)
-          
+
           echo "HTTP Status: $HTTP_CODE"
           echo "Response Body: $BODY"
-          
+
           if [ "$HTTP_CODE" -ne 200 ]; then
             echo "Signin test failed with status $HTTP_CODE"
             exit 1
           fi
-          
+
           if ! echo "$BODY" | grep -q "testuser"; then
             echo "Signin response does not contain expected username"
             exit 1
           fi
-          
+
           echo "✅ Signin test passed!"
 
       - name: Test validation errors
@@ -100,14 +101,14 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{"username":"testuser2","email":"invalid-email","password":"testpass123"}')
           HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
-          
+
           echo "Validation test HTTP Status: $HTTP_CODE"
-          
+
           if [ "$HTTP_CODE" -ne 400 ]; then
             echo "Validation test failed - expected 400 but got $HTTP_CODE"
             exit 1
           fi
-          
+
           echo "✅ Validation test passed!"
 
       - name: Test duplicate email
@@ -118,20 +119,20 @@ jobs:
             -d '{"username":"testuser3","email":"test@example.com","password":"testpass123"}')
           HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
           BODY=$(echo "$RESPONSE" | head -n -1)
-          
+
           echo "Duplicate email test HTTP Status: $HTTP_CODE"
           echo "Response Body: $BODY"
-          
+
           if [ "$HTTP_CODE" -ne 400 ]; then
             echo "Duplicate email test failed - expected 400 but got $HTTP_CODE"
             exit 1
           fi
-          
+
           if ! echo "$BODY" | grep -q "このメールアドレスは既に登録されています"; then
             echo "Duplicate email error message not found"
             exit 1
           fi
-          
+
           echo "✅ Duplicate email test passed!"
 
       - name: Test wrong password
@@ -142,20 +143,20 @@ jobs:
             -d '{"email":"test@example.com","password":"wrongpassword"}')
           HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
           BODY=$(echo "$RESPONSE" | head -n -1)
-          
+
           echo "Wrong password test HTTP Status: $HTTP_CODE"
           echo "Response Body: $BODY"
-          
+
           if [ "$HTTP_CODE" -ne 400 ]; then
             echo "Wrong password test failed - expected 400 but got $HTTP_CODE"
             exit 1
           fi
-          
+
           if ! echo "$BODY" | grep -q "パスワードが正しくありません"; then
             echo "Wrong password error message not found"
             exit 1
           fi
-          
+
           echo "✅ Wrong password test passed!"
 
       - name: Test subjects API
@@ -164,49 +165,49 @@ jobs:
           RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:8080/api/subjects)
           HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
           BODY=$(echo "$RESPONSE" | head -n -1)
-          
+
           echo "Subjects API HTTP Status: $HTTP_CODE"
           echo "Response Body: $BODY"
-          
+
           if [ "$HTTP_CODE" -ne 200 ]; then
             echo "Subjects API test failed with status $HTTP_CODE"
             exit 1
           fi
-          
+
           # デフォルト題材が存在するか確認
           if ! echo "$BODY" | grep -q "デフォルト題材"; then
             echo "Default subject not found in response"
             exit 1
           fi
-          
+
           # 題材作成テスト
           CREATE_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/subjects \
             -H "Content-Type: application/json" \
             -d '{"subjectId":100,"title":"テスト題材","description":"CIテスト用","maxSections":50}')
           HTTP_CODE=$(echo "$CREATE_RESPONSE" | tail -n 1)
-          
+
           echo "Create subject HTTP Status: $HTTP_CODE"
-          
+
           if [ "$HTTP_CODE" -ne 201 ]; then
             echo "Create subject test failed with status $HTTP_CODE"
             exit 1
           fi
-          
+
           # 作成した題材を取得
           GET_RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:8080/api/subjects/100)
           HTTP_CODE=$(echo "$GET_RESPONSE" | tail -n 1)
           BODY=$(echo "$GET_RESPONSE" | head -n -1)
-          
+
           if [ "$HTTP_CODE" -ne 200 ]; then
             echo "Get subject test failed with status $HTTP_CODE"
             exit 1
           fi
-          
+
           if ! echo "$BODY" | grep -q "テスト題材"; then
             echo "Created subject not found"
             exit 1
           fi
-          
+
           echo "✅ Subjects API test passed!"
 
       - name: Test sections API
@@ -215,14 +216,14 @@ jobs:
           RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:8080/api/subjects/1/sections)
           HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
           BODY=$(echo "$RESPONSE" | head -n -1)
-          
+
           echo "Sections API HTTP Status: $HTTP_CODE"
-          
+
           if [ "$HTTP_CODE" -ne 200 ]; then
             echo "Sections API test failed with status $HTTP_CODE"
             exit 1
           fi
-          
+
           echo "✅ Sections API test passed!"
 
       - name: Test progress management
@@ -231,69 +232,69 @@ jobs:
           SIGNUP_RESPONSE=$(curl -s -X POST http://localhost:8080/api/users/signup \
             -H "Content-Type: application/json" \
             -d '{"username":"progressuser","email":"progress@example.com","password":"password123"}')
-          
+
           USER_ID=$(echo "$SIGNUP_RESPONSE" | grep -o '"userId":"[^"]*"' | cut -d'"' -f4)
           echo "Created user with ID: $USER_ID"
-          
+
           if [ -z "$USER_ID" ]; then
             echo "Failed to extract user ID"
             exit 1
           fi
-          
+
           # 初期進捗状態を取得（題材ID=1のデフォルト題材）
           PROGRESS_RESPONSE=$(curl -s http://localhost:8080/api/progress/$USER_ID/subjects/1)
           echo "Initial progress: $PROGRESS_RESPONSE"
-          
+
           if ! echo "$PROGRESS_RESPONSE" | grep -q '"clearedCount":0'; then
             echo "Initial progress should have 0 cleared sections"
             exit 1
           fi
-          
+
           if ! echo "$PROGRESS_RESPONSE" | grep -q '"subjectId":1'; then
             echo "Progress response should contain subjectId"
             exit 1
           fi
-          
+
           # セクション0を完了マーク（題材1のセクション0）
           MARK_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/progress/$USER_ID/subjects/1/sections \
             -H "Content-Type: application/json" \
             -d '{"sectionId":0}')
           HTTP_CODE=$(echo "$MARK_RESPONSE" | tail -n 1)
-          
+
           if [ "$HTTP_CODE" -ne 201 ]; then
             echo "Mark section failed with status $HTTP_CODE"
             exit 1
           fi
-          
+
           # 進捗状態を再取得
           PROGRESS_AFTER=$(curl -s http://localhost:8080/api/progress/$USER_ID/subjects/1)
           echo "Progress after marking section 0: $PROGRESS_AFTER"
-          
+
           if ! echo "$PROGRESS_AFTER" | grep -q '"clearedCount":1'; then
             echo "Progress should have 1 cleared section"
             exit 1
           fi
-          
+
           # 重複マークのテスト（既に完了済みのセクション）
           DUPLICATE_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/progress/$USER_ID/subjects/1/sections \
             -H "Content-Type: application/json" \
             -d '{"sectionId":0}')
           HTTP_CODE=$(echo "$DUPLICATE_RESPONSE" | tail -n 1)
-          
+
           if [ "$HTTP_CODE" -ne 400 ]; then
             echo "Duplicate mark should return 400 but got $HTTP_CODE"
             exit 1
           fi
-          
+
           # セクション完了削除テスト
           DELETE_RESPONSE=$(curl -s -w "\n%{http_code}" -X DELETE http://localhost:8080/api/progress/$USER_ID/subjects/1/sections/0)
           HTTP_CODE=$(echo "$DELETE_RESPONSE" | tail -n 1)
-          
+
           if [ "$HTTP_CODE" -ne 200 ]; then
             echo "Delete completed section test failed with status $HTTP_CODE"
             exit 1
           fi
-          
+
           echo "✅ Progress management test passed!"
 
       - name: Show logs on failure
@@ -311,3 +312,23 @@ jobs:
           name: build-artifacts
           path: build/libs/*.jar
 
+  # PRがmain向けでCIが成功したら自動マージ
+  auto-merge:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Auto merge PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.pulls.merge({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              merge_method: 'squash'
+            });
+            console.log('✅ PR auto-merged to main');
