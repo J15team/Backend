@@ -14,9 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 // セキュリティ関連のBean定義
 @Configuration
 @EnableWebSecurity
-class SecurityConfiguration(
-    private val jwtAuthenticationFilter: JwtAuthenticationFilter
-) {
+class SecurityConfiguration(private val jwtAuthenticationFilter: JwtAuthenticationFilter) {
     @Bean
     fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
@@ -25,24 +23,27 @@ class SecurityConfiguration(
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http
-            .csrf { it.disable() }
-            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .authorizeHttpRequests { auth ->
-                auth.requestMatchers(
-                        "/api/auth/**",
-                        "/api/users/signup",
-                        "/api/health",
-                        "/api/subjects/**",
-                        "/api/sections/**",
-                        "/api/progress/**"
-                    )
-                    .permitAll()
-                    .requestMatchers("/actuator/**")
-                    .permitAll()
-                    .anyRequest()
-                    .authenticated()
-            }
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+                .csrf { it.disable() }
+                .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+                .authorizeHttpRequests { auth ->
+                    auth
+                            // 認証不要の公開エンドポイント
+                            .requestMatchers("/api/auth/signin", "/api/users/signup", "/api/health")
+                            .permitAll()
+                            // Actuatorエンドポイント（監視用）
+                            .requestMatchers("/actuator/**")
+                            .permitAll()
+                            // 題材・進捗APIは認証必須
+                            .requestMatchers("/api/subjects/**", "/api/progress/**")
+                            .authenticated()
+                            // その他のエンドポイントも認証必須
+                            .anyRequest()
+                            .authenticated()
+                }
+                .addFilterBefore(
+                        jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter::class.java
+                )
         return http.build()
     }
 }

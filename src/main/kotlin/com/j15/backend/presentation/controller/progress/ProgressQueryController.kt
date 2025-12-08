@@ -6,6 +6,7 @@ import com.j15.backend.domain.model.user.UserId
 import com.j15.backend.presentation.dto.response.UserProgressResponse
 import java.util.UUID
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 /** 進捗照会コントローラー 責務: ユーザーの進捗状態の取得 */
@@ -13,10 +14,10 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/progress")
 class ProgressQueryController(private val progressUseCase: ProgressUseCase) {
 
-    @GetMapping("/{userId}/subjects/{subjectId}")
+    @GetMapping("/subjects/{subjectId}")
     fun getUserProgress(
-            @PathVariable userId: String,
-            @PathVariable subjectId: Long
+            @PathVariable subjectId: Long,
+            @AuthenticationPrincipal userId: String
     ): ResponseEntity<UserProgressResponse> {
         return try {
             val userIdObj = UserId(UUID.fromString(userId))

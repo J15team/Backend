@@ -7,6 +7,7 @@ import com.j15.backend.domain.model.user.UserId
 import java.util.UUID
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 /** セクション完了削除コントローラー 責務: セクション完了記録の削除（デバッグ用） */
@@ -14,11 +15,11 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/progress")
 class SectionCompletionDeletionController(private val progressUseCase: ProgressUseCase) {
 
-    @DeleteMapping("/{userId}/subjects/{subjectId}/sections/{sectionId}")
+    @DeleteMapping("/subjects/{subjectId}/sections/{sectionId}")
     fun unmarkSectionAsCleared(
-            @PathVariable userId: String,
             @PathVariable subjectId: Long,
-            @PathVariable sectionId: Int
+            @PathVariable sectionId: Int,
+            @AuthenticationPrincipal userId: String
     ): ResponseEntity<Map<String, String>> {
         val userIdObj = UserId(UUID.fromString(userId))
         val subjectIdObj = SubjectId(subjectId)

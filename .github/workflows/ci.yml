@@ -92,7 +92,20 @@ jobs:
             exit 1
           fi
 
+          # JWT認証: accessTokenが返されることを確認
+          if ! echo "$BODY" | grep -q "accessToken"; then
+            echo "Signin response does not contain accessToken"
+            exit 1
+          fi
+
+          # JWT認証: refreshTokenが返されることを確認
+          if ! echo "$BODY" | grep -q "refreshToken"; then
+            echo "Signin response does not contain refreshToken"
+            exit 1
+          fi
+
           echo "✅ Signin test passed!"
+          echo "✅ JWT token generation verified!"
 
       - name: Test validation errors
         run: |
