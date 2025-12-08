@@ -1,5 +1,7 @@
 package com.j15.backend.domain.service
 
+import com.j15.backend.domain.exception.DuplicateEmailException
+import com.j15.backend.domain.exception.DuplicateUsernameException
 import com.j15.backend.domain.model.user.Email
 import com.j15.backend.domain.model.user.Username
 import com.j15.backend.domain.repository.UserRepository
@@ -9,14 +11,14 @@ class UserDuplicationCheckService(private val userRepository: UserRepository) {
     // メールアドレスが使用可能かチェック
     fun checkEmailAvailable(email: Email) {
         if (userRepository.existsByEmail(email)) {
-            throw IllegalArgumentException("このメールアドレスは既に登録されています")
+            throw DuplicateEmailException()
         }
     }
 
     // ユーザー名が使用可能かチェック
     fun checkUsernameAvailable(username: Username) {
         if (userRepository.existsByUsername(username)) {
-            throw IllegalArgumentException("このユーザー名は既に使用されています")
+            throw DuplicateUsernameException()
         }
     }
 }

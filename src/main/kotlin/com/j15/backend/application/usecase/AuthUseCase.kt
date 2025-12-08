@@ -1,5 +1,6 @@
 package com.j15.backend.application.usecase
 
+import com.j15.backend.domain.exception.InvalidCredentialsException
 import com.j15.backend.domain.model.auth.AuthTokens
 import com.j15.backend.domain.model.user.Email
 import com.j15.backend.domain.model.user.User
@@ -41,7 +42,7 @@ class AuthUseCase(
         }
         
         if (user == null || !isPasswordValid) {
-            throw IllegalArgumentException("メールアドレスまたはパスワードが正しくありません")
+            throw InvalidCredentialsException()
         }
         
         // JWTトークンの生成

@@ -1,12 +1,21 @@
 package com.j15.backend.presentation.controller
 
+import com.j15.backend.application.command.RefreshTokenCommand
+import com.j15.backend.application.command.SignInCommand
+import com.j15.backend.application.command.SignUpCommand
 import com.j15.backend.application.service.AuthService
+import com.j15.backend.domain.exception.DuplicateEmailException
+import com.j15.backend.domain.exception.DuplicateUsernameException
+import com.j15.backend.domain.exception.InvalidCredentialsException
+import com.j15.backend.domain.exception.InvalidTokenException
+import com.j15.backend.domain.exception.UserNotFoundException
 import com.j15.backend.presentation.dto.auth.SignInRequest
 import com.j15.backend.presentation.dto.auth.SignInResponse
 import com.j15.backend.presentation.dto.auth.SignUpRequest
 import com.j15.backend.presentation.dto.auth.SignUpResponse
 import com.j15.backend.presentation.dto.auth.TokenRefreshRequest
 import com.j15.backend.presentation.dto.auth.TokenRefreshResponse
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -25,11 +34,21 @@ class AuthController(
      * POST /api/auth/signin
      */
     @PostMapping("/signin")
-    fun signIn(@RequestBody request: SignInRequest): ResponseEntity<Any> {
+    fun signIn(@Valid @RequestBody request: SignInRequest): ResponseEntity<Any> {
         return try {
-            val response = authService.signIn(request)
+            val command = SignInCommand(
+                email = request.email,
+                password = request.password
+            )
+            val result = authService.signIn(command)
+            val response = SignInResponse(
+                userId = result.userId,
+                email = result.email,
+                accessToken = result.accessToken,
+                refreshToken = result.refreshToken
+            )
             ResponseEntity.ok(response)
-        } catch (e: IllegalArgumentException) {
+        } catch (e: InvalidCredentialsException) {
             ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(mapOf("error" to e.message))
         }
@@ -40,11 +59,24 @@ class AuthController(
      * POST /api/auth/signup
      */
     @PostMapping("/signup")
-    fun signUp(@RequestBody request: SignUpRequest): ResponseEntity<Any> {
+    fun signUp(@Valid @RequestBody request: SignUpRequest): ResponseEntity<Any> {
         return try {
-            val response = authService.signUp(request)
+            val command = SignUpCommand(
+                email = request.email,
+                password = request.password,
+                username = request.username
+            )
+            val result = authService.signUp(command)
+            val response = SignUpResponse(
+                userId = result.userId,
+                email = result.email,
+                username = result.username
+            )
             ResponseEntity.status(HttpStatus.CREATED).body(response)
-        } catch (e: IllegalArgumentException) {
+        } catch (e: DuplicateEmailException) {
+            ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(mapOf("error" to e.message))
+        } catch (e: DuplicateUsernameException) {
             ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(mapOf("error" to e.message))
         }
@@ -55,11 +87,15 @@ class AuthController(
      * POST /api/auth/refresh
      */
     @PostMapping("/refresh")
-    fun refreshToken(@RequestBody request: TokenRefreshRequest): ResponseEntity<Any> {
+    fun refreshToken(@Valid @RequestBody request: TokenRefreshRequest): ResponseEntity<Any> {
         return try {
-            val accessToken = authService.refreshToken(request.refreshToken)
+            val command = RefreshTokenCommand(refreshToken = request.refreshToken)
+            val accessToken = authService.refreshToken(command)
             ResponseEntity.ok(TokenRefreshResponse(accessToken = accessToken))
-        } catch (e: IllegalArgumentException) {
+        } catch (e: InvalidTokenException) {
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(mapOf("error" to e.message))
+        } catch (e: UserNotFoundException) {
             ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(mapOf("error" to e.message))
         }

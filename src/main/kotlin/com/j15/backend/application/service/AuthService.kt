@@ -1,5 +1,10 @@
 package com.j15.backend.application.service
 
+import com.j15.backend.application.command.RefreshTokenCommand
+import com.j15.backend.application.command.SignInCommand
+import com.j15.backend.application.command.SignUpCommand
+import com.j15.backend.domain.exception.InvalidTokenException
+import com.j15.backend.domain.exception.UserNotFoundException
 import com.j15.backend.domain.model.user.Email
 import com.j15.backend.domain.model.user.PasswordHash
 import com.j15.backend.domain.model.user.User
@@ -7,36 +12,46 @@ import com.j15.backend.domain.model.user.Username
 import com.j15.backend.domain.model.user.UserId
 import com.j15.backend.domain.repository.UserRepository
 import com.j15.backend.domain.service.JwtTokenService
-import com.j15.backend.presentation.dto.auth.SignInRequest
-import com.j15.backend.presentation.dto.auth.SignInResponse
-import com.j15.backend.presentation.dto.auth.SignUpRequest
-import com.j15.backend.presentation.dto.auth.SignUpResponse
-import org.springframework.security.crypto.password.PasswordEncoder
+import com.j15.backend.domain.service.PasswordHashService
+import com.j15.backend.domain.service.UserDuplicationCheckService
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class AuthService(
     private val userRepository: UserRepository,
     private val jwtTokenService: JwtTokenService,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordHashService: PasswordHashService,
+    private val duplicationCheckService: UserDuplicationCheckService
 ) {
+    // タイミング攻撃を防ぐための有効なダミーBCryptハッシュ
+    private val dummyHash = "\$2a\$10\$N9qo8uLOickgx2ZMRZoMye.DOH7R4rE/pqKQf9p1mT4cXQF7lXjvC"
 
     /**
      * ユーザーサインイン
      */
-    fun signIn(request: SignInRequest): SignInResponse {
-        val email = Email(request.email)
+    @Transactional(readOnly = true)
+    fun signIn(command: SignInCommand): SignInResult {
+        val email = Email(command.email)
         val user = userRepository.findByEmail(email)
-            ?: throw IllegalArgumentException("User not found with email: ${request.email}")
-
-        if (!passwordEncoder.matches(request.password, user.passwordHash.value)) {
-            throw IllegalArgumentException("Invalid credentials")
+        
+        // タイミング攻撃を防ぐため、ユーザーが存在しない場合でもパスワード検証を実行
+        val isPasswordValid = if (user != null) {
+            passwordHashService.verify(command.password, user.passwordHash.value)
+        } else {
+            // ダミーのハッシュで検証を実行してタイミングを一定に保つ
+            passwordHashService.verify(command.password, dummyHash)
+            false
+        }
+        
+        if (user == null || !isPasswordValid) {
+            throw com.j15.backend.domain.exception.InvalidCredentialsException()
         }
 
         val accessToken = jwtTokenService.generateAccessToken(user.userId)
         val refreshToken = jwtTokenService.generateRefreshToken(user.userId)
 
-        return SignInResponse(
+        return SignInResult(
             userId = user.userId.value.toString(),
             email = user.email.value,
             accessToken = accessToken.value,
@@ -47,21 +62,16 @@ class AuthService(
     /**
      * ユーザーサインアップ
      */
-    fun signUp(request: SignUpRequest): SignUpResponse {
-        val email = Email(request.email)
-        val username = Username(request.username)
+    @Transactional
+    fun signUp(command: SignUpCommand): SignUpResult {
+        val email = Email(command.email)
+        val username = Username(command.username)
 
-        // メールアドレスが既に使用されていないか確認
-        if (userRepository.existsByEmail(email)) {
-            throw IllegalArgumentException("Email already registered: ${request.email}")
-        }
+        // 重複チェックサービスを使用
+        duplicationCheckService.checkEmailAvailable(email)
+        duplicationCheckService.checkUsernameAvailable(username)
 
-        // ユーザー名が既に使用されていないか確認
-        if (userRepository.existsByUsername(username)) {
-            throw IllegalArgumentException("Username already taken: ${request.username}")
-        }
-
-        val hashedPassword = PasswordHash(passwordEncoder.encode(request.password))
+        val hashedPassword = PasswordHash(passwordHashService.hash(command.password))
         val user = User(
             userId = UserId(),
             username = username,
@@ -71,7 +81,7 @@ class AuthService(
 
         val savedUser = userRepository.save(user)
 
-        return SignUpResponse(
+        return SignUpResult(
             userId = savedUser.userId.value.toString(),
             email = savedUser.email.value,
             username = savedUser.username.value
@@ -81,14 +91,15 @@ class AuthService(
     /**
      * トークンリフレッシュ
      */
-    fun refreshToken(refreshToken: String): String {
-        if (!jwtTokenService.validateToken(refreshToken)) {
-            throw IllegalArgumentException("Invalid refresh token")
+    @Transactional(readOnly = true)
+    fun refreshToken(command: RefreshTokenCommand): String {
+        if (!jwtTokenService.validateToken(command.refreshToken)) {
+            throw InvalidTokenException("リフレッシュトークンが不正です")
         }
 
-        val userId = jwtTokenService.getUserIdFromToken(refreshToken)
+        val userId = jwtTokenService.getUserIdFromToken(command.refreshToken)
         val user = userRepository.findById(userId)
-            ?: throw IllegalArgumentException("User not found")
+            ?: throw UserNotFoundException()
 
         return jwtTokenService.generateAccessToken(user.userId).value
     }
