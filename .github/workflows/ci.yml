@@ -92,7 +92,20 @@ jobs:
             exit 1
           fi
 
+          # JWT認証: accessTokenが返されることを確認
+          if ! echo "$BODY" | grep -q "accessToken"; then
+            echo "Signin response does not contain accessToken"
+            exit 1
+          fi
+
+          # JWT認証: refreshTokenが返されることを確認
+          if ! echo "$BODY" | grep -q "refreshToken"; then
+            echo "Signin response does not contain refreshToken"
+            exit 1
+          fi
+
           echo "✅ Signin test passed!"
+          echo "✅ JWT token generation verified!"
 
       - name: Test validation errors
         run: |
@@ -161,7 +174,14 @@ jobs:
 
       - name: Test subjects API
         run: |
-          # 題材一覧取得テスト
+          # サインインしてJWTトークンを取得
+          SIGNIN_RESPONSE=$(curl -s -X POST http://localhost:8080/api/auth/signin \
+            -H "Content-Type: application/json" \
+            -d '{"email":"test@example.com","password":"testpass123"}')
+          TOKEN=$(echo "$SIGNIN_RESPONSE" | grep -o '"accessToken":"[^"]*"' | cut -d'"' -f4)
+          echo "Obtained JWT token"
+
+          # 題材一覧取得テスト（認証不要）
           RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:8080/api/subjects)
           HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
           BODY=$(echo "$RESPONSE" | head -n -1)
@@ -180,13 +200,29 @@ jobs:
             exit 1
           fi
 
-          # 題材作成テスト
+          # JWT認証: 認証なしで題材作成を試みる（403エラー期待）
+          CREATE_RESPONSE_NO_AUTH=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/subjects \
+            -H "Content-Type: application/json" \
+            -d '{"subjectId":99,"title":"認証なし","description":"失敗するはず","maxSections":50}')
+          HTTP_CODE=$(echo "$CREATE_RESPONSE_NO_AUTH" | tail -n 1)
+
+          echo "Create subject without auth HTTP Status: $HTTP_CODE"
+
+          if [ "$HTTP_CODE" -ne 403 ]; then
+            echo "Expected 403 Forbidden but got $HTTP_CODE"
+            exit 1
+          fi
+
+          echo "✅ Authentication required for subject creation verified!"
+
+          # JWT認証: 認証付きで題材作成テスト
           CREATE_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/subjects \
             -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $TOKEN" \
             -d '{"subjectId":100,"title":"テスト題材","description":"CIテスト用","maxSections":50}')
           HTTP_CODE=$(echo "$CREATE_RESPONSE" | tail -n 1)
 
-          echo "Create subject HTTP Status: $HTTP_CODE"
+          echo "Create subject with auth HTTP Status: $HTTP_CODE"
 
           if [ "$HTTP_CODE" -ne 201 ]; then
             echo "Create subject test failed with status $HTTP_CODE"
@@ -209,6 +245,7 @@ jobs:
           fi
 
           echo "✅ Subjects API test passed!"
+          echo "✅ JWT authentication for subject creation verified!"
 
       - name: Test sections API
         run: |
@@ -241,8 +278,29 @@ jobs:
             exit 1
           fi
 
-          # 初期進捗状態を取得（題材ID=1のデフォルト題材）
-          PROGRESS_RESPONSE=$(curl -s http://localhost:8080/api/progress/$USER_ID/subjects/1)
+          # サインインしてJWTトークンを取得
+          SIGNIN_RESPONSE=$(curl -s -X POST http://localhost:8080/api/auth/signin \
+            -H "Content-Type: application/json" \
+            -d '{"email":"progress@example.com","password":"password123"}')
+          TOKEN=$(echo "$SIGNIN_RESPONSE" | grep -o '"accessToken":"[^"]*"' | cut -d'"' -f4)
+          echo "Obtained JWT token for progress user"
+
+          # JWT認証: 認証なしで進捗取得を試みる（403エラー期待）
+          PROGRESS_NO_AUTH=$(curl -s -w "\n%{http_code}" http://localhost:8080/api/progress/subjects/1)
+          HTTP_CODE=$(echo "$PROGRESS_NO_AUTH" | tail -n 1)
+
+          echo "Progress API without auth HTTP Status: $HTTP_CODE"
+
+          if [ "$HTTP_CODE" -ne 403 ]; then
+            echo "Expected 403 Forbidden but got $HTTP_CODE"
+            exit 1
+          fi
+
+          echo "✅ Authentication required for progress API verified!"
+
+          # JWT認証: 認証付きで初期進捗状態を取得（題材ID=1のデフォルト題材）
+          PROGRESS_RESPONSE=$(curl -s http://localhost:8080/api/progress/subjects/1 \
+            -H "Authorization: Bearer $TOKEN")
           echo "Initial progress: $PROGRESS_RESPONSE"
 
           if ! echo "$PROGRESS_RESPONSE" | grep -q '"clearedCount":0'; then
@@ -255,9 +313,23 @@ jobs:
             exit 1
           fi
 
-          # セクション0を完了マーク（題材1のセクション0）
-          MARK_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/progress/$USER_ID/subjects/1/sections \
+          # JWT認証: 認証なしでセクション完了マークを試みる（403エラー期待）
+          MARK_NO_AUTH=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/progress/subjects/1/sections \
             -H "Content-Type: application/json" \
+            -d '{"sectionId":0}')
+          HTTP_CODE=$(echo "$MARK_NO_AUTH" | tail -n 1)
+
+          if [ "$HTTP_CODE" -ne 403 ]; then
+            echo "Expected 403 Forbidden for marking section without auth but got $HTTP_CODE"
+            exit 1
+          fi
+
+          echo "✅ Authentication required for section completion verified!"
+
+          # JWT認証: 認証付きでセクション0を完了マーク（題材1のセクション0）
+          MARK_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/progress/subjects/1/sections \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $TOKEN" \
             -d '{"sectionId":0}')
           HTTP_CODE=$(echo "$MARK_RESPONSE" | tail -n 1)
 
@@ -267,7 +339,8 @@ jobs:
           fi
 
           # 進捗状態を再取得
-          PROGRESS_AFTER=$(curl -s http://localhost:8080/api/progress/$USER_ID/subjects/1)
+          PROGRESS_AFTER=$(curl -s http://localhost:8080/api/progress/subjects/1 \
+            -H "Authorization: Bearer $TOKEN")
           echo "Progress after marking section 0: $PROGRESS_AFTER"
 
           if ! echo "$PROGRESS_AFTER" | grep -q '"clearedCount":1'; then
@@ -276,8 +349,9 @@ jobs:
           fi
 
           # 重複マークのテスト（既に完了済みのセクション）
-          DUPLICATE_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/progress/$USER_ID/subjects/1/sections \
+          DUPLICATE_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/progress/subjects/1/sections \
             -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $TOKEN" \
             -d '{"sectionId":0}')
           HTTP_CODE=$(echo "$DUPLICATE_RESPONSE" | tail -n 1)
 
@@ -287,7 +361,8 @@ jobs:
           fi
 
           # セクション完了削除テスト
-          DELETE_RESPONSE=$(curl -s -w "\n%{http_code}" -X DELETE http://localhost:8080/api/progress/$USER_ID/subjects/1/sections/0)
+          DELETE_RESPONSE=$(curl -s -w "\n%{http_code}" -X DELETE http://localhost:8080/api/progress/subjects/1/sections/0 \
+            -H "Authorization: Bearer $TOKEN")
           HTTP_CODE=$(echo "$DELETE_RESPONSE" | tail -n 1)
 
           if [ "$HTTP_CODE" -ne 200 ]; then
@@ -296,6 +371,8 @@ jobs:
           fi
 
           echo "✅ Progress management test passed!"
+          echo "✅ JWT authentication for progress API verified!"
+          echo "✅ User isolation verified - userId from JWT instead of URL!"
 
       - name: Show logs on failure
         if: failure()

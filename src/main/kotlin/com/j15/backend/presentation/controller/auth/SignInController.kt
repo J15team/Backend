@@ -13,11 +13,15 @@ class SignInController(private val authUseCase: AuthUseCase) {
 
     @PostMapping("/signin")
     fun signIn(@Valid @RequestBody request: LoginRequest): LoginResponse {
-        val user = authUseCase.authenticate(request.email, request.password)
+        val result = authUseCase.authenticate(request.email, request.password)
         return LoginResponse(
-                userId = user.userId.value.toString(),
-                username = user.username.value,
-                email = user.email.value
+            accessToken = result.tokens.accessToken.value,
+            refreshToken = result.tokens.refreshToken.value,
+            user = LoginResponse.UserInfo(
+                id = result.user.userId.value.toString(),
+                username = result.user.username.value,
+                email = result.user.email.value
+            )
         )
     }
 }

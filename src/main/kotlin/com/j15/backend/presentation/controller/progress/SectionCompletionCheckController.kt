@@ -6,6 +6,7 @@ import com.j15.backend.domain.model.subject.SubjectId
 import com.j15.backend.domain.model.user.UserId
 import java.util.UUID
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 /** セクション完了状態確認コントローラー 責務: セクション完了状態のチェック */
@@ -13,11 +14,11 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/progress")
 class SectionCompletionCheckController(private val progressUseCase: ProgressUseCase) {
 
-    @GetMapping("/{userId}/subjects/{subjectId}/sections/{sectionId}")
+    @GetMapping("/subjects/{subjectId}/sections/{sectionId}")
     fun checkSectionCleared(
-            @PathVariable userId: String,
             @PathVariable subjectId: Long,
-            @PathVariable sectionId: Int
+            @PathVariable sectionId: Int,
+            @AuthenticationPrincipal userId: String
     ): ResponseEntity<Map<String, Boolean>> {
         val userIdObj = UserId(UUID.fromString(userId))
         val subjectIdObj = SubjectId(subjectId)
