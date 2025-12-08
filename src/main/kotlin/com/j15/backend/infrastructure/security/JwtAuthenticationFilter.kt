@@ -37,7 +37,10 @@ class JwtAuthenticationFilter(
                 SecurityContextHolder.getContext().authentication = authentication
             }
         } catch (e: Exception) {
-            logger.error("JWT認証エラー: ${e.message}", e)
+            logger.error("JWT認証エラーが発生しました")
+            if (logger.isDebugEnabled) {
+                logger.debug("JWT認証エラー詳細: ${e.message}", e)
+            }
         }
         
         filterChain.doFilter(request, response)

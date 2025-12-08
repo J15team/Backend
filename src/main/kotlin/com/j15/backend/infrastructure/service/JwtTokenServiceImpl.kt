@@ -20,7 +20,7 @@ class JwtTokenServiceImpl(
 ) : JwtTokenService {
 
     private val secretKey: SecretKey by lazy {
-        Keys.hmacShaKeyFor(secret.toByteArray())
+        Keys.hmacShaKeyFor(secret.toByteArray(Charsets.UTF_8))
     }
 
     override fun generateAccessToken(userId: UserId): AccessToken {

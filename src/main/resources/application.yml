@@ -32,6 +32,8 @@ management:
 
 # JWT設定
 jwt:
+  # 本番環境では必ず環境変数JWT_SECRETを設定してください
+  # 開発環境でのみデフォルト値を使用（本番環境では環境変数必須）
   secret: ${JWT_SECRET:your-256-bit-secret-key-change-this-in-production-environment-for-security-purposes-minimum-32-characters}
   access-token-expiration: 3600000  # 1時間（ミリ秒）
   refresh-token-expiration: 604800000  # 7日間（ミリ秒）
