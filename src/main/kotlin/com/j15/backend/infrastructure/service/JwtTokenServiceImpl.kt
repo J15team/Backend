@@ -43,6 +43,7 @@ class JwtTokenServiceImpl(
     override fun getRoleFromToken(token: String): UserRole {
         val claims = extractAllClaims(token)
         val roleString = claims.get("role", String::class.java)
+            ?: throw IllegalArgumentException("トークンにロール情報が含まれていません")
         return UserRole.fromString(roleString)
     }
 
