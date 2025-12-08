@@ -103,18 +103,4 @@ class AuthService(
 
         return jwtTokenService.generateAccessToken(user.userId).value
     }
-    
-    // 結果オブジェクト
-    data class SignInResult(
-        val userId: String,
-        val email: String,
-        val accessToken: String,
-        val refreshToken: String
-    )
-    
-    data class SignUpResult(
-        val userId: String,
-        val email: String,
-        val username: String
-    )
 }
