@@ -31,8 +31,8 @@ class SecurityConfig(
                 authz
                     // ヘルスチェック、Actuator は認証不要
                     .requestMatchers("/api/health", "/actuator/**").permitAll()
-                    // 認証関連エンドポイント（サインイン、サインアップ）は認証不要
-                    .requestMatchers(HttpMethod.POST, "/api/auth/signin", "/api/auth/signup").permitAll()
+                    // 認証関連エンドポイント（サインイン、サインアップ、トークンリフレッシュ）は認証不要
+                    .requestMatchers(HttpMethod.POST, "/api/auth/signin", "/api/auth/signup", "/api/auth/refresh").permitAll()
                     // 題材の取得（GET）は認証不要
                     .requestMatchers(HttpMethod.GET, "/api/subjects/**").permitAll()
                     // 題材の作成・更新・削除は認証必須
