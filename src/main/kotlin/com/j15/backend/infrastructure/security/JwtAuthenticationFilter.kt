@@ -5,6 +5,7 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
@@ -26,12 +27,16 @@ class JwtAuthenticationFilter(
             
             if (token != null && jwtTokenService.validateToken(token)) {
                 val userId = jwtTokenService.getUserIdFromToken(token)
+                val role = jwtTokenService.getRoleFromToken(token)
+                
+                // ロールを権限として設定
+                val authorities = listOf(SimpleGrantedAuthority(role.name))
                 
                 // 認証情報をSecurityContextに設定
                 val authentication = UsernamePasswordAuthenticationToken(
                     userId.value.toString(),
                     null,
-                    emptyList()
+                    authorities
                 )
                 authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
                 SecurityContextHolder.getContext().authentication = authentication
