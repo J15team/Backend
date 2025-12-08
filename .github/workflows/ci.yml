@@ -226,6 +226,12 @@ jobs:
           echo "Create subject with ROLE_USER HTTP Status: $HTTP_CODE"
           echo "Response Body: $BODY"
 
+          if [ "$HTTP_CODE" -eq 500 ]; then
+            echo "❌ Server error occurred - checking logs..."
+            docker compose logs backend | tail -100
+            exit 1
+          fi
+
           if [ "$HTTP_CODE" -ne 403 ]; then
             echo "Expected 403 Forbidden for ROLE_USER but got $HTTP_CODE"
             exit 1
