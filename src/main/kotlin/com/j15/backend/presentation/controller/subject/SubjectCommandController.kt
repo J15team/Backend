@@ -4,6 +4,7 @@ import com.j15.backend.application.usecase.SubjectUseCase
 import com.j15.backend.presentation.dto.subject.*
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
@@ -12,8 +13,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/subjects")
 class SubjectCommandController(private val subjectUseCase: SubjectUseCase) {
 
-    // TODO: 将来的にはROLE_ADMIN権限が必要
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     fun createSubject(
             @RequestBody request: CreateSubjectRequest,
             @AuthenticationPrincipal userId: String
@@ -29,8 +30,8 @@ class SubjectCommandController(private val subjectUseCase: SubjectUseCase) {
         return ResponseEntity.status(HttpStatus.CREATED).body(SubjectResponse.from(subject))
     }
 
-    // TODO: 将来的にはROLE_ADMIN権限が必要
     @PutMapping("/{subjectId}")
+    @PreAuthorize("hasRole('ADMIN')")
     fun updateSubject(
             @PathVariable subjectId: Long,
             @RequestBody request: UpdateSubjectRequest,
@@ -50,8 +51,8 @@ class SubjectCommandController(private val subjectUseCase: SubjectUseCase) {
         }
     }
 
-    // TODO: 将来的にはROLE_ADMIN権限が必要
     @DeleteMapping("/{subjectId}")
+    @PreAuthorize("hasRole('ADMIN')")
     fun deleteSubject(
             @PathVariable subjectId: Long,
             @AuthenticationPrincipal userId: String

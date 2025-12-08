@@ -14,6 +14,8 @@ class UserEntity(
         @Column(unique = true, nullable = false, length = 255) var email: String = "",
         @Column(name = "password_hash", nullable = false, length = 255)
         var passwordHash: String = "",
+        @Column(nullable = false, length = 20)
+        var role: String = "ROLE_USER",
         @Column(name = "created_at", nullable = false, updatable = false)
         @CreationTimestamp
         val createdAt: Instant? = null

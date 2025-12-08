@@ -4,6 +4,7 @@ import com.j15.backend.presentation.dto.response.ErrorResponse
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -38,6 +39,21 @@ class GlobalExceptionHandler {
                         ErrorResponse(
                                 message = ex.message ?: "不正なリクエストです",
                                 status = HttpStatus.BAD_REQUEST.value()
+                        )
+                )
+    }
+
+    // Spring Securityのアクセス拒否例外（403 Forbiddenを返す）
+    @ExceptionHandler(AccessDeniedException::class)
+    fun handleAccessDeniedException(
+            ex: AccessDeniedException
+    ): ResponseEntity<ErrorResponse> {
+        logger.warn("Access denied: {}", ex.message)
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(
+                        ErrorResponse(
+                                message = "アクセスが拒否されました",
+                                status = HttpStatus.FORBIDDEN.value()
                         )
                 )
     }

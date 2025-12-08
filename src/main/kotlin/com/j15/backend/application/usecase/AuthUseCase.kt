@@ -45,8 +45,8 @@ class AuthUseCase(
         }
         
         // JWTトークンの生成
-        val accessToken = jwtTokenService.generateAccessToken(user.userId)
-        val refreshToken = jwtTokenService.generateRefreshToken(user.userId)
+        val accessToken = jwtTokenService.generateAccessToken(user.userId, user.role)
+        val refreshToken = jwtTokenService.generateRefreshToken(user.userId, user.role)
         val tokens = AuthTokens(accessToken, refreshToken)
         
         return AuthenticationResult(user, tokens)

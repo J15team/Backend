@@ -4,6 +4,7 @@ import com.j15.backend.domain.model.user.Email
 import com.j15.backend.domain.model.user.PasswordHash
 import com.j15.backend.domain.model.user.User
 import com.j15.backend.domain.model.user.UserId
+import com.j15.backend.domain.model.user.UserRole
 import com.j15.backend.domain.model.user.Username
 import com.j15.backend.infrastructure.persistence.entity.UserEntity
 
@@ -16,6 +17,7 @@ object UserConverter {
                 username = Username(entity.username),
                 email = Email(entity.email),
                 passwordHash = PasswordHash(entity.passwordHash),
+                role = UserRole.fromString(entity.role),
                 createdAt = entity.createdAt ?: throw IllegalStateException("createdAt must not be null")
         )
     }
@@ -27,6 +29,7 @@ object UserConverter {
                 username = domain.username.value,
                 email = domain.email.value,
                 passwordHash = domain.passwordHash.value,
+                role = domain.role.name,
                 createdAt = domain.createdAt
         )
     }
