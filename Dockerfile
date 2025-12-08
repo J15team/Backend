@@ -7,7 +7,7 @@ COPY build.gradle.kts settings.gradle.kts ./
 COPY gradle ./gradle
 
 # Download dependencies
-RUN gradle dependencies --no-daemon || true
+RUN gradle dependencies --no-daemon --info 2>&1 | tail -50 || true
 
 # Copy source code
 COPY src ./src
