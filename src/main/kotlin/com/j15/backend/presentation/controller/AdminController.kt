@@ -1,6 +1,6 @@
 package com.j15.backend.presentation.controller
 
-import com.j15.backend.application.service.AdminService
+import com.j15.backend.application.usecase.AdminUseCase
 import com.j15.backend.presentation.dto.request.AdminUserCreateRequest
 import com.j15.backend.presentation.dto.response.AdminUserCreateResponse
 import org.slf4j.LoggerFactory
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/admin")
 class AdminController(
-    private val adminService: AdminService
+    private val adminUseCase: AdminUseCase
 ) {
     private val logger = LoggerFactory.getLogger(AdminController::class.java)
 
@@ -40,7 +40,20 @@ class AdminController(
                     .body(mapOf("error" to "X-Admin-Key header is required"))
             }
 
-            val response = adminService.createAdminUser(request, adminKey)
+            val result = adminUseCase.createAdminUser(
+                email = request.email,
+                username = request.username,
+                password = request.password,
+                providedKey = adminKey
+            )
+            
+            val response = AdminUserCreateResponse(
+                userId = result.user.userId.value.toString(),
+                email = result.user.email.value,
+                username = result.user.username.value,
+                role = result.user.role.name
+            )
+            
             ResponseEntity.status(HttpStatus.CREATED).body(response)
         } catch (e: IllegalArgumentException) {
             logger.warn("Admin user creation failed", e)
