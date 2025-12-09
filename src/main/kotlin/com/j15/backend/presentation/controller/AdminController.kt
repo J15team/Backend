@@ -1,8 +1,9 @@
 package com.j15.backend.presentation.controller
 
-import com.j15.backend.application.service.AdminService
+import com.j15.backend.application.usecase.AdminUseCase
 import com.j15.backend.presentation.dto.request.AdminUserCreateRequest
 import com.j15.backend.presentation.dto.response.AdminUserCreateResponse
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -18,8 +19,9 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/admin")
 class AdminController(
-    private val adminService: AdminService
+    private val adminUseCase: AdminUseCase
 ) {
+    private val logger = LoggerFactory.getLogger(AdminController::class.java)
 
     /**
      * 管理者アカウントを作成
@@ -38,14 +40,31 @@ class AdminController(
                     .body(mapOf("error" to "X-Admin-Key header is required"))
             }
 
-            val response = adminService.createAdminUser(request, adminKey)
+            val result = adminUseCase.createAdminUser(
+                email = request.email,
+                username = request.username,
+                password = request.password,
+                providedKey = adminKey
+            )
+            
+            val response = AdminUserCreateResponse(
+                userId = result.user.userId.value.toString(),
+                email = result.user.email.value,
+                username = result.user.username.value,
+                role = result.user.role.name
+            )
+            
             ResponseEntity.status(HttpStatus.CREATED).body(response)
         } catch (e: IllegalArgumentException) {
+            logger.warn("Admin user creation failed: {}", e.javaClass.simpleName)
+            logger.debug("Admin user creation failed with details", e)
             ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(mapOf("error" to e.message))
+                .body(mapOf("error" to "管理者ユーザーの作成に失敗しました"))
         } catch (e: Exception) {
+            logger.error("Unexpected error during admin user creation: {}", e.javaClass.simpleName)
+            logger.debug("Unexpected error details", e)
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(mapOf("error" to "Failed to create admin user"))
+                .body(mapOf("error" to "管理者ユーザーの作成中にエラーが発生しました"))
         }
     }
 }
