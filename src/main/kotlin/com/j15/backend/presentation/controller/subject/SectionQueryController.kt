@@ -1,6 +1,6 @@
 package com.j15.backend.presentation.controller.subject
 
-import com.j15.backend.application.usecase.SectionUseCase
+import com.j15.backend.application.usecase.subject.SectionUseCase
 import com.j15.backend.domain.model.section.SectionId
 import com.j15.backend.domain.model.subject.SubjectId
 import com.j15.backend.presentation.dto.response.SectionResponse

@@ -1,6 +1,6 @@
 package com.j15.backend.presentation.controller.progress
 
-import com.j15.backend.application.usecase.ProgressUseCase
+import com.j15.backend.application.usecase.progress.ProgressUseCase
 import com.j15.backend.domain.model.section.SectionId
 import com.j15.backend.domain.model.subject.SubjectId
 import com.j15.backend.domain.model.user.UserId
@@ -27,34 +27,27 @@ class SectionCompletionController(private val progressUseCase: ProgressUseCase) 
                 val subjectIdObj = SubjectId(subjectId)
                 val sectionId = SectionId(request.sectionId)
 
-                val result =
-                        progressUseCase.markSectionAsCleared(userIdObj, subjectIdObj, sectionId)
+                return try {
+                        val clearedSection =
+                                progressUseCase.markSectionAsCleared(
+                                        userIdObj,
+                                        subjectIdObj,
+                                        sectionId
+                                )
 
-                return result.fold(
-                        onSuccess = { clearedSection ->
-                                ResponseEntity.status(HttpStatus.CREATED)
-                                        .body(
-                                                mapOf(
-                                                        "message" to
-                                                                "セクション ${request.sectionId} を完了としてマークしました",
-                                                        "sectionId" to
-                                                                clearedSection.sectionId.value,
-                                                        "completedAt" to
-                                                                clearedSection.completedAt
-                                                                        .toString()
-                                                )
+                        ResponseEntity.status(HttpStatus.CREATED)
+                                .body(
+                                        mapOf(
+                                                "message" to
+                                                        "セクション ${request.sectionId} を完了としてマークしました",
+                                                "sectionId" to clearedSection.sectionId.value,
+                                                "completedAt" to
+                                                        clearedSection.completedAt.toString()
                                         )
-                        },
-                        onFailure = { error ->
-                                ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                        .body(
-                                                mapOf(
-                                                        "error" to
-                                                                (error.message
-                                                                        ?: "セクションの完了記録に失敗しました")
-                                                )
-                                        )
-                        }
-                )
+                                )
+                } catch (e: Exception) {
+                        ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                .body(mapOf("error" to (e.message ?: "セクションの完了記録に失敗しました")))
+                }
         }
 }

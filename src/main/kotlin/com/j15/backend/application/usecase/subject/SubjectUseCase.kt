@@ -1,4 +1,4 @@
-package com.j15.backend.application.usecase
+package com.j15.backend.application.usecase.subject
 
 import com.j15.backend.domain.model.subject.Subject
 import com.j15.backend.domain.model.subject.SubjectId
@@ -38,7 +38,6 @@ class SubjectUseCase(private val subjectRepository: SubjectRepository) {
             maxSections: Int
     ): Subject {
         validateSubjectInput(title, maxSections)
-
 
         val subject =
                 Subject(

@@ -1,4 +1,4 @@
-package com.j15.backend.application.usecase
+package com.j15.backend.application.usecase.user
 
 import com.j15.backend.domain.model.user.Email
 import com.j15.backend.domain.model.user.PasswordHash

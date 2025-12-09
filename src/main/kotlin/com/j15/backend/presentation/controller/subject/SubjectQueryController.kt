@@ -1,6 +1,6 @@
 package com.j15.backend.presentation.controller.subject
 
-import com.j15.backend.application.usecase.SubjectUseCase
+import com.j15.backend.application.usecase.subject.SubjectUseCase
 import com.j15.backend.presentation.dto.subject.SubjectResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
