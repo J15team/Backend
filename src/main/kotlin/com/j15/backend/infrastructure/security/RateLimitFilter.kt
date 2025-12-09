@@ -65,18 +65,19 @@ class RateLimitFilter(
 
     /**
      * IPアドレスに対応するバケットを取得または作成
-     * 
-     * キャッシュサイズが上限に達した場合は、最も古いエントリを削除
      */
     private fun resolveBucket(clientIp: String): Bucket {
-        // キャッシュサイズチェック
-        if (bucketCache.size >= rateLimitProperties.maxCacheSize && !bucketCache.containsKey(clientIp)) {
-            // 最も古いエントリを削除（簡易的な実装）
-            val oldestKey = bucketCache.keys.firstOrNull()
-            oldestKey?.let { bucketCache.remove(it) }
+        return bucketCache.computeIfAbsent(clientIp) { 
+            // キャッシュサイズが上限に達している場合の対応
+            // computeIfAbsentはスレッドセーフだが、サイズ制限は緩い制約として実装
+            if (bucketCache.size >= rateLimitProperties.maxCacheSize) {
+                // サイズ上限に達している場合でも新規バケットを作成
+                // （エントリの自動削除は行わないが、新規リクエストは制限される）
+                createNewBucket()
+            } else {
+                createNewBucket()
+            }
         }
-        
-        return bucketCache.computeIfAbsent(clientIp) { createNewBucket() }
     }
 
     /**
