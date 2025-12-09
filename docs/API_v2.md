@@ -89,7 +89,7 @@ ISO 8601 形式（UTC）を使用します。
 **エンドポイント**
 
 ```http
-POST /api/users/signup
+POST /api/auth/signup
 ```
 
 **認証**: 不要
@@ -846,7 +846,7 @@ Authorization: Bearer {accessToken}
 ```typescript
 // サインアップ
 const signup = async (username: string, email: string, password: string) => {
-  const response = await fetch("/api/users/signup", {
+  const response = await fetch("/api/auth/signup", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, email, password }),
