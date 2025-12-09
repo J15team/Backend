@@ -31,6 +31,7 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-impl:0.12.3")
     implementation("io.jsonwebtoken:jjwt-jackson:0.12.3")
     implementation("com.bucket4j:bucket4j-core:8.7.0")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
     
     runtimeOnly("org.postgresql:postgresql")
     
