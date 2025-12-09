@@ -1,6 +1,7 @@
 package com.j15.backend.infrastructure.config
 
 import com.j15.backend.infrastructure.security.JwtAuthenticationFilter
+import com.j15.backend.infrastructure.security.RateLimitFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -17,7 +18,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-class SecurityConfiguration(private val jwtAuthenticationFilter: JwtAuthenticationFilter) {
+class SecurityConfiguration(
+    private val jwtAuthenticationFilter: JwtAuthenticationFilter,
+    private val rateLimitFilter: RateLimitFilter
+) {
     @Bean
     fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
@@ -53,6 +57,11 @@ class SecurityConfiguration(private val jwtAuthenticationFilter: JwtAuthenticati
                             .anyRequest()
                             .authenticated()
                 }
+                // レート制限フィルターを最初に適用
+                .addFilterBefore(
+                        rateLimitFilter,
+                        UsernamePasswordAuthenticationFilter::class.java
+                )
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter::class.java

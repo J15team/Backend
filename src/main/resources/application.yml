@@ -37,3 +37,11 @@ jwt:
   secret: ${JWT_SECRET:your-256-bit-secret-key-change-this-in-production-environment-for-security-purposes-minimum-32-characters}
   access-token-expiration: 3600000  # 1時間（ミリ秒）
   refresh-token-expiration: 604800000  # 7日間（ミリ秒）
+
+# レート制限設定
+rate-limit:
+  enabled: true
+  capacity: 100  # バケット容量（最大リクエスト数）
+  tokens: 100  # 初期トークン数
+  refill-tokens: 100  # 補充するトークン数
+  refill-period-seconds: 60  # 補充間隔（秒）
