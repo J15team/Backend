@@ -499,9 +499,27 @@ jobs:
       - name: Wait for rate limit reset
         run: |
           echo "Waiting for rate limit tokens to refill..."
-          echo "Bucket4j refills tokens gradually, waiting 5 seconds..."
-          sleep 5
-          echo "✅ Wait complete"
+          echo "Bucket4j refills 100 tokens over 60 seconds"
+          echo "Waiting 15 seconds to ensure sufficient tokens are available..."
+          sleep 15
+          
+          # トークンが補充されたか確認
+          for i in {1..5}; do
+            RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:8080/api/health)
+            HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
+            
+            if [ "$HTTP_CODE" -eq 200 ]; then
+              echo "✅ Rate limit reset confirmed - tokens available"
+              break
+            elif [ $i -eq 5 ]; then
+              echo "❌ Rate limit still active after 15 seconds"
+              echo "This may indicate a problem with token refill"
+              exit 1
+            else
+              echo "Attempt $i: Still rate limited, waiting 3 more seconds..."
+              sleep 3
+            fi
+          done
 
       - name: Test X-Forwarded-For handling
         run: |
@@ -511,15 +529,9 @@ jobs:
           RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:8080/api/health)
           HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
           
-          if [ "$HTTP_CODE" -eq 429 ]; then
-            echo "Rate limit still active, waiting additional 5 seconds..."
-            sleep 5
-            RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:8080/api/health)
-            HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
-          fi
-          
           if [ "$HTTP_CODE" -ne 200 ]; then
             echo "Request without X-Forwarded-For failed with status $HTTP_CODE"
+            echo "Response: $(echo "$RESPONSE" | head -n -1)"
             exit 1
           fi
           
@@ -530,6 +542,7 @@ jobs:
           
           if [ "$HTTP_CODE" -ne 200 ]; then
             echo "Request with X-Forwarded-For failed with status $HTTP_CODE"
+            echo "Response: $(echo "$RESPONSE" | head -n -1)"
             exit 1
           fi
           
