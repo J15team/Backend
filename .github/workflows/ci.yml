@@ -496,6 +496,13 @@ jobs:
           
           echo "✅ Rate limit headers test passed!"
 
+      - name: Wait for rate limit reset
+        run: |
+          echo "Waiting for rate limit tokens to refill..."
+          echo "Bucket4j refills tokens gradually, waiting 5 seconds..."
+          sleep 5
+          echo "✅ Wait complete"
+
       - name: Test X-Forwarded-For handling
         run: |
           echo "Testing X-Forwarded-For header handling..."
@@ -503,6 +510,13 @@ jobs:
           # X-Forwarded-Forヘッダーなしのリクエスト（正常動作）
           RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:8080/api/health)
           HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
+          
+          if [ "$HTTP_CODE" -eq 429 ]; then
+            echo "Rate limit still active, waiting additional 5 seconds..."
+            sleep 5
+            RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:8080/api/health)
+            HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
+          fi
           
           if [ "$HTTP_CODE" -ne 200 ]; then
             echo "Request without X-Forwarded-For failed with status $HTTP_CODE"
