@@ -35,5 +35,17 @@ jwt:
   # 本番環境では必ず環境変数JWT_SECRETを設定してください
   # 開発環境でのみデフォルト値を使用（本番環境では環境変数必須）
   secret: ${JWT_SECRET:your-256-bit-secret-key-change-this-in-production-environment-for-security-purposes-minimum-32-characters}
-  access-token-expiration: 3600000  # 1時間（ミリ秒）
-  refresh-token-expiration: 604800000  # 7日間（ミリ秒）
+  access-token-expiration: 3600000 # 1時間（ミリ秒）
+  refresh-token-expiration: 604800000 # 7日間（ミリ秒）
+
+# レート制限設定
+rate-limit:
+  enabled: true
+  capacity: 100 # バケット容量（最大リクエスト数）
+  refill-tokens: 100 # 補充するトークン数
+  refill-period-seconds: 60 # 補充間隔（秒）
+  max-cache-size: 10000 # キャッシュする最大IPアドレス数（LRUで自動削除）
+  # 信頼できるプロキシのIPアドレス（カンマ区切り）
+  # ALB/API Gatewayなど、本番環境のプロキシIPを指定してください
+  # 例: trusted-proxies: "10.0.0.1,10.0.0.2,172.31.0.0/16"
+  trusted-proxies: ${TRUSTED_PROXIES:}
