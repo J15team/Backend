@@ -12,6 +12,7 @@ import com.j15.backend.presentation.dto.response.AdminUserCreateResponse
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import java.security.MessageDigest
 
 @Service
 class AdminService(
@@ -28,9 +29,16 @@ class AdminService(
         request: AdminUserCreateRequest,
         providedKey: String
     ): AdminUserCreateResponse {
-        // 管理者キーの検証
-        if (adminApiKey.isBlank() || providedKey != adminApiKey) {
-            throw IllegalArgumentException("Invalid or missing admin API key")
+        // 管理者キーの検証（定数時間比較でタイミング攻撃を防止）
+        if (adminApiKey.isBlank()) {
+            throw IllegalArgumentException("Admin API key is not configured")
+        }
+        
+        if (!MessageDigest.isEqual(
+            providedKey.toByteArray(Charsets.UTF_8),
+            adminApiKey.toByteArray(Charsets.UTF_8)
+        )) {
+            throw IllegalArgumentException("Invalid admin API key")
         }
 
         val email = Email(request.email)

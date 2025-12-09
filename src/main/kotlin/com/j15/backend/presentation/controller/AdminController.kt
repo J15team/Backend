@@ -3,6 +3,7 @@ package com.j15.backend.presentation.controller
 import com.j15.backend.application.service.AdminService
 import com.j15.backend.presentation.dto.request.AdminUserCreateRequest
 import com.j15.backend.presentation.dto.response.AdminUserCreateResponse
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController
 class AdminController(
     private val adminService: AdminService
 ) {
+    private val logger = LoggerFactory.getLogger(AdminController::class.java)
 
     /**
      * 管理者アカウントを作成
@@ -41,11 +43,13 @@ class AdminController(
             val response = adminService.createAdminUser(request, adminKey)
             ResponseEntity.status(HttpStatus.CREATED).body(response)
         } catch (e: IllegalArgumentException) {
+            logger.warn("Admin user creation failed", e)
             ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(mapOf("error" to e.message))
+                .body(mapOf("error" to "管理者ユーザーの作成に失敗しました"))
         } catch (e: Exception) {
+            logger.error("Unexpected error during admin user creation", e)
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(mapOf("error" to "Failed to create admin user"))
+                .body(mapOf("error" to "管理者ユーザーの作成中にエラーが発生しました"))
         }
     }
 }
