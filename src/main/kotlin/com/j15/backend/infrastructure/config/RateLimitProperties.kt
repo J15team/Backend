@@ -15,10 +15,10 @@ data class RateLimitProperties(
     var enabled: Boolean = true,
     /** バケットの容量（最大リクエスト数） */
     var capacity: Long = 100,
-    /** 初期トークン数 */
-    var tokens: Long = 100,
     /** 補充するトークン数 */
     var refillTokens: Long = 100,
     /** トークン補充間隔（秒） */
-    var refillPeriodSeconds: Long = 60
+    var refillPeriodSeconds: Long = 60,
+    /** キャッシュの最大サイズ（IPアドレス数） */
+    var maxCacheSize: Int = 10000
 )

@@ -41,12 +41,19 @@ class RateLimitFilter(
 
         // トークンを消費できるか確認
         if (bucket.tryConsume(1)) {
+            // レート制限情報をヘッダーに追加
+            val availableTokens = bucket.availableTokens
+            response.setHeader("X-RateLimit-Limit", rateLimitProperties.capacity.toString())
+            response.setHeader("X-RateLimit-Remaining", availableTokens.toString())
+            
             filterChain.doFilter(request, response)
         } else {
             // レート制限超過
             response.status = HttpStatus.TOO_MANY_REQUESTS.value()
             response.contentType = "application/json"
             response.characterEncoding = "UTF-8"
+            response.setHeader("X-RateLimit-Limit", rateLimitProperties.capacity.toString())
+            response.setHeader("X-RateLimit-Remaining", "0")
             response.writer.write("""
                 {
                     "error": "Too Many Requests",
@@ -58,8 +65,17 @@ class RateLimitFilter(
 
     /**
      * IPアドレスに対応するバケットを取得または作成
+     * 
+     * キャッシュサイズが上限に達した場合は、最も古いエントリを削除
      */
     private fun resolveBucket(clientIp: String): Bucket {
+        // キャッシュサイズチェック
+        if (bucketCache.size >= rateLimitProperties.maxCacheSize && !bucketCache.containsKey(clientIp)) {
+            // 最も古いエントリを削除（簡易的な実装）
+            val oldestKey = bucketCache.keys.firstOrNull()
+            oldestKey?.let { bucketCache.remove(it) }
+        }
+        
         return bucketCache.computeIfAbsent(clientIp) { createNewBucket() }
     }
 
@@ -83,6 +99,10 @@ class RateLimitFilter(
      * クライアントのIPアドレスを取得
      * 
      * プロキシ経由の場合はX-Forwarded-Forヘッダーから取得
+     * 
+     * 注意: X-Forwarded-Forヘッダーは改ざん可能なため、
+     * 信頼できるプロキシのみを使用する環境で運用することを推奨します。
+     * 本番環境では、信頼できるプロキシIPの検証を追加することを検討してください。
      */
     private fun getClientIp(request: HttpServletRequest): String {
         val xForwardedFor = request.getHeader("X-Forwarded-For")

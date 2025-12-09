@@ -42,6 +42,6 @@ jwt:
 rate-limit:
   enabled: true
   capacity: 100  # バケット容量（最大リクエスト数）
-  tokens: 100  # 初期トークン数
   refill-tokens: 100  # 補充するトークン数
   refill-period-seconds: 60  # 補充間隔（秒）
+  max-cache-size: 10000  # キャッシュする最大IPアドレス数
