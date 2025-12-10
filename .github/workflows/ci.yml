@@ -53,7 +53,7 @@ jobs:
 
       - name: Test signup endpoint
         run: |
-          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/users/signup \
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/auth/signup \
             -H "Content-Type: application/json" \
             -d '{"username":"testuser","email":"test@example.com","password":"testpass123"}')
           HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
@@ -110,7 +110,7 @@ jobs:
       - name: Test validation errors
         run: |
           # 無効なメールアドレスでのサインアップテスト
-          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/users/signup \
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/auth/signup \
             -H "Content-Type: application/json" \
             -d '{"username":"testuser2","email":"invalid-email","password":"testpass123"}')
           HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
@@ -127,7 +127,7 @@ jobs:
       - name: Test duplicate email
         run: |
           # 重複したメールアドレスでのサインアップテスト
-          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/users/signup \
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/auth/signup \
             -H "Content-Type: application/json" \
             -d '{"username":"testuser3","email":"test@example.com","password":"testpass123"}')
           HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
@@ -165,7 +165,7 @@ jobs:
             exit 1
           fi
 
-          if ! echo "$BODY" | grep -q "パスワードが正しくありません"; then
+          if ! echo "$BODY" | grep -q "メールアドレスまたはパスワードが正しくありません"; then
             echo "Wrong password error message not found"
             exit 1
           fi
@@ -199,7 +199,7 @@ jobs:
 
           echo "✅ Admin user created successfully!"
 
-          # 無効な管理キーでテスト（403エラー期待）
+          # 無効な管理キーでテスト（401エラー期待）
           INVALID_KEY=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/admin/users \
             -H "Content-Type: application/json" \
             -H "X-Admin-Key: invalid-key" \
@@ -208,8 +208,8 @@ jobs:
 
           echo "Invalid admin key HTTP Status: $HTTP_CODE"
 
-          if [ "$HTTP_CODE" -ne 403 ]; then
-            echo "Expected 403 Forbidden for invalid key but got $HTTP_CODE"
+          if [ "$HTTP_CODE" -ne 401 ]; then
+            echo "Expected 401 Unauthorized for invalid key but got $HTTP_CODE"
             exit 1
           fi
 
@@ -370,7 +370,7 @@ jobs:
       - name: Test progress management
         run: |
           # 新しいユーザーを作成
-          SIGNUP_RESPONSE=$(curl -s -X POST http://localhost:8080/api/users/signup \
+          SIGNUP_RESPONSE=$(curl -s -X POST http://localhost:8080/api/auth/signup \
             -H "Content-Type: application/json" \
             -d '{"username":"progressuser","email":"progress@example.com","password":"password123"}')
 
