@@ -83,7 +83,10 @@ CI/CDではGitHub Actionsで自動的にE2Eテストが実行されます。
 
 ## API エンドポイント
 
-詳細なAPI仕様については [API仕様書](./docs/API.md) を参照してください。
+APIドキュメント:
+
+- [APIリファレンス（エンドポイントとJSONの一覧）](./docs/API_reference.md)
+- [詳細なAPI仕様書 v2](./docs/API_v2.md)
 
 ### 概要
 
@@ -141,7 +144,7 @@ curl http://localhost:8080/api/sections
 
 ```bash
 curl http://localhost:8080/api/progress/{userId}
-詳細なリクエスト/レスポンス形式、エラーハンドリング、バリデーションルールについては [API仕様書](./docs/API.md) を参照してください。
+詳細なリクエスト/レスポンス形式、エラーハンドリング、バリデーションルールは [APIリファレンス](./docs/API_reference.md) および [API仕様書 v2](./docs/API_v2.md) を参照してください。
 
 ## データベース設計
 
