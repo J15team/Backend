@@ -172,6 +172,98 @@ jobs:
 
           echo "✅ Wrong password test passed!"
 
+      - name: Test admin user creation endpoint
+        run: |
+          # 管理者キーで新しい管理者アカウントを作成
+          ADMIN_KEY="admin-secret-key-change-in-production"
+          ADMIN_SIGNUP=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/admin/users \
+            -H "Content-Type: application/json" \
+            -H "X-Admin-Key: $ADMIN_KEY" \
+            -d '{"email":"admin@example.com","username":"adminuser","password":"adminpass123"}')
+          HTTP_CODE=$(echo "$ADMIN_SIGNUP" | tail -n 1)
+          BODY=$(echo "$ADMIN_SIGNUP" | head -n -1)
+
+          echo "Admin user creation HTTP Status: $HTTP_CODE"
+          echo "Response Body: $BODY"
+
+          if [ "$HTTP_CODE" -ne 201 ]; then
+            echo "Admin user creation failed with status $HTTP_CODE"
+            docker compose logs backend | tail -50
+            exit 1
+          fi
+
+          if ! echo "$BODY" | grep -q "ROLE_ADMIN"; then
+            echo "Admin user role not verified in response"
+            exit 1
+          fi
+
+          echo "✅ Admin user created successfully!"
+
+          # 無効な管理キーでテスト（401エラー期待）
+          INVALID_KEY=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/admin/users \
+            -H "Content-Type: application/json" \
+            -H "X-Admin-Key: invalid-key" \
+            -d '{"email":"invalid@example.com","username":"invaliduser","password":"pass123"}')
+          HTTP_CODE=$(echo "$INVALID_KEY" | tail -n 1)
+
+          echo "Invalid admin key HTTP Status: $HTTP_CODE"
+
+          if [ "$HTTP_CODE" -ne 401 ]; then
+            echo "Expected 401 Unauthorized for invalid key but got $HTTP_CODE"
+            exit 1
+          fi
+
+          echo "✅ Invalid admin key rejected!"
+
+          # 管理キーなしでテスト（401エラー期待）
+          NO_KEY=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/admin/users \
+            -H "Content-Type: application/json" \
+            -d '{"email":"nokey@example.com","username":"nokeyuser","password":"pass123"}')
+          HTTP_CODE=$(echo "$NO_KEY" | tail -n 1)
+
+          echo "No admin key HTTP Status: $HTTP_CODE"
+
+          if [ "$HTTP_CODE" -ne 401 ] && [ "$HTTP_CODE" -ne 403 ]; then
+            echo "Expected 401/403 for missing key but got $HTTP_CODE"
+            exit 1
+          fi
+
+          echo "✅ Missing admin key rejected!"
+
+      - name: Test admin user can create subjects
+        run: |
+          # 管理者でサインイン
+          ADMIN_SIGNIN=$(curl -s -X POST http://localhost:8080/api/auth/signin \
+            -H "Content-Type: application/json" \
+            -d '{"email":"admin@example.com","password":"adminpass123"}')
+          ADMIN_TOKEN=$(echo "$ADMIN_SIGNIN" | grep -o '"accessToken":"[^"]*"' | cut -d'"' -f4)
+          echo "Obtained admin JWT token"
+
+          if [ -z "$ADMIN_TOKEN" ]; then
+            echo "Failed to obtain admin token"
+            docker compose logs backend | tail -50
+            exit 1
+          fi
+
+          # 管理者権限で題材作成（成功期待）
+          CREATE_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/subjects \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $ADMIN_TOKEN" \
+            -d '{"subjectId":99,"title":"Admin Created Subject","description":"By admin user","maxSections":50}')
+          HTTP_CODE=$(echo "$CREATE_RESPONSE" | tail -n 1)
+          BODY=$(echo "$CREATE_RESPONSE" | head -n -1)
+
+          echo "Create subject with ROLE_ADMIN HTTP Status: $HTTP_CODE"
+          echo "Response Body: $BODY"
+
+          if [ "$HTTP_CODE" -ne 201 ]; then
+            echo "Admin subject creation failed with status $HTTP_CODE"
+            docker compose logs backend | tail -50
+            exit 1
+          fi
+
+          echo "✅ Admin can create subjects!"
+
       - name: Test subjects API
         run: |
           # サインインしてJWTトークンを取得
@@ -238,11 +330,6 @@ jobs:
           fi
 
           echo "✅ RBAC verified: ROLE_USER cannot create subjects!"
-
-          # RBAC: 管理者ユーザー（ROLE_ADMIN）を作成してテスト
-          # TODO: 実際の管理者作成エンドポイントまたはマイグレーションで初期管理者を用意する必要があります
-          # 現在は一般ユーザーしか作成できないため、このテストはスキップまたは将来の実装待ち
-          echo "⚠️  ADMIN user creation test skipped - awaiting admin user creation mechanism"
 
           # 既存の題材を取得（GET操作は誰でも可能）
           # 既存の題材を取得（GET操作は誰でも可能）
