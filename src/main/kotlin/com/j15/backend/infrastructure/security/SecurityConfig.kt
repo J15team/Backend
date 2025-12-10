@@ -3,6 +3,7 @@ package com.j15.backend.infrastructure.security
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -13,8 +14,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 class SecurityConfig(
-    private val jwtAuthenticationFilter: JwtAuthenticationFilter
+    private val jwtAuthenticationFilter: JwtAuthenticationFilter,
+    private val rateLimitFilter: RateLimitFilter
 ) {
 
     @Bean
@@ -31,10 +34,15 @@ class SecurityConfig(
                 authz
                     // ヘルスチェック、Actuator は認証不要
                     .requestMatchers("/api/health", "/actuator/**").permitAll()
-                    // 認証関連エンドポイント（サインイン、サインアップ）は認証不要
-                    .requestMatchers(HttpMethod.POST, "/api/auth/signin", "/api/auth/signup").permitAll()
+                    // 認証関連エンドポイントは認証不要
+                    .requestMatchers(
+                        HttpMethod.POST,
+                        "/api/auth/signin",
+                        "/api/auth/signup",
+                        "/api/auth/refresh"
+                    )
+                    .permitAll()
                     // 管理者エンドポイント（APIキーで保護、コントローラー内で検証）
-                    // TODO: Spring Securityの認証フローに統合してセキュリティ監査を改善
                     .requestMatchers("/api/admin/**").permitAll()
                     // 題材の取得（GET）は認証不要
                     .requestMatchers(HttpMethod.GET, "/api/subjects/**").permitAll()
@@ -42,9 +50,13 @@ class SecurityConfig(
                     .requestMatchers(HttpMethod.POST, "/api/subjects/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.PUT, "/api/subjects/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/api/subjects/**").hasRole("ADMIN")
+                    // 進捗APIは認証必須
+                    .requestMatchers("/api/progress/**").authenticated()
                     // その他のすべてのエンドポイントは認証必須
                     .anyRequest().authenticated()
             }
+            // RateLimit -> JWT -> UsernamePassword の順序で評価
+            .addFilterBefore(rateLimitFilter, JwtAuthenticationFilter::class.java)
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
 
         return http.build()

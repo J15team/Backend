@@ -1,6 +1,6 @@
 package com.j15.backend.presentation.controller.progress
 
-import com.j15.backend.application.usecase.ProgressUseCase
+import com.j15.backend.application.usecase.progress.ProgressUseCase
 import com.j15.backend.domain.model.section.SectionId
 import com.j15.backend.domain.model.subject.SubjectId
 import com.j15.backend.domain.model.user.UserId

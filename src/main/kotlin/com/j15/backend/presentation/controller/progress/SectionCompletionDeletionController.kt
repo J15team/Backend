@@ -1,6 +1,6 @@
 package com.j15.backend.presentation.controller.progress
 
-import com.j15.backend.application.usecase.ProgressUseCase
+import com.j15.backend.application.usecase.progress.ProgressUseCase
 import com.j15.backend.domain.model.section.SectionId
 import com.j15.backend.domain.model.subject.SubjectId
 import com.j15.backend.domain.model.user.UserId
@@ -25,16 +25,12 @@ class SectionCompletionDeletionController(private val progressUseCase: ProgressU
         val subjectIdObj = SubjectId(subjectId)
         val sectionIdObj = SectionId(sectionId)
 
-        val result = progressUseCase.unmarkSectionAsCleared(userIdObj, subjectIdObj, sectionIdObj)
-
-        return result.fold(
-                onSuccess = {
-                    ResponseEntity.ok(mapOf("message" to "セクション $sectionId の完了記録を削除しました"))
-                },
-                onFailure = { error ->
-                    ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body(mapOf("error" to (error.message ?: "削除に失敗しました")))
-                }
-        )
+        return try {
+            progressUseCase.unmarkSectionAsCleared(userIdObj, subjectIdObj, sectionIdObj)
+            ResponseEntity.ok(mapOf("message" to "セクション $sectionId の完了記録を削除しました"))
+        } catch (e: Exception) {
+            ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(mapOf("error" to (e.message ?: "削除に失敗しました")))
+        }
     }
 }

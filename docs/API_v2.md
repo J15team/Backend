@@ -199,6 +199,55 @@ Content-Type: application/json
 
 ---
 
+### トークンリフレッシュ
+
+```
+POST /api/auth/refresh
+```
+
+**認証**: 不要
+
+**リクエストヘッダー**
+
+```
+Content-Type: application/json
+```
+
+**リクエストボディ**
+
+```json
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+| フィールド   | 型     | 必須 | 説明                   |
+| ------------ | ------ | ---- | ---------------------- |
+| refreshToken | string | ○    | リフレッシュトークン   |
+
+**レスポンス**
+
+**成功時 (200 OK)**
+
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+| フィールド   | 型     | 説明                                     |
+| ------------ | ------ | ---------------------------------------- |
+| accessToken  | string | 新しいアクセストークン（JWT）             |
+| refreshToken | string | リフレッシュトークン（JWT）               |
+
+**エラー**
+
+- **400 Bad Request**: リフレッシュトークンが無効または期限切れ
+- **400 Bad Request**: ユーザーが見つからない
+
+---
+
 ## 題材管理 API
 
 題材（学習プロジェクト）を管理します。各題材には複数のセクションが属します。
