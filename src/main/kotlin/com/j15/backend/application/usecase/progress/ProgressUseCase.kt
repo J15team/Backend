@@ -8,7 +8,6 @@ import com.j15.backend.domain.model.user.UserId
 import com.j15.backend.domain.repository.SectionRepository
 import com.j15.backend.domain.repository.SubjectRepository
 import com.j15.backend.domain.repository.UserClearedSectionRepository
-import java.time.Instant
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -25,26 +24,22 @@ class ProgressUseCase(
                 subjectId: SubjectId,
                 sectionId: SectionId
         ): UserClearedSection {
-                subjectRepository.findById(subjectId)
+                val subject = subjectRepository.findById(subjectId)
                         ?: throw IllegalArgumentException("題材が見つかりません: ${subjectId.value}")
+                sectionRepository.findById(subjectId, sectionId)
+                        ?: throw IllegalArgumentException("セクションが見つかりません: ${sectionId.value}")
 
-                if (isSectionCleared(userId, subjectId, sectionId)) {
-                        throw IllegalStateException("セクション ${sectionId.value} は既に完了しています")
-                }
-                val cleared =
-                        UserClearedSection(
-                                userClearedSectionId = null,
-                                userId = userId,
-                                subjectId = subjectId,
-                                sectionId = sectionId,
-                                completedAt = Instant.now()
-                        )
+                val userProgress = getUserProgress(userId, subjectId)
+                val cleared = userProgress.markSectionAsCleared(sectionId)
 
                 return clearedSectionRepository.save(cleared)
         }
 
         /** セクション完了を取り消し デバッグや管理機能で使用 */
         fun unmarkSectionAsCleared(userId: UserId, subjectId: SubjectId, sectionId: SectionId) {
+                if (!isSectionCleared(userId, subjectId, sectionId)) {
+                        throw IllegalArgumentException("セクション ${sectionId.value} は完了していません")
+                }
                 clearedSectionRepository.deleteByUserIdAndSubjectIdAndSectionId(
                         userId,
                         subjectId,

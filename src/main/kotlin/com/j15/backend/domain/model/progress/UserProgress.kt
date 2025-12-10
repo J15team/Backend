@@ -14,7 +14,13 @@ data class UserProgress(
         val totalSections: Int // 題材の最大セクション数
 ) {
 
-    /** 進捗率を計算（0~100の整数パーセンテージ） 小数点以下は切り捨て 全完了時は必ず100%を返す 動的なセクション数に対応 */
+    /**
+     * 進捗率を計算（0~100の整数パーセンテージ）
+     *
+     * - 小数点以下は切り捨て
+     * - 全完了時は必ず100%を返す
+     * - 動的なセクション数に対応
+     */
     fun calculateProgressPercentage(): Int {
         if (totalSections == 0) {
             return 0
@@ -42,6 +48,27 @@ data class UserProgress(
         return clearedSections.any { it.sectionId == sectionId }
     }
 
+    /**
+     * セクションを完了としてマークする
+     *
+     * @param sectionId 完了するセクションID
+     * @return 完了記録エンティティ
+     * @throws IllegalStateException セクションが既に完了している場合
+     */
+    fun markSectionAsCleared(sectionId: SectionId): UserClearedSection {
+        require(!isSectionCleared(sectionId)) {
+            "セクション ${sectionId.value} は既に完了しています"
+        }
+
+        return UserClearedSection(
+            userClearedSectionId = null,
+            userId = userId,
+            subjectId = subjectId,
+            sectionId = sectionId,
+            completedAt = java.time.Instant.now()
+        )
+    }
+
     /** 完了済みセクションIDのリストを取得 */
     fun getClearedSectionIds(): List<SectionId> {
         return clearedSections.map { it.sectionId }
@@ -67,7 +94,9 @@ data class UserProgress(
 
     companion object {
         /**
-         * ファクトリメソッド ユーザー進捗状態を構築する
+         * ファクトリメソッド
+         *
+         * ユーザー進捗状態を構築する
          *
          * @param userId ユーザーID
          * @param subjectId 題材ID

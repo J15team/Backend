@@ -14,7 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter
 /**
  * JWT認証フィルター
  *
- * Bearer Tokenを検証しSecurityContextに認証情報をセット。 401エラーは返さず、SecurityConfigが処理する。
+ * Bearer Tokenを検証しSecurityContextに認証情報をセット。 401エラーは返さず、SecurityConfigurationが処理する。
  */
 @Component
 class JwtAuthenticationFilter(private val jwtTokenService: JwtTokenService) :

@@ -38,8 +38,8 @@ class AuthController(
 
     @PostMapping("/signup")
     fun signUp(@Valid @RequestBody request: RegisterUserRequest): LoginResponse {
-        val user =
-                userCommandUseCase.register(
+        val result =
+                userCommandUseCase.registerAndGenerateTokens(
                         RegisterUserCommand(
                                 username = request.username,
                                 email = request.email,
@@ -47,16 +47,14 @@ class AuthController(
                         )
                 )
 
-        val authResult = authUseCase.authenticate(request.email, request.password)
-
         return LoginResponse(
-                accessToken = authResult.tokens.accessToken.value,
-                refreshToken = authResult.tokens.refreshToken.value,
+                accessToken = result.tokens.accessToken.value,
+                refreshToken = result.tokens.refreshToken.value,
                 user =
                         LoginResponse.UserInfo(
-                                id = user.userId.value.toString(),
-                                username = user.username.value,
-                                email = user.email.value
+                                id = result.user.userId.value.toString(),
+                                username = result.user.username.value,
+                                email = result.user.email.value
                         )
         )
     }
