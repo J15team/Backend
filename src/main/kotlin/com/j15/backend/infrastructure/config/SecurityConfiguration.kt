@@ -31,27 +31,21 @@ class SecurityConfiguration(private val jwtAuthenticationFilter: JwtAuthenticati
                 .authorizeHttpRequests { auth ->
                     auth
                             // 認証不要の公開エンドポイント
-                            .requestMatchers("/api/auth/signin", "/api/users/signup", "/api/health")
-                            .permitAll()
-                            // Actuatorエンドポイント（監視用）
-                            .requestMatchers("/actuator/**")
-                            .permitAll()
+                            .requestMatchers("/api/health", "/actuator/**").permitAll()
+                            // 認証関連エンドポイント
+                            .requestMatchers(HttpMethod.POST, "/api/auth/signin", "/api/auth/signup").permitAll()
+                            // 管理者エンドポイント（管理キーで保護）
+                            .requestMatchers("/api/admin/**").permitAll()
                             // 題材の読み取り（GET）は公開
-                            .requestMatchers(HttpMethod.GET, "/api/subjects/**")
-                            .permitAll()
-                            // 題材の作成・更新・削除は認証必須
-                            .requestMatchers(HttpMethod.POST, "/api/subjects/**")
-                            .authenticated()
-                            .requestMatchers(HttpMethod.PUT, "/api/subjects/**")
-                            .authenticated()
-                            .requestMatchers(HttpMethod.DELETE, "/api/subjects/**")
-                            .authenticated()
+                            .requestMatchers(HttpMethod.GET, "/api/subjects/**").permitAll()
+                            // 題材の作成・更新・削除は ROLE_ADMIN のみ
+                            .requestMatchers(HttpMethod.POST, "/api/subjects/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.PUT, "/api/subjects/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, "/api/subjects/**").hasRole("ADMIN")
                             // 進捗APIは認証必須
-                            .requestMatchers("/api/progress/**")
-                            .authenticated()
+                            .requestMatchers("/api/progress/**").authenticated()
                             // その他のエンドポイントも認証必須
-                            .anyRequest()
-                            .authenticated()
+                            .anyRequest().authenticated()
                 }
                 .addFilterBefore(
                         jwtAuthenticationFilter,
