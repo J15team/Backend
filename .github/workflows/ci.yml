@@ -165,7 +165,7 @@ jobs:
             exit 1
           fi
 
-          if ! echo "$BODY" | grep -q "パスワードが正しくありません"; then
+          if ! echo "$BODY" | grep -q "メールアドレスまたはパスワードが正しくありません"; then
             echo "Wrong password error message not found"
             exit 1
           fi
@@ -287,7 +287,7 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{"username":"progressuser","email":"progress@example.com","password":"password123"}')
 
-          USER_ID=$(echo "$SIGNUP_RESPONSE" | grep -o '"userId":"[^"]*"' | cut -d'"' -f4)
+          USER_ID=$(echo "$SIGNUP_RESPONSE" | grep -o '"id":"[^"]*"' | cut -d'"' -f4)
           echo "Created user with ID: $USER_ID"
 
           if [ -z "$USER_ID" ]; then
