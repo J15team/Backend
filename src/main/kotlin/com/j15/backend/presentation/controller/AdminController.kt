@@ -55,14 +55,16 @@ class AdminController(
             )
             
             ResponseEntity.status(HttpStatus.CREATED).body(response)
+        } catch (e: SecurityException) {
+            logger.warn("Admin user creation failed due to invalid key", e)
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(mapOf("error" to "認証に失敗しました"))
         } catch (e: IllegalArgumentException) {
-            logger.warn("Admin user creation failed: {}", e.javaClass.simpleName)
-            logger.debug("Admin user creation failed with details", e)
-            ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(mapOf("error" to "管理者ユーザーの作成に失敗しました"))
+            logger.warn("Admin user creation failed: ${e.message}", e)
+            ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(mapOf("error" to e.message))
         } catch (e: Exception) {
-            logger.error("Unexpected error during admin user creation: {}", e.javaClass.simpleName)
-            logger.debug("Unexpected error details", e)
+            logger.error("Unexpected error during admin user creation: ${e.message}", e)
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(mapOf("error" to "管理者ユーザーの作成中にエラーが発生しました"))
         }
