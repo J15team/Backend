@@ -35,7 +35,7 @@ class SecurityConfiguration(
                 .authorizeHttpRequests { auth ->
                     auth
                             // 認証不要の公開エンドポイント
-                            .requestMatchers("/api/auth/signin", "/api/users/signup", "/api/health")
+                            .requestMatchers("/api/auth/signin", "/api/auth/signup", "/api/auth/refresh", "/api/health")
                             .permitAll()
                             // Actuatorエンドポイント（監視用）
                             .requestMatchers("/actuator/**")

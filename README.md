@@ -96,7 +96,7 @@ CI/CDではGitHub Actionsで自動的にE2Eテストが実行されます。
 
 | カテゴリ | メソッド | エンドポイント | 説明 |
 |---------|---------|---------------|------|
-| 認証 | POST | `/api/users/signup` | 新規ユーザー登録 |
+| 認証 | POST | `/api/auth/signup` | 新規ユーザー登録 |
 | 認証 | POST | `/api/auth/signin` | ログイン |
 | セクション | GET | `/api/sections` | 全セクション一覧 |
 | セクション | GET | `/api/sections/{sectionId}` | セクション詳細 |
@@ -111,7 +111,7 @@ CI/CDではGitHub Actionsで自動的にE2Eテストが実行されます。
 #### サインアップ
 
 ```bash
-curl -X POST http://localhost:8080/api/users/signup \
+curl -X POST http://localhost:8080/api/auth/signup \
   -H "Content-Type: application/json" \
   -d '{
     "username": "testuser",

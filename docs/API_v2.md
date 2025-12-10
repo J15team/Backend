@@ -89,7 +89,7 @@ ISO 8601 形式（UTC）を使用します。
 **エンドポイント**
 
 ```http
-POST /api/users/signup
+POST /api/auth/signup
 ```
 
 **認証**: 不要
@@ -196,6 +196,55 @@ Content-Type: application/json
 **エラー**
 
 - **400 Bad Request**: メールアドレスまたはパスワードが不正
+
+---
+
+### トークンリフレッシュ
+
+```
+POST /api/auth/refresh
+```
+
+**認証**: 不要
+
+**リクエストヘッダー**
+
+```
+Content-Type: application/json
+```
+
+**リクエストボディ**
+
+```json
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+| フィールド   | 型     | 必須 | 説明                   |
+| ------------ | ------ | ---- | ---------------------- |
+| refreshToken | string | ○    | リフレッシュトークン   |
+
+**レスポンス**
+
+**成功時 (200 OK)**
+
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+| フィールド   | 型     | 説明                                     |
+| ------------ | ------ | ---------------------------------------- |
+| accessToken  | string | 新しいアクセストークン（JWT）             |
+| refreshToken | string | リフレッシュトークン（JWT）               |
+
+**エラー**
+
+- **400 Bad Request**: リフレッシュトークンが無効または期限切れ
+- **400 Bad Request**: ユーザーが見つからない
 
 ---
 
@@ -846,7 +895,7 @@ Authorization: Bearer {accessToken}
 ```typescript
 // サインアップ
 const signup = async (username: string, email: string, password: string) => {
-  const response = await fetch("/api/users/signup", {
+  const response = await fetch("/api/auth/signup", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, email, password }),

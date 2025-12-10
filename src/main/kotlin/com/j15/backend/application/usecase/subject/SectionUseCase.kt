@@ -1,4 +1,4 @@
-package com.j15.backend.application.usecase
+package com.j15.backend.application.usecase.subject
 
 import com.j15.backend.domain.model.section.Section
 import com.j15.backend.domain.model.section.SectionId
