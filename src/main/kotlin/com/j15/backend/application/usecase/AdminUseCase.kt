@@ -99,14 +99,14 @@ class AdminUseCase(
         }
         
         if (adminApiKey.isBlank()) {
-            throw IllegalArgumentException("Invalid admin API key")
+            throw SecurityException("Admin API key not configured")
         }
 
         if (!MessageDigest.isEqual(
             providedKey.toByteArray(Charsets.UTF_8),
             adminApiKey.toByteArray(Charsets.UTF_8)
         )) {
-            throw IllegalArgumentException("Invalid admin API key")
+            throw SecurityException("Invalid admin API key")
         }
     }
 }
