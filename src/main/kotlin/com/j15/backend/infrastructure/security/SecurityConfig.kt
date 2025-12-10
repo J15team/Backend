@@ -33,7 +33,8 @@ class SecurityConfig(
                     .requestMatchers("/api/health", "/actuator/**").permitAll()
                     // 認証関連エンドポイント（サインイン、サインアップ）は認証不要
                     .requestMatchers(HttpMethod.POST, "/api/auth/signin", "/api/auth/signup").permitAll()
-                    // 管理者エンドポイント（管理キーで保護）は認証不要
+                    // 管理者エンドポイント（APIキーで保護、コントローラー内で検証）
+                    // TODO: Spring Securityの認証フローに統合してセキュリティ監査を改善
                     .requestMatchers("/api/admin/**").permitAll()
                     // 題材の取得（GET）は認証不要
                     .requestMatchers(HttpMethod.GET, "/api/subjects/**").permitAll()
