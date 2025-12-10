@@ -8,5 +8,6 @@ data class User(
         val username: Username,
         val email: Email,
         val passwordHash: PasswordHash,
+        val role: UserRole = UserRole.ROLE_USER,
         val createdAt: Instant = Instant.now()
 )

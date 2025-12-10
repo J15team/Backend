@@ -1,0 +1,1791 @@
+time="2025-12-09T10:15:15+09:00" level=warning msg="C:\\2025\\J15\\Backend\\docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+Compose can now delegate builds to bake for better performance.
+ To do so, set COMPOSE_BAKE=true.
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [backend internal] load build definition from Dockerfile
+#1 transferring dockerfile: 868B 0.0s done
+#1 DONE 0.1s
+
+#2 [backend internal] load metadata for docker.io/library/gradle:8.5-jdk17
+#2 ...
+
+#3 [backend internal] load metadata for docker.io/library/eclipse-temurin:17-jre
+#3 DONE 2.0s
+
+#2 [backend internal] load metadata for docker.io/library/gradle:8.5-jdk17
+#2 DONE 2.2s
+
+#4 [backend internal] load .dockerignore
+#4 transferring context: 245B done
+#4 DONE 0.0s
+
+#5 [backend build 1/7] FROM docker.io/library/gradle:8.5-jdk17@sha256:7704366590930c03de7e514008ba3d7b7031b92591bd5a74fae79c16f3a17726
+#5 DONE 0.0s
+
+#6 [backend stage-1 1/4] FROM docker.io/library/eclipse-temurin:17-jre@sha256:75ab7d1b4b18483e9245342cbee253b558952c1def5c1c18956196330a01683e
+#6 DONE 0.0s
+
+#7 [backend internal] load build context
+#7 transferring context: 46.11kB 0.0s done
+#7 DONE 0.1s
+
+#8 [backend build 2/7] WORKDIR /app
+#8 CACHED
+
+#9 [backend build 3/7] COPY build.gradle.kts settings.gradle.kts ./
+#9 CACHED
+
+#10 [backend build 4/7] COPY gradle ./gradle
+#10 CACHED
+
+#11 [backend build 5/7] RUN gradle dependencies --no-daemon || true
+#11 2.051 
+#11 2.051 Welcome to Gradle 8.5!
+#11 2.051 
+#11 2.052 Here are the highlights of this release:
+#11 2.052  - Support for running on Java 21
+#11 2.052  - Faster first use with Kotlin DSL
+#11 2.052  - Improved error and warning messages
+#11 2.052 
+#11 2.052 For more details see https://docs.gradle.org/8.5/release-notes.html
+#11 2.053 
+#11 2.249 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.5/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+#11 3.748 Daemon will be stopped at the end of the build 
+#11 100.9 
+#11 100.9 > Task :dependencies
+#11 100.9 
+#11 100.9 ------------------------------------------------------------
+#11 100.9 Root project 'backend'
+#11 100.9 ------------------------------------------------------------
+#11 100.9 
+#11 100.9 annotationProcessor - Annotation processors and their dependencies for source set 'main'.
+#11 105.5 No dependencies
+#11 105.5 
+#11 105.5 api - API dependencies for null/main (n)
+#11 105.5 No dependencies
+#11 105.5 
+#11 105.5 apiDependenciesMetadata
+#11 106.1 \--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21
+#11 106.1 
+#11 106.1 apiElements - API elements for the 'main' feature. (n)
+#11 106.1 No dependencies
+#11 106.1 
+#11 106.1 apiElements-published (n)
+#11 106.1 No dependencies
+#11 106.1 
+#11 106.1 bootArchives - Configuration for Spring Boot archive artifacts. (n)
+#11 106.1 No dependencies
+#11 106.1 
+#11 106.1 compileClasspath - Compile classpath for null/main.
+#11 115.0 +--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21
+#11 115.0 |    \--- org.jetbrains:annotations:13.0
+#11 115.0 +--- org.springframework.boot:spring-boot-starter-web -> 3.2.0
+#11 115.0 |    +--- org.springframework.boot:spring-boot-starter:3.2.0
+#11 115.0 |    |    +--- org.springframework.boot:spring-boot:3.2.0
+#11 115.0 |    |    |    +--- org.springframework:spring-core:6.1.1
+#11 115.0 |    |    |    |    \--- org.springframework:spring-jcl:6.1.1
+#11 115.0 |    |    |    \--- org.springframework:spring-context:6.1.1
+#11 115.0 |    |    |         +--- org.springframework:spring-aop:6.1.1
+#11 115.0 |    |    |         |    +--- org.springframework:spring-beans:6.1.1
+#11 115.0 |    |    |         |    |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 115.0 |    |    |         |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 115.0 |    |    |         +--- org.springframework:spring-beans:6.1.1 (*)
+#11 115.1 |    |    |         +--- org.springframework:spring-core:6.1.1 (*)
+#11 115.1 |    |    |         +--- org.springframework:spring-expression:6.1.1
+#11 115.1 |    |    |         |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 115.1 |    |    |         \--- io.micrometer:micrometer-observation:1.12.0
+#11 115.1 |    |    |              \--- io.micrometer:micrometer-commons:1.12.0
+#11 115.1 |    |    +--- org.springframework.boot:spring-boot-autoconfigure:3.2.0
+#11 115.1 |    |    |    \--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 115.1 |    |    +--- org.springframework.boot:spring-boot-starter-logging:3.2.0
+#11 115.1 |    |    |    +--- ch.qos.logback:logback-classic:1.4.11
+#11 115.1 |    |    |    |    +--- ch.qos.logback:logback-core:1.4.11
+#11 115.1 |    |    |    |    \--- org.slf4j:slf4j-api:2.0.7 -> 2.0.9
+#11 115.1 |    |    |    +--- org.apache.logging.log4j:log4j-to-slf4j:2.21.1
+#11 115.1 |    |    |    |    +--- org.apache.logging.log4j:log4j-api:2.21.1
+#11 115.1 |    |    |    |    \--- org.slf4j:slf4j-api:1.7.36 -> 2.0.9
+#11 115.1 |    |    |    \--- org.slf4j:jul-to-slf4j:2.0.9
+#11 115.1 |    |    |         \--- org.slf4j:slf4j-api:2.0.9
+#11 115.1 |    |    +--- jakarta.annotation:jakarta.annotation-api:2.1.1
+#11 115.1 |    |    +--- org.springframework:spring-core:6.1.1 (*)
+#11 115.1 |    |    \--- org.yaml:snakeyaml:2.2
+#11 115.1 |    +--- org.springframework.boot:spring-boot-starter-json:3.2.0
+#11 115.1 |    |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 115.1 |    |    +--- org.springframework:spring-web:6.1.1
+#11 115.1 |    |    |    +--- org.springframework:spring-beans:6.1.1 (*)
+#11 115.1 |    |    |    +--- org.springframework:spring-core:6.1.1 (*)
+#11 115.1 |    |    |    \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 115.1 |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3
+#11 115.1 |    |    |    +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3
+#11 115.1 |    |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3
+#11 115.1 |    |    |    |         +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3 (c)
+#11 115.1 |    |    |    |         +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (c)
+#11 115.1 |    |    |    |         +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (c)
+#11 115.1 |    |    |    |         +--- com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.15.3 (c)
+#11 115.1 |    |    |    |         +--- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.15.3 (c)
+#11 115.1 |    |    |    |         +--- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3 (c)
+#11 115.1 |    |    |    |         +--- com.fasterxml.jackson.module:jackson-module-kotlin:2.15.3 (c)
+#11 115.1 |    |    |    |         \--- com.fasterxml.jackson.module:jackson-module-parameter-names:2.15.3 (c)
+#11 115.1 |    |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3
+#11 115.1 |    |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 115.1 |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 115.1 |    |    +--- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.15.3
+#11 115.1 |    |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 115.1 |    |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 115.1 |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 115.1 |    |    +--- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3
+#11 115.1 |    |    |    +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3 (*)
+#11 115.1 |    |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 115.1 |    |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 115.1 |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 115.1 |    |    \--- com.fasterxml.jackson.module:jackson-module-parameter-names:2.15.3
+#11 115.1 |    |         +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 115.1 |    |         +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 115.1 |    |         \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 115.1 |    +--- org.springframework.boot:spring-boot-starter-tomcat:3.2.0
+#11 115.1 |    |    +--- jakarta.annotation:jakarta.annotation-api:2.1.1
+#11 115.1 |    |    +--- org.apache.tomcat.embed:tomcat-embed-core:10.1.16
+#11 115.1 |    |    +--- org.apache.tomcat.embed:tomcat-embed-el:10.1.16
+#11 115.1 |    |    \--- org.apache.tomcat.embed:tomcat-embed-websocket:10.1.16
+#11 115.1 |    |         \--- org.apache.tomcat.embed:tomcat-embed-core:10.1.16
+#11 115.1 |    +--- org.springframework:spring-web:6.1.1 (*)
+#11 115.1 |    \--- org.springframework:spring-webmvc:6.1.1
+#11 115.1 |         +--- org.springframework:spring-aop:6.1.1 (*)
+#11 115.1 |         +--- org.springframework:spring-beans:6.1.1 (*)
+#11 115.1 |         +--- org.springframework:spring-context:6.1.1 (*)
+#11 115.1 |         +--- org.springframework:spring-core:6.1.1 (*)
+#11 115.1 |         +--- org.springframework:spring-expression:6.1.1 (*)
+#11 115.1 |         \--- org.springframework:spring-web:6.1.1 (*)
+#11 115.1 +--- org.springframework.boot:spring-boot-starter-actuator -> 3.2.0
+#11 115.1 |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 115.1 |    +--- org.springframework.boot:spring-boot-actuator-autoconfigure:3.2.0
+#11 115.1 |    |    +--- org.springframework.boot:spring-boot-actuator:3.2.0
+#11 115.1 |    |    |    \--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 115.1 |    |    +--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 115.1 |    |    \--- org.springframework.boot:spring-boot-autoconfigure:3.2.0 (*)
+#11 115.1 |    +--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 115.1 |    \--- io.micrometer:micrometer-jakarta9:1.12.0
+#11 115.1 |         +--- io.micrometer:micrometer-core:1.12.0
+#11 115.1 |         |    +--- io.micrometer:micrometer-commons:1.12.0
+#11 115.1 |         |    \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 115.1 |         +--- io.micrometer:micrometer-commons:1.12.0
+#11 115.1 |         \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 115.1 +--- org.springframework.boot:spring-boot-starter-data-jpa -> 3.2.0
+#11 115.1 |    +--- org.springframework.boot:spring-boot-starter-aop:3.2.0
+#11 115.1 |    |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 115.1 |    |    +--- org.springframework:spring-aop:6.1.1 (*)
+#11 115.1 |    |    \--- org.aspectj:aspectjweaver:1.9.20.1
+#11 115.1 |    +--- org.springframework.boot:spring-boot-starter-jdbc:3.2.0
+#11 115.1 |    |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 115.1 |    |    +--- com.zaxxer:HikariCP:5.0.1
+#11 115.1 |    |    |    \--- org.slf4j:slf4j-api:1.7.30 -> 2.0.9
+#11 115.1 |    |    \--- org.springframework:spring-jdbc:6.1.1
+#11 115.1 |    |         +--- org.springframework:spring-beans:6.1.1 (*)
+#11 115.1 |    |         +--- org.springframework:spring-core:6.1.1 (*)
+#11 115.1 |    |         \--- org.springframework:spring-tx:6.1.1
+#11 115.1 |    |              +--- org.springframework:spring-beans:6.1.1 (*)
+#11 115.1 |    |              \--- org.springframework:spring-core:6.1.1 (*)
+#11 115.1 |    +--- org.hibernate.orm:hibernate-core:6.3.1.Final
+#11 115.1 |    |    +--- jakarta.persistence:jakarta.persistence-api:3.1.0
+#11 115.1 |    |    \--- jakarta.transaction:jakarta.transaction-api:2.0.1
+#11 115.1 |    +--- org.springframework.data:spring-data-jpa:3.2.0
+#11 115.1 |    |    +--- org.springframework.data:spring-data-commons:3.2.0
+#11 115.1 |    |    |    +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 115.1 |    |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 115.1 |    |    |    \--- org.slf4j:slf4j-api:2.0.2 -> 2.0.9
+#11 115.1 |    |    +--- org.springframework:spring-orm:6.1.0 -> 6.1.1
+#11 115.1 |    |    |    +--- org.springframework:spring-beans:6.1.1 (*)
+#11 115.1 |    |    |    +--- org.springframework:spring-core:6.1.1 (*)
+#11 115.1 |    |    |    +--- org.springframework:spring-jdbc:6.1.1 (*)
+#11 115.1 |    |    |    \--- org.springframework:spring-tx:6.1.1 (*)
+#11 115.1 |    |    +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 115.1 |    |    +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 115.1 |    |    +--- org.springframework:spring-tx:6.1.0 -> 6.1.1 (*)
+#11 115.1 |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 115.1 |    |    +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 115.1 |    |    +--- org.antlr:antlr4-runtime:4.10.1
+#11 115.1 |    |    +--- jakarta.annotation:jakarta.annotation-api:2.0.0 -> 2.1.1
+#11 115.1 |    |    \--- org.slf4j:slf4j-api:2.0.2 -> 2.0.9
+#11 115.1 |    \--- org.springframework:spring-aspects:6.1.1
+#11 115.1 |         \--- org.aspectj:aspectjweaver:1.9.20.1
+#11 115.1 +--- org.springframework.boot:spring-boot-starter-validation -> 3.2.0
+#11 115.1 |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 115.1 |    +--- org.apache.tomcat.embed:tomcat-embed-el:10.1.16
+#11 115.1 |    \--- org.hibernate.validator:hibernate-validator:8.0.1.Final
+#11 115.1 |         +--- jakarta.validation:jakarta.validation-api:3.0.2
+#11 115.1 |         +--- org.jboss.logging:jboss-logging:3.4.3.Final -> 3.5.3.Final
+#11 115.1 |         \--- com.fasterxml:classmate:1.5.1 -> 1.6.0
+#11 115.1 +--- org.springframework.boot:spring-boot-starter-security -> 3.2.0
+#11 115.1 |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 115.1 |    +--- org.springframework:spring-aop:6.1.1 (*)
+#11 115.1 |    +--- org.springframework.security:spring-security-config:6.2.0
+#11 115.1 |    |    +--- org.springframework.security:spring-security-core:6.2.0
+#11 115.1 |    |    |    +--- org.springframework.security:spring-security-crypto:6.2.0
+#11 115.1 |    |    |    +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 115.1 |    |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 115.1 |    |    |    +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 115.1 |    |    |    +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 115.1 |    |    |    +--- org.springframework:spring-expression:6.1.0 -> 6.1.1 (*)
+#11 115.1 |    |    |    \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 115.1 |    |    +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 115.1 |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 115.1 |    |    +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 115.1 |    |    \--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 115.1 |    \--- org.springframework.security:spring-security-web:6.2.0
+#11 115.1 |         +--- org.springframework.security:spring-security-core:6.2.0 (*)
+#11 115.1 |         +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 115.1 |         +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 115.1 |         +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 115.1 |         +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 115.1 |         +--- org.springframework:spring-expression:6.1.0 -> 6.1.1 (*)
+#11 115.1 |         \--- org.springframework:spring-web:6.1.0 -> 6.1.1 (*)
+#11 115.1 +--- org.flywaydb:flyway-core -> 9.22.3
+#11 115.2 |    +--- com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.15.2 -> 2.15.3
+#11 115.2 |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 115.2 |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 115.2 |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 115.2 |    \--- com.google.code.gson:gson:2.10.1
+#11 115.2 +--- com.fasterxml.jackson.module:jackson-module-kotlin -> 2.15.3
+#11 115.2 |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 115.2 |    +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3 (*)
+#11 115.2 |    +--- org.jetbrains.kotlin:kotlin-reflect:1.5.32 -> 1.9.21
+#11 115.2 |    |    \--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21 (*)
+#11 115.2 |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 115.2 +--- org.jetbrains.kotlin:kotlin-reflect:1.9.21 (*)
+#11 115.2 +--- io.jsonwebtoken:jjwt-api:0.12.3
+#11 115.2 +--- io.jsonwebtoken:jjwt-impl:0.12.3
+#11 115.2 |    \--- io.jsonwebtoken:jjwt-api:0.12.3
+#11 115.2 \--- io.jsonwebtoken:jjwt-jackson:0.12.3
+#11 115.2      +--- io.jsonwebtoken:jjwt-api:0.12.3
+#11 115.2      \--- com.fasterxml.jackson.core:jackson-databind:2.12.7.1 -> 2.15.3 (*)
+#11 115.2 
+#11 115.2 compileOnly - Compile only dependencies for null/main. (n)
+#11 115.2 No dependencies
+#11 115.2 
+#11 115.2 compileOnlyDependenciesMetadata
+#11 115.2 No dependencies
+#11 115.2 
+#11 115.2 default - Configuration for default artifacts. (n)
+#11 115.2 No dependencies
+#11 115.2 
+#11 115.2 developmentOnly - Configuration for development-only dependencies such as Spring Boot's DevTools.
+#11 115.2 No dependencies
+#11 115.2 
+#11 115.2 implementation - Implementation only dependencies for null/main. (n)
+#11 115.2 +--- org.springframework.boot:spring-boot-starter-web (n)
+#11 115.2 +--- org.springframework.boot:spring-boot-starter-actuator (n)
+#11 115.2 +--- org.springframework.boot:spring-boot-starter-data-jpa (n)
+#11 115.2 +--- org.springframework.boot:spring-boot-starter-validation (n)
+#11 115.2 +--- org.springframework.boot:spring-boot-starter-security (n)
+#11 115.2 +--- org.flywaydb:flyway-core (n)
+#11 115.2 +--- com.fasterxml.jackson.module:jackson-module-kotlin (n)
+#11 115.2 +--- org.jetbrains.kotlin:kotlin-reflect (n)
+#11 115.2 +--- io.jsonwebtoken:jjwt-api:0.12.3 (n)
+#11 115.2 +--- io.jsonwebtoken:jjwt-impl:0.12.3 (n)
+#11 115.2 \--- io.jsonwebtoken:jjwt-jackson:0.12.3 (n)
+#11 115.2 
+#11 115.2 implementationDependenciesMetadata
+#11 115.2 +--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21
+#11 115.2 +--- org.springframework.boot:spring-boot-starter-web -> 3.2.0
+#11 115.3 |    +--- org.springframework.boot:spring-boot-starter:3.2.0
+#11 115.3 |    |    +--- org.springframework.boot:spring-boot:3.2.0
+#11 115.3 |    |    |    +--- org.springframework:spring-core:6.1.1
+#11 115.3 |    |    |    |    \--- org.springframework:spring-jcl:6.1.1
+#11 115.3 |    |    |    \--- org.springframework:spring-context:6.1.1
+#11 115.3 |    |    |         +--- org.springframework:spring-aop:6.1.1
+#11 115.3 |    |    |         |    +--- org.springframework:spring-beans:6.1.1
+#11 115.3 |    |    |         |    |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 115.3 |    |    |         |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 115.3 |    |    |         +--- org.springframework:spring-beans:6.1.1 (*)
+#11 115.3 |    |    |         +--- org.springframework:spring-core:6.1.1 (*)
+#11 115.3 |    |    |         +--- org.springframework:spring-expression:6.1.1
+#11 115.3 |    |    |         |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 115.3 |    |    |         \--- io.micrometer:micrometer-observation:1.12.0
+#11 115.3 |    |    |              \--- io.micrometer:micrometer-commons:1.12.0
+#11 115.3 |    |    +--- org.springframework.boot:spring-boot-autoconfigure:3.2.0
+#11 115.3 |    |    |    \--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 115.3 |    |    +--- org.springframework.boot:spring-boot-starter-logging:3.2.0
+#11 115.3 |    |    |    +--- ch.qos.logback:logback-classic:1.4.11
+#11 115.3 |    |    |    |    +--- ch.qos.logback:logback-core:1.4.11
+#11 115.3 |    |    |    |    \--- org.slf4j:slf4j-api:2.0.7 -> 2.0.9
+#11 115.3 |    |    |    +--- org.apache.logging.log4j:log4j-to-slf4j:2.21.1
+#11 115.3 |    |    |    |    +--- org.apache.logging.log4j:log4j-api:2.21.1
+#11 115.3 |    |    |    |    \--- org.slf4j:slf4j-api:1.7.36 -> 2.0.9
+#11 115.3 |    |    |    \--- org.slf4j:jul-to-slf4j:2.0.9
+#11 115.3 |    |    |         \--- org.slf4j:slf4j-api:2.0.9
+#11 115.3 |    |    +--- jakarta.annotation:jakarta.annotation-api:2.1.1
+#11 115.3 |    |    +--- org.springframework:spring-core:6.1.1 (*)
+#11 115.3 |    |    \--- org.yaml:snakeyaml:2.2
+#11 115.3 |    +--- org.springframework.boot:spring-boot-starter-json:3.2.0
+#11 115.3 |    |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 115.3 |    |    +--- org.springframework:spring-web:6.1.1
+#11 115.3 |    |    |    +--- org.springframework:spring-beans:6.1.1 (*)
+#11 115.3 |    |    |    +--- org.springframework:spring-core:6.1.1 (*)
+#11 115.3 |    |    |    \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 115.3 |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3
+#11 115.3 |    |    |    +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3
+#11 115.3 |    |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3
+#11 115.3 |    |    |    |         +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3 (c)
+#11 115.3 |    |    |    |         +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (c)
+#11 115.3 |    |    |    |         +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (c)
+#11 115.3 |    |    |    |         +--- com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.15.3 (c)
+#11 115.3 |    |    |    |         +--- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.15.3 (c)
+#11 115.3 |    |    |    |         +--- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3 (c)
+#11 115.3 |    |    |    |         +--- com.fasterxml.jackson.module:jackson-module-kotlin:2.15.3 (c)
+#11 115.3 |    |    |    |         \--- com.fasterxml.jackson.module:jackson-module-parameter-names:2.15.3 (c)
+#11 115.3 |    |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3
+#11 115.3 |    |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 115.3 |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 115.3 |    |    +--- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.15.3
+#11 115.3 |    |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 115.3 |    |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 115.3 |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 115.3 |    |    +--- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3
+#11 115.3 |    |    |    +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3 (*)
+#11 115.3 |    |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 115.3 |    |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 115.3 |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 115.3 |    |    \--- com.fasterxml.jackson.module:jackson-module-parameter-names:2.15.3
+#11 115.3 |    |         +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 115.3 |    |         +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 115.3 |    |         \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 115.3 |    +--- org.springframework.boot:spring-boot-starter-tomcat:3.2.0
+#11 115.3 |    |    +--- jakarta.annotation:jakarta.annotation-api:2.1.1
+#11 115.3 |    |    +--- org.apache.tomcat.embed:tomcat-embed-core:10.1.16
+#11 115.3 |    |    +--- org.apache.tomcat.embed:tomcat-embed-el:10.1.16
+#11 115.3 |    |    \--- org.apache.tomcat.embed:tomcat-embed-websocket:10.1.16
+#11 115.3 |    |         \--- org.apache.tomcat.embed:tomcat-embed-core:10.1.16
+#11 115.3 |    +--- org.springframework:spring-web:6.1.1 (*)
+#11 115.3 |    \--- org.springframework:spring-webmvc:6.1.1
+#11 115.3 |         +--- org.springframework:spring-aop:6.1.1 (*)
+#11 115.3 |         +--- org.springframework:spring-beans:6.1.1 (*)
+#11 115.3 |         +--- org.springframework:spring-context:6.1.1 (*)
+#11 115.3 |         +--- org.springframework:spring-core:6.1.1 (*)
+#11 115.3 |         +--- org.springframework:spring-expression:6.1.1 (*)
+#11 115.3 |         \--- org.springframework:spring-web:6.1.1 (*)
+#11 115.3 +--- org.springframework.boot:spring-boot-starter-actuator -> 3.2.0
+#11 115.3 |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 115.3 |    +--- org.springframework.boot:spring-boot-actuator-autoconfigure:3.2.0
+#11 115.3 |    |    +--- org.springframework.boot:spring-boot-actuator:3.2.0
+#11 115.3 |    |    |    \--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 115.3 |    |    +--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 115.3 |    |    \--- org.springframework.boot:spring-boot-autoconfigure:3.2.0 (*)
+#11 115.3 |    +--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 115.3 |    \--- io.micrometer:micrometer-jakarta9:1.12.0
+#11 115.3 |         +--- io.micrometer:micrometer-core:1.12.0
+#11 115.3 |         |    +--- io.micrometer:micrometer-commons:1.12.0
+#11 115.4 |         |    \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 115.4 |         +--- io.micrometer:micrometer-commons:1.12.0
+#11 115.4 |         \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 115.4 +--- org.springframework.boot:spring-boot-starter-data-jpa -> 3.2.0
+#11 115.4 |    +--- org.springframework.boot:spring-boot-starter-aop:3.2.0
+#11 115.4 |    |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 115.4 |    |    +--- org.springframework:spring-aop:6.1.1 (*)
+#11 115.4 |    |    \--- org.aspectj:aspectjweaver:1.9.20.1
+#11 115.4 |    +--- org.springframework.boot:spring-boot-starter-jdbc:3.2.0
+#11 115.4 |    |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 115.4 |    |    +--- com.zaxxer:HikariCP:5.0.1
+#11 115.4 |    |    |    \--- org.slf4j:slf4j-api:1.7.30 -> 2.0.9
+#11 115.4 |    |    \--- org.springframework:spring-jdbc:6.1.1
+#11 115.4 |    |         +--- org.springframework:spring-beans:6.1.1 (*)
+#11 115.4 |    |         +--- org.springframework:spring-core:6.1.1 (*)
+#11 115.4 |    |         \--- org.springframework:spring-tx:6.1.1
+#11 115.4 |    |              +--- org.springframework:spring-beans:6.1.1 (*)
+#11 115.4 |    |              \--- org.springframework:spring-core:6.1.1 (*)
+#11 115.4 |    +--- org.hibernate.orm:hibernate-core:6.3.1.Final
+#11 115.4 |    |    +--- jakarta.persistence:jakarta.persistence-api:3.1.0
+#11 115.4 |    |    \--- jakarta.transaction:jakarta.transaction-api:2.0.1
+#11 115.4 |    +--- org.springframework.data:spring-data-jpa:3.2.0
+#11 115.4 |    |    +--- org.springframework.data:spring-data-commons:3.2.0
+#11 115.4 |    |    |    +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 115.4 |    |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 115.4 |    |    |    \--- org.slf4j:slf4j-api:2.0.2 -> 2.0.9
+#11 115.4 |    |    +--- org.springframework:spring-orm:6.1.0 -> 6.1.1
+#11 115.4 |    |    |    +--- org.springframework:spring-beans:6.1.1 (*)
+#11 115.4 |    |    |    +--- org.springframework:spring-core:6.1.1 (*)
+#11 115.4 |    |    |    +--- org.springframework:spring-jdbc:6.1.1 (*)
+#11 115.4 |    |    |    \--- org.springframework:spring-tx:6.1.1 (*)
+#11 115.4 |    |    +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 115.4 |    |    +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 115.4 |    |    +--- org.springframework:spring-tx:6.1.0 -> 6.1.1 (*)
+#11 115.4 |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 115.4 |    |    +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 115.4 |    |    +--- org.antlr:antlr4-runtime:4.10.1
+#11 115.4 |    |    +--- jakarta.annotation:jakarta.annotation-api:2.0.0 -> 2.1.1
+#11 115.4 |    |    \--- org.slf4j:slf4j-api:2.0.2 -> 2.0.9
+#11 115.4 |    \--- org.springframework:spring-aspects:6.1.1
+#11 115.4 |         \--- org.aspectj:aspectjweaver:1.9.20.1
+#11 115.4 +--- org.springframework.boot:spring-boot-starter-validation -> 3.2.0
+#11 115.4 |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 115.4 |    +--- org.apache.tomcat.embed:tomcat-embed-el:10.1.16
+#11 115.4 |    \--- org.hibernate.validator:hibernate-validator:8.0.1.Final
+#11 115.4 |         +--- jakarta.validation:jakarta.validation-api:3.0.2
+#11 115.4 |         +--- org.jboss.logging:jboss-logging:3.4.3.Final -> 3.5.3.Final
+#11 115.4 |         \--- com.fasterxml:classmate:1.5.1 -> 1.6.0
+#11 115.4 +--- org.springframework.boot:spring-boot-starter-security -> 3.2.0
+#11 115.4 |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 115.4 |    +--- org.springframework:spring-aop:6.1.1 (*)
+#11 115.4 |    +--- org.springframework.security:spring-security-config:6.2.0
+#11 115.4 |    |    +--- org.springframework.security:spring-security-core:6.2.0
+#11 115.4 |    |    |    +--- org.springframework.security:spring-security-crypto:6.2.0
+#11 115.4 |    |    |    +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 115.4 |    |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 115.4 |    |    |    +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 115.4 |    |    |    +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 115.4 |    |    |    +--- org.springframework:spring-expression:6.1.0 -> 6.1.1 (*)
+#11 115.4 |    |    |    \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 115.4 |    |    +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 115.4 |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 115.4 |    |    +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 115.4 |    |    \--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 115.4 |    \--- org.springframework.security:spring-security-web:6.2.0
+#11 115.4 |         +--- org.springframework.security:spring-security-core:6.2.0 (*)
+#11 115.4 |         +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 115.4 |         +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 115.4 |         +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 115.4 |         +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 115.4 |         +--- org.springframework:spring-expression:6.1.0 -> 6.1.1 (*)
+#11 115.4 |         \--- org.springframework:spring-web:6.1.0 -> 6.1.1 (*)
+#11 115.4 +--- org.flywaydb:flyway-core -> 9.22.3
+#11 115.4 |    +--- com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.15.2 -> 2.15.3
+#11 115.4 |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 115.4 |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 115.4 |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 115.4 |    \--- com.google.code.gson:gson:2.10.1
+#11 115.4 +--- com.fasterxml.jackson.module:jackson-module-kotlin -> 2.15.3
+#11 115.4 |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 115.4 |    +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3 (*)
+#11 115.4 |    +--- org.jetbrains.kotlin:kotlin-reflect:1.5.32 -> 1.9.21
+#11 115.4 |    |    \--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21
+#11 115.4 |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 115.4 +--- org.jetbrains.kotlin:kotlin-reflect:1.9.21 (*)
+#11 115.4 +--- io.jsonwebtoken:jjwt-api:0.12.3
+#11 115.4 +--- io.jsonwebtoken:jjwt-impl:0.12.3
+#11 115.4 |    \--- io.jsonwebtoken:jjwt-api:0.12.3
+#11 115.4 \--- io.jsonwebtoken:jjwt-jackson:0.12.3
+#11 115.4      +--- io.jsonwebtoken:jjwt-api:0.12.3
+#11 115.4      \--- com.fasterxml.jackson.core:jackson-databind:2.12.7.1 -> 2.15.3 (*)
+#11 115.4 
+#11 115.4 intransitiveDependenciesMetadata
+#11 115.4 No dependencies
+#11 115.4 
+#11 115.4 kotlinBuildToolsApiClasspath
+#11 116.2 \--- org.jetbrains.kotlin:kotlin-build-tools-impl:1.9.21
+#11 116.2      +--- org.jetbrains.kotlin:kotlin-build-tools-api:1.9.21
+#11 116.2      +--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21
+#11 116.2      |    \--- org.jetbrains:annotations:13.0
+#11 116.2      +--- org.jetbrains.kotlin:kotlin-compiler-embeddable:1.9.21
+#11 116.2      |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21 (*)
+#11 116.2      |    +--- org.jetbrains.kotlin:kotlin-script-runtime:1.9.21
+#11 116.2      |    +--- org.jetbrains.kotlin:kotlin-reflect:1.6.10 -> 1.9.21
+#11 116.2      |    +--- org.jetbrains.kotlin:kotlin-daemon-embeddable:1.9.21
+#11 116.2      |    \--- org.jetbrains.intellij.deps:trove4j:1.0.20200330
+#11 116.2      \--- org.jetbrains.kotlin:kotlin-compiler-runner:1.9.21
+#11 116.2           +--- org.jetbrains.kotlin:kotlin-build-common:1.9.21
+#11 116.2           +--- org.jetbrains.kotlin:kotlin-daemon-client:1.9.21
+#11 116.2           +--- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.0 -> 1.7.3
+#11 116.2           \--- org.jetbrains.kotlin:kotlin-compiler-embeddable:1.9.21 (*)
+#11 116.2 
+#11 116.2 kotlinCompilerClasspath
+#11 116.3 \--- org.jetbrains.kotlin:kotlin-compiler-embeddable:1.9.21
+#11 116.3      +--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21
+#11 116.3      |    \--- org.jetbrains:annotations:13.0
+#11 116.3      +--- org.jetbrains.kotlin:kotlin-script-runtime:1.9.21
+#11 116.3      +--- org.jetbrains.kotlin:kotlin-reflect:1.6.10 -> 1.9.21
+#11 116.3      +--- org.jetbrains.kotlin:kotlin-daemon-embeddable:1.9.21
+#11 116.3      \--- org.jetbrains.intellij.deps:trove4j:1.0.20200330
+#11 116.3 
+#11 116.3 kotlinCompilerPluginClasspath
+#11 116.3 No dependencies
+#11 116.3 
+#11 116.3 kotlinCompilerPluginClasspathMain - Kotlin compiler plugins for compilation
+#11 116.8 +--- org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:1.9.21
+#11 116.8 |    +--- org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable:1.9.21
+#11 116.8 |    |    +--- org.jetbrains.kotlin:kotlin-scripting-common:1.9.21
+#11 116.8 |    |    |    \--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21
+#11 116.8 |    |    |         \--- org.jetbrains:annotations:13.0
+#11 116.8 |    |    +--- org.jetbrains.kotlin:kotlin-scripting-jvm:1.9.21
+#11 116.8 |    |    |    +--- org.jetbrains.kotlin:kotlin-script-runtime:1.9.21
+#11 116.8 |    |    |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21 (*)
+#11 116.8 |    |    |    \--- org.jetbrains.kotlin:kotlin-scripting-common:1.9.21 (*)
+#11 116.8 |    |    \--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21 (*)
+#11 116.8 |    \--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21 (*)
+#11 116.8 \--- org.jetbrains.kotlin:kotlin-allopen-compiler-plugin-embeddable:1.9.21
+#11 116.8 
+#11 116.8 kotlinCompilerPluginClasspathTest - Kotlin compiler plugins for compilation
+#11 116.8 +--- org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:1.9.21
+#11 116.8 |    +--- org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable:1.9.21
+#11 116.8 |    |    +--- org.jetbrains.kotlin:kotlin-scripting-common:1.9.21
+#11 116.8 |    |    |    \--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21
+#11 116.8 |    |    |         \--- org.jetbrains:annotations:13.0
+#11 116.8 |    |    +--- org.jetbrains.kotlin:kotlin-scripting-jvm:1.9.21
+#11 116.8 |    |    |    +--- org.jetbrains.kotlin:kotlin-script-runtime:1.9.21
+#11 116.8 |    |    |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21 (*)
+#11 116.8 |    |    |    \--- org.jetbrains.kotlin:kotlin-scripting-common:1.9.21 (*)
+#11 116.8 |    |    \--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21 (*)
+#11 116.8 |    \--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21 (*)
+#11 116.8 \--- org.jetbrains.kotlin:kotlin-allopen-compiler-plugin-embeddable:1.9.21
+#11 116.8 
+#11 116.8 kotlinKlibCommonizerClasspath
+#11 116.9 \--- org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable:1.9.21
+#11 116.9      +--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21
+#11 116.9      |    \--- org.jetbrains:annotations:13.0
+#11 116.9      \--- org.jetbrains.kotlin:kotlin-compiler-embeddable:1.9.21
+#11 116.9           +--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21 (*)
+#11 116.9           +--- org.jetbrains.kotlin:kotlin-script-runtime:1.9.21
+#11 116.9           +--- org.jetbrains.kotlin:kotlin-reflect:1.6.10 -> 1.9.21
+#11 116.9           +--- org.jetbrains.kotlin:kotlin-daemon-embeddable:1.9.21
+#11 116.9           \--- org.jetbrains.intellij.deps:trove4j:1.0.20200330
+#11 116.9 
+#11 116.9 kotlinNativeCompilerPluginClasspath
+#11 116.9 No dependencies
+#11 116.9 
+#11 116.9 kotlinScriptDef - Script filename extensions discovery classpath configuration
+#11 116.9 No dependencies
+#11 116.9 
+#11 116.9 kotlinScriptDefExtensions
+#11 116.9 No dependencies
+#11 116.9 
+#11 116.9 mainSourceElements - List of source directories contained in the Main SourceSet. (n)
+#11 116.9 No dependencies
+#11 116.9 
+#11 116.9 productionRuntimeClasspath
+#11 117.2 +--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21
+#11 117.2 |    \--- org.jetbrains:annotations:13.0
+#11 117.2 +--- org.springframework.boot:spring-boot-starter-web -> 3.2.0
+#11 117.2 |    +--- org.springframework.boot:spring-boot-starter:3.2.0
+#11 117.2 |    |    +--- org.springframework.boot:spring-boot:3.2.0
+#11 117.2 |    |    |    +--- org.springframework:spring-core:6.1.1
+#11 117.2 |    |    |    |    \--- org.springframework:spring-jcl:6.1.1
+#11 117.2 |    |    |    \--- org.springframework:spring-context:6.1.1
+#11 117.2 |    |    |         +--- org.springframework:spring-aop:6.1.1
+#11 117.2 |    |    |         |    +--- org.springframework:spring-beans:6.1.1
+#11 117.2 |    |    |         |    |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 117.2 |    |    |         |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 117.2 |    |    |         +--- org.springframework:spring-beans:6.1.1 (*)
+#11 117.2 |    |    |         +--- org.springframework:spring-core:6.1.1 (*)
+#11 117.2 |    |    |         +--- org.springframework:spring-expression:6.1.1
+#11 117.2 |    |    |         |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 117.2 |    |    |         \--- io.micrometer:micrometer-observation:1.12.0
+#11 117.2 |    |    |              \--- io.micrometer:micrometer-commons:1.12.0
+#11 117.2 |    |    +--- org.springframework.boot:spring-boot-autoconfigure:3.2.0
+#11 117.2 |    |    |    \--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 117.2 |    |    +--- org.springframework.boot:spring-boot-starter-logging:3.2.0
+#11 117.2 |    |    |    +--- ch.qos.logback:logback-classic:1.4.11
+#11 117.2 |    |    |    |    +--- ch.qos.logback:logback-core:1.4.11
+#11 117.2 |    |    |    |    \--- org.slf4j:slf4j-api:2.0.7 -> 2.0.9
+#11 117.2 |    |    |    +--- org.apache.logging.log4j:log4j-to-slf4j:2.21.1
+#11 117.2 |    |    |    |    +--- org.apache.logging.log4j:log4j-api:2.21.1
+#11 117.2 |    |    |    |    \--- org.slf4j:slf4j-api:1.7.36 -> 2.0.9
+#11 117.2 |    |    |    \--- org.slf4j:jul-to-slf4j:2.0.9
+#11 117.2 |    |    |         \--- org.slf4j:slf4j-api:2.0.9
+#11 117.2 |    |    +--- jakarta.annotation:jakarta.annotation-api:2.1.1
+#11 117.2 |    |    +--- org.springframework:spring-core:6.1.1 (*)
+#11 117.2 |    |    \--- org.yaml:snakeyaml:2.2
+#11 117.2 |    +--- org.springframework.boot:spring-boot-starter-json:3.2.0
+#11 117.2 |    |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 117.2 |    |    +--- org.springframework:spring-web:6.1.1
+#11 117.2 |    |    |    +--- org.springframework:spring-beans:6.1.1 (*)
+#11 117.2 |    |    |    +--- org.springframework:spring-core:6.1.1 (*)
+#11 117.2 |    |    |    \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 117.2 |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3
+#11 117.2 |    |    |    +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3
+#11 117.2 |    |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3
+#11 117.2 |    |    |    |         +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3 (c)
+#11 117.2 |    |    |    |         +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (c)
+#11 117.2 |    |    |    |         +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (c)
+#11 117.2 |    |    |    |         +--- com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.15.3 (c)
+#11 117.2 |    |    |    |         +--- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.15.3 (c)
+#11 117.2 |    |    |    |         +--- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3 (c)
+#11 117.2 |    |    |    |         +--- com.fasterxml.jackson.module:jackson-module-kotlin:2.15.3 (c)
+#11 117.2 |    |    |    |         \--- com.fasterxml.jackson.module:jackson-module-parameter-names:2.15.3 (c)
+#11 117.2 |    |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3
+#11 117.2 |    |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 117.2 |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 117.2 |    |    +--- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.15.3
+#11 117.2 |    |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 117.2 |    |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 117.2 |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 117.2 |    |    +--- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3
+#11 117.2 |    |    |    +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3 (*)
+#11 117.2 |    |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 117.2 |    |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 117.2 |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 117.2 |    |    \--- com.fasterxml.jackson.module:jackson-module-parameter-names:2.15.3
+#11 117.2 |    |         +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 117.2 |    |         +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 117.2 |    |         \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 117.2 |    +--- org.springframework.boot:spring-boot-starter-tomcat:3.2.0
+#11 117.2 |    |    +--- jakarta.annotation:jakarta.annotation-api:2.1.1
+#11 117.2 |    |    +--- org.apache.tomcat.embed:tomcat-embed-core:10.1.16
+#11 117.2 |    |    +--- org.apache.tomcat.embed:tomcat-embed-el:10.1.16
+#11 117.2 |    |    \--- org.apache.tomcat.embed:tomcat-embed-websocket:10.1.16
+#11 117.2 |    |         \--- org.apache.tomcat.embed:tomcat-embed-core:10.1.16
+#11 117.2 |    +--- org.springframework:spring-web:6.1.1 (*)
+#11 117.2 |    \--- org.springframework:spring-webmvc:6.1.1
+#11 117.2 |         +--- org.springframework:spring-aop:6.1.1 (*)
+#11 117.2 |         +--- org.springframework:spring-beans:6.1.1 (*)
+#11 117.2 |         +--- org.springframework:spring-context:6.1.1 (*)
+#11 117.2 |         +--- org.springframework:spring-core:6.1.1 (*)
+#11 117.2 |         +--- org.springframework:spring-expression:6.1.1 (*)
+#11 117.2 |         \--- org.springframework:spring-web:6.1.1 (*)
+#11 117.2 +--- org.springframework.boot:spring-boot-starter-actuator -> 3.2.0
+#11 117.2 |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 117.2 |    +--- org.springframework.boot:spring-boot-actuator-autoconfigure:3.2.0
+#11 117.2 |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 117.2 |    |    +--- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3 (*)
+#11 117.2 |    |    +--- org.springframework.boot:spring-boot-actuator:3.2.0
+#11 117.2 |    |    |    \--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 117.2 |    |    +--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 117.2 |    |    \--- org.springframework.boot:spring-boot-autoconfigure:3.2.0 (*)
+#11 117.2 |    +--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 117.2 |    \--- io.micrometer:micrometer-jakarta9:1.12.0
+#11 117.2 |         +--- io.micrometer:micrometer-core:1.12.0
+#11 117.2 |         |    +--- io.micrometer:micrometer-commons:1.12.0
+#11 117.2 |         |    +--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 117.2 |         |    +--- org.hdrhistogram:HdrHistogram:2.1.12
+#11 117.2 |         |    \--- org.latencyutils:LatencyUtils:2.0.3
+#11 117.2 |         +--- io.micrometer:micrometer-commons:1.12.0
+#11 117.2 |         \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 117.2 +--- org.springframework.boot:spring-boot-starter-data-jpa -> 3.2.0
+#11 117.2 |    +--- org.springframework.boot:spring-boot-starter-aop:3.2.0
+#11 117.2 |    |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 117.2 |    |    +--- org.springframework:spring-aop:6.1.1 (*)
+#11 117.2 |    |    \--- org.aspectj:aspectjweaver:1.9.20.1
+#11 117.2 |    +--- org.springframework.boot:spring-boot-starter-jdbc:3.2.0
+#11 117.2 |    |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 117.2 |    |    +--- com.zaxxer:HikariCP:5.0.1
+#11 117.2 |    |    |    \--- org.slf4j:slf4j-api:1.7.30 -> 2.0.9
+#11 117.2 |    |    \--- org.springframework:spring-jdbc:6.1.1
+#11 117.2 |    |         +--- org.springframework:spring-beans:6.1.1 (*)
+#11 117.2 |    |         +--- org.springframework:spring-core:6.1.1 (*)
+#11 117.2 |    |         \--- org.springframework:spring-tx:6.1.1
+#11 117.2 |    |              +--- org.springframework:spring-beans:6.1.1 (*)
+#11 117.2 |    |              \--- org.springframework:spring-core:6.1.1 (*)
+#11 117.2 |    +--- org.hibernate.orm:hibernate-core:6.3.1.Final
+#11 117.2 |    |    +--- jakarta.persistence:jakarta.persistence-api:3.1.0
+#11 117.2 |    |    +--- jakarta.transaction:jakarta.transaction-api:2.0.1
+#11 117.2 |    |    +--- org.jboss.logging:jboss-logging:3.5.0.Final -> 3.5.3.Final
+#11 117.2 |    |    +--- org.hibernate.common:hibernate-commons-annotations:6.0.6.Final
+#11 117.2 |    |    +--- io.smallrye:jandex:3.1.2
+#11 117.2 |    |    +--- com.fasterxml:classmate:1.5.1 -> 1.6.0
+#11 117.2 |    |    +--- net.bytebuddy:byte-buddy:1.14.7 -> 1.14.10
+#11 117.2 |    |    +--- jakarta.xml.bind:jakarta.xml.bind-api:4.0.0 -> 4.0.1
+#11 117.2 |    |    |    \--- jakarta.activation:jakarta.activation-api:2.1.2
+#11 117.2 |    |    +--- org.glassfish.jaxb:jaxb-runtime:4.0.2 -> 4.0.4
+#11 117.2 |    |    |    \--- org.glassfish.jaxb:jaxb-core:4.0.4
+#11 117.2 |    |    |         +--- jakarta.xml.bind:jakarta.xml.bind-api:4.0.1 (*)
+#11 117.2 |    |    |         +--- jakarta.activation:jakarta.activation-api:2.1.2
+#11 117.2 |    |    |         +--- org.eclipse.angus:angus-activation:2.0.1
+#11 117.2 |    |    |         |    \--- jakarta.activation:jakarta.activation-api:2.1.2
+#11 117.2 |    |    |         +--- org.glassfish.jaxb:txw2:4.0.4
+#11 117.2 |    |    |         \--- com.sun.istack:istack-commons-runtime:4.1.2
+#11 117.2 |    |    +--- jakarta.inject:jakarta.inject-api:2.0.1
+#11 117.2 |    |    \--- org.antlr:antlr4-runtime:4.10.1
+#11 117.2 |    +--- org.springframework.data:spring-data-jpa:3.2.0
+#11 117.2 |    |    +--- org.springframework.data:spring-data-commons:3.2.0
+#11 117.2 |    |    |    +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 117.2 |    |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 117.2 |    |    |    \--- org.slf4j:slf4j-api:2.0.2 -> 2.0.9
+#11 117.2 |    |    +--- org.springframework:spring-orm:6.1.0 -> 6.1.1
+#11 117.2 |    |    |    +--- org.springframework:spring-beans:6.1.1 (*)
+#11 117.2 |    |    |    +--- org.springframework:spring-core:6.1.1 (*)
+#11 117.2 |    |    |    +--- org.springframework:spring-jdbc:6.1.1 (*)
+#11 117.2 |    |    |    \--- org.springframework:spring-tx:6.1.1 (*)
+#11 117.2 |    |    +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 117.2 |    |    +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 117.2 |    |    +--- org.springframework:spring-tx:6.1.0 -> 6.1.1 (*)
+#11 117.2 |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 117.2 |    |    +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 117.2 |    |    +--- org.antlr:antlr4-runtime:4.10.1
+#11 117.2 |    |    +--- jakarta.annotation:jakarta.annotation-api:2.0.0 -> 2.1.1
+#11 117.2 |    |    \--- org.slf4j:slf4j-api:2.0.2 -> 2.0.9
+#11 117.2 |    \--- org.springframework:spring-aspects:6.1.1
+#11 117.2 |         \--- org.aspectj:aspectjweaver:1.9.20.1
+#11 117.2 +--- org.springframework.boot:spring-boot-starter-validation -> 3.2.0
+#11 117.2 |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 117.2 |    +--- org.apache.tomcat.embed:tomcat-embed-el:10.1.16
+#11 117.2 |    \--- org.hibernate.validator:hibernate-validator:8.0.1.Final
+#11 117.2 |         +--- jakarta.validation:jakarta.validation-api:3.0.2
+#11 117.2 |         +--- org.jboss.logging:jboss-logging:3.4.3.Final -> 3.5.3.Final
+#11 117.2 |         \--- com.fasterxml:classmate:1.5.1 -> 1.6.0
+#11 117.2 +--- org.springframework.boot:spring-boot-starter-security -> 3.2.0
+#11 117.2 |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 117.2 |    +--- org.springframework:spring-aop:6.1.1 (*)
+#11 117.2 |    +--- org.springframework.security:spring-security-config:6.2.0
+#11 117.2 |    |    +--- org.springframework.security:spring-security-core:6.2.0
+#11 117.2 |    |    |    +--- org.springframework.security:spring-security-crypto:6.2.0
+#11 117.2 |    |    |    +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 117.2 |    |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 117.2 |    |    |    +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 117.2 |    |    |    +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 117.2 |    |    |    +--- org.springframework:spring-expression:6.1.0 -> 6.1.1 (*)
+#11 117.2 |    |    |    \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 117.2 |    |    +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 117.2 |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 117.2 |    |    +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 117.2 |    |    \--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 117.2 |    \--- org.springframework.security:spring-security-web:6.2.0
+#11 117.2 |         +--- org.springframework.security:spring-security-core:6.2.0 (*)
+#11 117.2 |         +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 117.2 |         +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 117.2 |         +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 117.2 |         +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 117.2 |         +--- org.springframework:spring-expression:6.1.0 -> 6.1.1 (*)
+#11 117.2 |         \--- org.springframework:spring-web:6.1.0 -> 6.1.1 (*)
+#11 117.2 +--- org.flywaydb:flyway-core -> 9.22.3
+#11 117.2 |    +--- com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.15.2 -> 2.15.3
+#11 117.2 |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 117.2 |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 117.2 |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 117.2 |    \--- com.google.code.gson:gson:2.10.1
+#11 117.2 +--- com.fasterxml.jackson.module:jackson-module-kotlin -> 2.15.3
+#11 117.2 |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 117.2 |    +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3 (*)
+#11 117.2 |    +--- org.jetbrains.kotlin:kotlin-reflect:1.5.32 -> 1.9.21
+#11 117.2 |    |    \--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21 (*)
+#11 117.2 |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 117.2 +--- org.jetbrains.kotlin:kotlin-reflect:1.9.21 (*)
+#11 117.2 +--- io.jsonwebtoken:jjwt-api:0.12.3
+#11 117.2 +--- io.jsonwebtoken:jjwt-impl:0.12.3
+#11 117.2 |    \--- io.jsonwebtoken:jjwt-api:0.12.3
+#11 117.2 +--- io.jsonwebtoken:jjwt-jackson:0.12.3
+#11 117.2 |    +--- io.jsonwebtoken:jjwt-api:0.12.3
+#11 117.2 |    \--- com.fasterxml.jackson.core:jackson-databind:2.12.7.1 -> 2.15.3 (*)
+#11 117.2 \--- org.postgresql:postgresql -> 42.6.0
+#11 117.2      \--- org.checkerframework:checker-qual:3.31.0
+#11 117.2 
+#11 117.2 runtimeClasspath - Runtime classpath of null/main.
+#11 117.3 +--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21
+#11 117.3 |    \--- org.jetbrains:annotations:13.0
+#11 117.3 +--- org.springframework.boot:spring-boot-starter-web -> 3.2.0
+#11 117.3 |    +--- org.springframework.boot:spring-boot-starter:3.2.0
+#11 117.3 |    |    +--- org.springframework.boot:spring-boot:3.2.0
+#11 117.3 |    |    |    +--- org.springframework:spring-core:6.1.1
+#11 117.3 |    |    |    |    \--- org.springframework:spring-jcl:6.1.1
+#11 117.3 |    |    |    \--- org.springframework:spring-context:6.1.1
+#11 117.3 |    |    |         +--- org.springframework:spring-aop:6.1.1
+#11 117.3 |    |    |         |    +--- org.springframework:spring-beans:6.1.1
+#11 117.3 |    |    |         |    |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 117.3 |    |    |         |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 117.3 |    |    |         +--- org.springframework:spring-beans:6.1.1 (*)
+#11 117.3 |    |    |         +--- org.springframework:spring-core:6.1.1 (*)
+#11 117.3 |    |    |         +--- org.springframework:spring-expression:6.1.1
+#11 117.3 |    |    |         |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 117.3 |    |    |         \--- io.micrometer:micrometer-observation:1.12.0
+#11 117.3 |    |    |              \--- io.micrometer:micrometer-commons:1.12.0
+#11 117.3 |    |    +--- org.springframework.boot:spring-boot-autoconfigure:3.2.0
+#11 117.3 |    |    |    \--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 117.3 |    |    +--- org.springframework.boot:spring-boot-starter-logging:3.2.0
+#11 117.3 |    |    |    +--- ch.qos.logback:logback-classic:1.4.11
+#11 117.3 |    |    |    |    +--- ch.qos.logback:logback-core:1.4.11
+#11 117.3 |    |    |    |    \--- org.slf4j:slf4j-api:2.0.7 -> 2.0.9
+#11 117.3 |    |    |    +--- org.apache.logging.log4j:log4j-to-slf4j:2.21.1
+#11 117.3 |    |    |    |    +--- org.apache.logging.log4j:log4j-api:2.21.1
+#11 117.3 |    |    |    |    \--- org.slf4j:slf4j-api:1.7.36 -> 2.0.9
+#11 117.3 |    |    |    \--- org.slf4j:jul-to-slf4j:2.0.9
+#11 117.3 |    |    |         \--- org.slf4j:slf4j-api:2.0.9
+#11 117.3 |    |    +--- jakarta.annotation:jakarta.annotation-api:2.1.1
+#11 117.3 |    |    +--- org.springframework:spring-core:6.1.1 (*)
+#11 117.3 |    |    \--- org.yaml:snakeyaml:2.2
+#11 117.3 |    +--- org.springframework.boot:spring-boot-starter-json:3.2.0
+#11 117.3 |    |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 117.3 |    |    +--- org.springframework:spring-web:6.1.1
+#11 117.3 |    |    |    +--- org.springframework:spring-beans:6.1.1 (*)
+#11 117.3 |    |    |    +--- org.springframework:spring-core:6.1.1 (*)
+#11 117.3 |    |    |    \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 117.3 |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3
+#11 117.3 |    |    |    +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3
+#11 117.3 |    |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3
+#11 117.3 |    |    |    |         +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3 (c)
+#11 117.3 |    |    |    |         +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (c)
+#11 117.3 |    |    |    |         +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (c)
+#11 117.3 |    |    |    |         +--- com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.15.3 (c)
+#11 117.3 |    |    |    |         +--- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.15.3 (c)
+#11 117.3 |    |    |    |         +--- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3 (c)
+#11 117.3 |    |    |    |         +--- com.fasterxml.jackson.module:jackson-module-kotlin:2.15.3 (c)
+#11 117.3 |    |    |    |         \--- com.fasterxml.jackson.module:jackson-module-parameter-names:2.15.3 (c)
+#11 117.3 |    |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3
+#11 117.3 |    |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 117.3 |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 117.3 |    |    +--- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.15.3
+#11 117.3 |    |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 117.3 |    |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 117.3 |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 117.3 |    |    +--- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3
+#11 117.3 |    |    |    +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3 (*)
+#11 117.3 |    |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 117.3 |    |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 117.3 |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 117.3 |    |    \--- com.fasterxml.jackson.module:jackson-module-parameter-names:2.15.3
+#11 117.3 |    |         +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 117.3 |    |         +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 117.3 |    |         \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 117.3 |    +--- org.springframework.boot:spring-boot-starter-tomcat:3.2.0
+#11 117.3 |    |    +--- jakarta.annotation:jakarta.annotation-api:2.1.1
+#11 117.3 |    |    +--- org.apache.tomcat.embed:tomcat-embed-core:10.1.16
+#11 117.3 |    |    +--- org.apache.tomcat.embed:tomcat-embed-el:10.1.16
+#11 117.3 |    |    \--- org.apache.tomcat.embed:tomcat-embed-websocket:10.1.16
+#11 117.3 |    |         \--- org.apache.tomcat.embed:tomcat-embed-core:10.1.16
+#11 117.3 |    +--- org.springframework:spring-web:6.1.1 (*)
+#11 117.3 |    \--- org.springframework:spring-webmvc:6.1.1
+#11 117.3 |         +--- org.springframework:spring-aop:6.1.1 (*)
+#11 117.3 |         +--- org.springframework:spring-beans:6.1.1 (*)
+#11 117.3 |         +--- org.springframework:spring-context:6.1.1 (*)
+#11 117.3 |         +--- org.springframework:spring-core:6.1.1 (*)
+#11 117.3 |         +--- org.springframework:spring-expression:6.1.1 (*)
+#11 117.3 |         \--- org.springframework:spring-web:6.1.1 (*)
+#11 117.3 +--- org.springframework.boot:spring-boot-starter-actuator -> 3.2.0
+#11 117.3 |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 117.3 |    +--- org.springframework.boot:spring-boot-actuator-autoconfigure:3.2.0
+#11 117.3 |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 117.3 |    |    +--- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3 (*)
+#11 117.3 |    |    +--- org.springframework.boot:spring-boot-actuator:3.2.0
+#11 117.3 |    |    |    \--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 117.3 |    |    +--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 117.3 |    |    \--- org.springframework.boot:spring-boot-autoconfigure:3.2.0 (*)
+#11 117.3 |    +--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 117.3 |    \--- io.micrometer:micrometer-jakarta9:1.12.0
+#11 117.3 |         +--- io.micrometer:micrometer-core:1.12.0
+#11 117.3 |         |    +--- io.micrometer:micrometer-commons:1.12.0
+#11 117.3 |         |    +--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 117.3 |         |    +--- org.hdrhistogram:HdrHistogram:2.1.12
+#11 117.3 |         |    \--- org.latencyutils:LatencyUtils:2.0.3
+#11 117.3 |         +--- io.micrometer:micrometer-commons:1.12.0
+#11 117.3 |         \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 117.3 +--- org.springframework.boot:spring-boot-starter-data-jpa -> 3.2.0
+#11 117.3 |    +--- org.springframework.boot:spring-boot-starter-aop:3.2.0
+#11 117.3 |    |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 117.3 |    |    +--- org.springframework:spring-aop:6.1.1 (*)
+#11 117.3 |    |    \--- org.aspectj:aspectjweaver:1.9.20.1
+#11 117.3 |    +--- org.springframework.boot:spring-boot-starter-jdbc:3.2.0
+#11 117.3 |    |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 117.3 |    |    +--- com.zaxxer:HikariCP:5.0.1
+#11 117.3 |    |    |    \--- org.slf4j:slf4j-api:1.7.30 -> 2.0.9
+#11 117.3 |    |    \--- org.springframework:spring-jdbc:6.1.1
+#11 117.3 |    |         +--- org.springframework:spring-beans:6.1.1 (*)
+#11 117.3 |    |         +--- org.springframework:spring-core:6.1.1 (*)
+#11 117.3 |    |         \--- org.springframework:spring-tx:6.1.1
+#11 117.3 |    |              +--- org.springframework:spring-beans:6.1.1 (*)
+#11 117.3 |    |              \--- org.springframework:spring-core:6.1.1 (*)
+#11 117.3 |    +--- org.hibernate.orm:hibernate-core:6.3.1.Final
+#11 117.3 |    |    +--- jakarta.persistence:jakarta.persistence-api:3.1.0
+#11 117.3 |    |    +--- jakarta.transaction:jakarta.transaction-api:2.0.1
+#11 117.3 |    |    +--- org.jboss.logging:jboss-logging:3.5.0.Final -> 3.5.3.Final
+#11 117.3 |    |    +--- org.hibernate.common:hibernate-commons-annotations:6.0.6.Final
+#11 117.3 |    |    +--- io.smallrye:jandex:3.1.2
+#11 117.3 |    |    +--- com.fasterxml:classmate:1.5.1 -> 1.6.0
+#11 117.3 |    |    +--- net.bytebuddy:byte-buddy:1.14.7 -> 1.14.10
+#11 117.3 |    |    +--- jakarta.xml.bind:jakarta.xml.bind-api:4.0.0 -> 4.0.1
+#11 117.3 |    |    |    \--- jakarta.activation:jakarta.activation-api:2.1.2
+#11 117.3 |    |    +--- org.glassfish.jaxb:jaxb-runtime:4.0.2 -> 4.0.4
+#11 117.3 |    |    |    \--- org.glassfish.jaxb:jaxb-core:4.0.4
+#11 117.3 |    |    |         +--- jakarta.xml.bind:jakarta.xml.bind-api:4.0.1 (*)
+#11 117.3 |    |    |         +--- jakarta.activation:jakarta.activation-api:2.1.2
+#11 117.3 |    |    |         +--- org.eclipse.angus:angus-activation:2.0.1
+#11 117.3 |    |    |         |    \--- jakarta.activation:jakarta.activation-api:2.1.2
+#11 117.3 |    |    |         +--- org.glassfish.jaxb:txw2:4.0.4
+#11 117.3 |    |    |         \--- com.sun.istack:istack-commons-runtime:4.1.2
+#11 117.3 |    |    +--- jakarta.inject:jakarta.inject-api:2.0.1
+#11 117.3 |    |    \--- org.antlr:antlr4-runtime:4.10.1
+#11 117.3 |    +--- org.springframework.data:spring-data-jpa:3.2.0
+#11 117.3 |    |    +--- org.springframework.data:spring-data-commons:3.2.0
+#11 117.3 |    |    |    +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 117.3 |    |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 117.3 |    |    |    \--- org.slf4j:slf4j-api:2.0.2 -> 2.0.9
+#11 117.3 |    |    +--- org.springframework:spring-orm:6.1.0 -> 6.1.1
+#11 117.3 |    |    |    +--- org.springframework:spring-beans:6.1.1 (*)
+#11 117.3 |    |    |    +--- org.springframework:spring-core:6.1.1 (*)
+#11 117.3 |    |    |    +--- org.springframework:spring-jdbc:6.1.1 (*)
+#11 117.3 |    |    |    \--- org.springframework:spring-tx:6.1.1 (*)
+#11 117.3 |    |    +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 117.3 |    |    +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 117.3 |    |    +--- org.springframework:spring-tx:6.1.0 -> 6.1.1 (*)
+#11 117.3 |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 117.3 |    |    +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 117.3 |    |    +--- org.antlr:antlr4-runtime:4.10.1
+#11 117.3 |    |    +--- jakarta.annotation:jakarta.annotation-api:2.0.0 -> 2.1.1
+#11 117.3 |    |    \--- org.slf4j:slf4j-api:2.0.2 -> 2.0.9
+#11 117.3 |    \--- org.springframework:spring-aspects:6.1.1
+#11 117.3 |         \--- org.aspectj:aspectjweaver:1.9.20.1
+#11 117.3 +--- org.springframework.boot:spring-boot-starter-validation -> 3.2.0
+#11 117.3 |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 117.3 |    +--- org.apache.tomcat.embed:tomcat-embed-el:10.1.16
+#11 117.3 |    \--- org.hibernate.validator:hibernate-validator:8.0.1.Final
+#11 117.3 |         +--- jakarta.validation:jakarta.validation-api:3.0.2
+#11 117.3 |         +--- org.jboss.logging:jboss-logging:3.4.3.Final -> 3.5.3.Final
+#11 117.3 |         \--- com.fasterxml:classmate:1.5.1 -> 1.6.0
+#11 117.3 +--- org.springframework.boot:spring-boot-starter-security -> 3.2.0
+#11 117.3 |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 117.3 |    +--- org.springframework:spring-aop:6.1.1 (*)
+#11 117.3 |    +--- org.springframework.security:spring-security-config:6.2.0
+#11 117.3 |    |    +--- org.springframework.security:spring-security-core:6.2.0
+#11 117.3 |    |    |    +--- org.springframework.security:spring-security-crypto:6.2.0
+#11 117.3 |    |    |    +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 117.3 |    |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 117.3 |    |    |    +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 117.3 |    |    |    +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 117.3 |    |    |    +--- org.springframework:spring-expression:6.1.0 -> 6.1.1 (*)
+#11 117.3 |    |    |    \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 117.3 |    |    +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 117.3 |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 117.3 |    |    +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 117.3 |    |    \--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 117.3 |    \--- org.springframework.security:spring-security-web:6.2.0
+#11 117.3 |         +--- org.springframework.security:spring-security-core:6.2.0 (*)
+#11 117.3 |         +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 117.3 |         +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 117.3 |         +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 117.3 |         +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 117.3 |         +--- org.springframework:spring-expression:6.1.0 -> 6.1.1 (*)
+#11 117.3 |         \--- org.springframework:spring-web:6.1.0 -> 6.1.1 (*)
+#11 117.3 +--- org.flywaydb:flyway-core -> 9.22.3
+#11 117.3 |    +--- com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.15.2 -> 2.15.3
+#11 117.3 |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 117.3 |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 117.3 |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 117.3 |    \--- com.google.code.gson:gson:2.10.1
+#11 117.3 +--- com.fasterxml.jackson.module:jackson-module-kotlin -> 2.15.3
+#11 117.3 |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 117.3 |    +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3 (*)
+#11 117.3 |    +--- org.jetbrains.kotlin:kotlin-reflect:1.5.32 -> 1.9.21
+#11 117.3 |    |    \--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21 (*)
+#11 117.3 |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 117.3 +--- org.jetbrains.kotlin:kotlin-reflect:1.9.21 (*)
+#11 117.3 +--- io.jsonwebtoken:jjwt-api:0.12.3
+#11 117.3 +--- io.jsonwebtoken:jjwt-impl:0.12.3
+#11 117.3 |    \--- io.jsonwebtoken:jjwt-api:0.12.3
+#11 117.3 +--- io.jsonwebtoken:jjwt-jackson:0.12.3
+#11 117.3 |    +--- io.jsonwebtoken:jjwt-api:0.12.3
+#11 117.3 |    \--- com.fasterxml.jackson.core:jackson-databind:2.12.7.1 -> 2.15.3 (*)
+#11 117.3 \--- org.postgresql:postgresql -> 42.6.0
+#11 117.3      \--- org.checkerframework:checker-qual:3.31.0
+#11 117.3 
+#11 117.3 runtimeElements - Runtime elements for the 'main' feature. (n)
+#11 117.3 No dependencies
+#11 117.3 
+#11 117.3 runtimeElements-published (n)
+#11 117.3 No dependencies
+#11 117.3 
+#11 117.3 runtimeOnly - Runtime only dependencies for null/main. (n)
+#11 117.3 \--- org.postgresql:postgresql (n)
+#11 117.3 
+#11 117.3 testAndDevelopmentOnly - Configuration for test and development-only dependencies such as Spring Boot's DevTools.
+#11 117.3 No dependencies
+#11 117.3 
+#11 117.3 testAnnotationProcessor - Annotation processors and their dependencies for source set 'test'.
+#11 117.3 No dependencies
+#11 117.3 
+#11 117.3 testApi - API dependencies for null/test (n)
+#11 117.3 No dependencies
+#11 117.3 
+#11 117.3 testApiDependenciesMetadata
+#11 117.3 No dependencies
+#11 117.3 
+#11 117.3 testCompileClasspath - Compile classpath for null/test.
+#11 120.6 +--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21
+#11 120.6 |    \--- org.jetbrains:annotations:13.0
+#11 120.6 +--- org.springframework.boot:spring-boot-starter-web -> 3.2.0
+#11 120.6 |    +--- org.springframework.boot:spring-boot-starter:3.2.0
+#11 120.6 |    |    +--- org.springframework.boot:spring-boot:3.2.0
+#11 120.6 |    |    |    +--- org.springframework:spring-core:6.1.1
+#11 120.6 |    |    |    |    \--- org.springframework:spring-jcl:6.1.1
+#11 120.6 |    |    |    \--- org.springframework:spring-context:6.1.1
+#11 120.6 |    |    |         +--- org.springframework:spring-aop:6.1.1
+#11 120.6 |    |    |         |    +--- org.springframework:spring-beans:6.1.1
+#11 120.6 |    |    |         |    |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 120.6 |    |    |         |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 120.6 |    |    |         +--- org.springframework:spring-beans:6.1.1 (*)
+#11 120.6 |    |    |         +--- org.springframework:spring-core:6.1.1 (*)
+#11 120.6 |    |    |         +--- org.springframework:spring-expression:6.1.1
+#11 120.6 |    |    |         |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 120.6 |    |    |         \--- io.micrometer:micrometer-observation:1.12.0
+#11 120.6 |    |    |              \--- io.micrometer:micrometer-commons:1.12.0
+#11 120.6 |    |    +--- org.springframework.boot:spring-boot-autoconfigure:3.2.0
+#11 120.6 |    |    |    \--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 120.6 |    |    +--- org.springframework.boot:spring-boot-starter-logging:3.2.0
+#11 120.6 |    |    |    +--- ch.qos.logback:logback-classic:1.4.11
+#11 120.6 |    |    |    |    +--- ch.qos.logback:logback-core:1.4.11
+#11 120.6 |    |    |    |    \--- org.slf4j:slf4j-api:2.0.7 -> 2.0.9
+#11 120.6 |    |    |    +--- org.apache.logging.log4j:log4j-to-slf4j:2.21.1
+#11 120.6 |    |    |    |    +--- org.apache.logging.log4j:log4j-api:2.21.1
+#11 120.6 |    |    |    |    \--- org.slf4j:slf4j-api:1.7.36 -> 2.0.9
+#11 120.6 |    |    |    \--- org.slf4j:jul-to-slf4j:2.0.9
+#11 120.6 |    |    |         \--- org.slf4j:slf4j-api:2.0.9
+#11 120.6 |    |    +--- jakarta.annotation:jakarta.annotation-api:2.1.1
+#11 120.6 |    |    +--- org.springframework:spring-core:6.1.1 (*)
+#11 120.6 |    |    \--- org.yaml:snakeyaml:2.2
+#11 120.6 |    +--- org.springframework.boot:spring-boot-starter-json:3.2.0
+#11 120.6 |    |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 120.6 |    |    +--- org.springframework:spring-web:6.1.1
+#11 120.6 |    |    |    +--- org.springframework:spring-beans:6.1.1 (*)
+#11 120.6 |    |    |    +--- org.springframework:spring-core:6.1.1 (*)
+#11 120.6 |    |    |    \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 120.6 |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3
+#11 120.6 |    |    |    +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3
+#11 120.6 |    |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3
+#11 120.6 |    |    |    |         +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3 (c)
+#11 120.6 |    |    |    |         +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (c)
+#11 120.6 |    |    |    |         +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (c)
+#11 120.6 |    |    |    |         +--- com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.15.3 (c)
+#11 120.6 |    |    |    |         +--- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.15.3 (c)
+#11 120.6 |    |    |    |         +--- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3 (c)
+#11 120.6 |    |    |    |         +--- com.fasterxml.jackson.module:jackson-module-kotlin:2.15.3 (c)
+#11 120.6 |    |    |    |         \--- com.fasterxml.jackson.module:jackson-module-parameter-names:2.15.3 (c)
+#11 120.6 |    |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3
+#11 120.6 |    |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 120.6 |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 120.6 |    |    +--- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.15.3
+#11 120.6 |    |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 120.6 |    |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 120.6 |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 120.6 |    |    +--- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3
+#11 120.6 |    |    |    +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3 (*)
+#11 120.6 |    |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 120.6 |    |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 120.6 |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 120.6 |    |    \--- com.fasterxml.jackson.module:jackson-module-parameter-names:2.15.3
+#11 120.6 |    |         +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 120.6 |    |         +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 120.6 |    |         \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 120.6 |    +--- org.springframework.boot:spring-boot-starter-tomcat:3.2.0
+#11 120.6 |    |    +--- jakarta.annotation:jakarta.annotation-api:2.1.1
+#11 120.6 |    |    +--- org.apache.tomcat.embed:tomcat-embed-core:10.1.16
+#11 120.6 |    |    +--- org.apache.tomcat.embed:tomcat-embed-el:10.1.16
+#11 120.6 |    |    \--- org.apache.tomcat.embed:tomcat-embed-websocket:10.1.16
+#11 120.6 |    |         \--- org.apache.tomcat.embed:tomcat-embed-core:10.1.16
+#11 120.6 |    +--- org.springframework:spring-web:6.1.1 (*)
+#11 120.6 |    \--- org.springframework:spring-webmvc:6.1.1
+#11 120.6 |         +--- org.springframework:spring-aop:6.1.1 (*)
+#11 120.6 |         +--- org.springframework:spring-beans:6.1.1 (*)
+#11 120.6 |         +--- org.springframework:spring-context:6.1.1 (*)
+#11 120.6 |         +--- org.springframework:spring-core:6.1.1 (*)
+#11 120.6 |         +--- org.springframework:spring-expression:6.1.1 (*)
+#11 120.6 |         \--- org.springframework:spring-web:6.1.1 (*)
+#11 120.6 +--- org.springframework.boot:spring-boot-starter-actuator -> 3.2.0
+#11 120.6 |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 120.6 |    +--- org.springframework.boot:spring-boot-actuator-autoconfigure:3.2.0
+#11 120.6 |    |    +--- org.springframework.boot:spring-boot-actuator:3.2.0
+#11 120.6 |    |    |    \--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 120.6 |    |    +--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 120.6 |    |    \--- org.springframework.boot:spring-boot-autoconfigure:3.2.0 (*)
+#11 120.6 |    +--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 120.6 |    \--- io.micrometer:micrometer-jakarta9:1.12.0
+#11 120.6 |         +--- io.micrometer:micrometer-core:1.12.0
+#11 120.6 |         |    +--- io.micrometer:micrometer-commons:1.12.0
+#11 120.6 |         |    \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 120.6 |         +--- io.micrometer:micrometer-commons:1.12.0
+#11 120.6 |         \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 120.6 +--- org.springframework.boot:spring-boot-starter-data-jpa -> 3.2.0
+#11 120.6 |    +--- org.springframework.boot:spring-boot-starter-aop:3.2.0
+#11 120.6 |    |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 120.6 |    |    +--- org.springframework:spring-aop:6.1.1 (*)
+#11 120.6 |    |    \--- org.aspectj:aspectjweaver:1.9.20.1
+#11 120.6 |    +--- org.springframework.boot:spring-boot-starter-jdbc:3.2.0
+#11 120.6 |    |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 120.6 |    |    +--- com.zaxxer:HikariCP:5.0.1
+#11 120.6 |    |    |    \--- org.slf4j:slf4j-api:1.7.30 -> 2.0.9
+#11 120.6 |    |    \--- org.springframework:spring-jdbc:6.1.1
+#11 120.6 |    |         +--- org.springframework:spring-beans:6.1.1 (*)
+#11 120.6 |    |         +--- org.springframework:spring-core:6.1.1 (*)
+#11 120.6 |    |         \--- org.springframework:spring-tx:6.1.1
+#11 120.6 |    |              +--- org.springframework:spring-beans:6.1.1 (*)
+#11 120.6 |    |              \--- org.springframework:spring-core:6.1.1 (*)
+#11 120.6 |    +--- org.hibernate.orm:hibernate-core:6.3.1.Final
+#11 120.6 |    |    +--- jakarta.persistence:jakarta.persistence-api:3.1.0
+#11 120.6 |    |    \--- jakarta.transaction:jakarta.transaction-api:2.0.1
+#11 120.6 |    +--- org.springframework.data:spring-data-jpa:3.2.0
+#11 120.6 |    |    +--- org.springframework.data:spring-data-commons:3.2.0
+#11 120.6 |    |    |    +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 120.6 |    |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 120.6 |    |    |    \--- org.slf4j:slf4j-api:2.0.2 -> 2.0.9
+#11 120.6 |    |    +--- org.springframework:spring-orm:6.1.0 -> 6.1.1
+#11 120.6 |    |    |    +--- org.springframework:spring-beans:6.1.1 (*)
+#11 120.6 |    |    |    +--- org.springframework:spring-core:6.1.1 (*)
+#11 120.6 |    |    |    +--- org.springframework:spring-jdbc:6.1.1 (*)
+#11 120.6 |    |    |    \--- org.springframework:spring-tx:6.1.1 (*)
+#11 120.6 |    |    +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 120.6 |    |    +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 120.6 |    |    +--- org.springframework:spring-tx:6.1.0 -> 6.1.1 (*)
+#11 120.6 |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 120.6 |    |    +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 120.6 |    |    +--- org.antlr:antlr4-runtime:4.10.1
+#11 120.6 |    |    +--- jakarta.annotation:jakarta.annotation-api:2.0.0 -> 2.1.1
+#11 120.6 |    |    \--- org.slf4j:slf4j-api:2.0.2 -> 2.0.9
+#11 120.6 |    \--- org.springframework:spring-aspects:6.1.1
+#11 120.6 |         \--- org.aspectj:aspectjweaver:1.9.20.1
+#11 120.6 +--- org.springframework.boot:spring-boot-starter-validation -> 3.2.0
+#11 120.6 |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 120.6 |    +--- org.apache.tomcat.embed:tomcat-embed-el:10.1.16
+#11 120.6 |    \--- org.hibernate.validator:hibernate-validator:8.0.1.Final
+#11 120.6 |         +--- jakarta.validation:jakarta.validation-api:3.0.2
+#11 120.6 |         +--- org.jboss.logging:jboss-logging:3.4.3.Final -> 3.5.3.Final
+#11 120.6 |         \--- com.fasterxml:classmate:1.5.1 -> 1.6.0
+#11 120.6 +--- org.springframework.boot:spring-boot-starter-security -> 3.2.0
+#11 120.6 |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 120.6 |    +--- org.springframework:spring-aop:6.1.1 (*)
+#11 120.6 |    +--- org.springframework.security:spring-security-config:6.2.0
+#11 120.6 |    |    +--- org.springframework.security:spring-security-core:6.2.0
+#11 120.6 |    |    |    +--- org.springframework.security:spring-security-crypto:6.2.0
+#11 120.6 |    |    |    +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 120.6 |    |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 120.6 |    |    |    +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 120.6 |    |    |    +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 120.6 |    |    |    +--- org.springframework:spring-expression:6.1.0 -> 6.1.1 (*)
+#11 120.6 |    |    |    \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 120.6 |    |    +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 120.6 |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 120.6 |    |    +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 120.6 |    |    \--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 120.6 |    \--- org.springframework.security:spring-security-web:6.2.0
+#11 120.6 |         +--- org.springframework.security:spring-security-core:6.2.0 (*)
+#11 120.6 |         +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 120.6 |         +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 120.6 |         +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 120.6 |         +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 120.6 |         +--- org.springframework:spring-expression:6.1.0 -> 6.1.1 (*)
+#11 120.6 |         \--- org.springframework:spring-web:6.1.0 -> 6.1.1 (*)
+#11 120.6 +--- org.flywaydb:flyway-core -> 9.22.3
+#11 120.6 |    +--- com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.15.2 -> 2.15.3
+#11 120.6 |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 120.6 |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 120.6 |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 120.6 |    \--- com.google.code.gson:gson:2.10.1
+#11 120.6 +--- com.fasterxml.jackson.module:jackson-module-kotlin -> 2.15.3
+#11 120.6 |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 120.6 |    +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3 (*)
+#11 120.6 |    +--- org.jetbrains.kotlin:kotlin-reflect:1.5.32 -> 1.9.21
+#11 120.6 |    |    \--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21 (*)
+#11 120.6 |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 120.6 +--- org.jetbrains.kotlin:kotlin-reflect:1.9.21 (*)
+#11 120.6 +--- io.jsonwebtoken:jjwt-api:0.12.3
+#11 120.6 +--- io.jsonwebtoken:jjwt-impl:0.12.3
+#11 120.6 |    \--- io.jsonwebtoken:jjwt-api:0.12.3
+#11 120.6 +--- io.jsonwebtoken:jjwt-jackson:0.12.3
+#11 120.6 |    +--- io.jsonwebtoken:jjwt-api:0.12.3
+#11 120.6 |    \--- com.fasterxml.jackson.core:jackson-databind:2.12.7.1 -> 2.15.3 (*)
+#11 120.6 \--- org.springframework.boot:spring-boot-starter-test -> 3.2.0
+#11 120.6      +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 120.6      +--- org.springframework.boot:spring-boot-test:3.2.0
+#11 120.6      |    \--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 120.6      +--- org.springframework.boot:spring-boot-test-autoconfigure:3.2.0
+#11 120.6      |    +--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 120.6      |    +--- org.springframework.boot:spring-boot-test:3.2.0 (*)
+#11 120.6      |    \--- org.springframework.boot:spring-boot-autoconfigure:3.2.0 (*)
+#11 120.6      +--- com.jayway.jsonpath:json-path:2.8.0
+#11 120.6      +--- jakarta.xml.bind:jakarta.xml.bind-api:4.0.1
+#11 120.6      |    \--- jakarta.activation:jakarta.activation-api:2.1.2
+#11 120.6      +--- net.minidev:json-smart:2.5.0
+#11 120.6      |    \--- net.minidev:accessors-smart:2.5.0
+#11 120.6      |         \--- org.ow2.asm:asm:9.3
+#11 120.6      +--- org.assertj:assertj-core:3.24.2
+#11 120.6      |    \--- net.bytebuddy:byte-buddy:1.12.21 -> 1.14.10
+#11 120.6      +--- org.awaitility:awaitility:4.2.0
+#11 120.6      |    \--- org.hamcrest:hamcrest:2.1 -> 2.2
+#11 120.6      +--- org.hamcrest:hamcrest:2.2
+#11 120.6      +--- org.junit.jupiter:junit-jupiter:5.10.1
+#11 120.6      |    +--- org.junit:junit-bom:5.10.1
+#11 120.6      |    |    +--- org.junit.jupiter:junit-jupiter:5.10.1 (c)
+#11 120.6      |    |    +--- org.junit.jupiter:junit-jupiter-api:5.10.1 (c)
+#11 120.6      |    |    +--- org.junit.jupiter:junit-jupiter-params:5.10.1 (c)
+#11 120.6      |    |    \--- org.junit.platform:junit-platform-commons:1.10.1 (c)
+#11 120.6      |    +--- org.junit.jupiter:junit-jupiter-api:5.10.1
+#11 120.6      |    |    +--- org.junit:junit-bom:5.10.1 (*)
+#11 120.6      |    |    +--- org.opentest4j:opentest4j:1.3.0
+#11 120.6      |    |    +--- org.junit.platform:junit-platform-commons:1.10.1
+#11 120.6      |    |    |    +--- org.junit:junit-bom:5.10.1 (*)
+#11 120.6      |    |    |    \--- org.apiguardian:apiguardian-api:1.1.2
+#11 120.6      |    |    \--- org.apiguardian:apiguardian-api:1.1.2
+#11 120.6      |    \--- org.junit.jupiter:junit-jupiter-params:5.10.1
+#11 120.6      |         +--- org.junit:junit-bom:5.10.1 (*)
+#11 120.6      |         +--- org.junit.jupiter:junit-jupiter-api:5.10.1 (*)
+#11 120.6      |         \--- org.apiguardian:apiguardian-api:1.1.2
+#11 120.6      +--- org.mockito:mockito-core:5.7.0
+#11 120.6      |    +--- net.bytebuddy:byte-buddy:1.14.9 -> 1.14.10
+#11 120.6      |    \--- net.bytebuddy:byte-buddy-agent:1.14.9 -> 1.14.10
+#11 120.6      +--- org.mockito:mockito-junit-jupiter:5.7.0
+#11 120.6      |    \--- org.mockito:mockito-core:5.7.0 (*)
+#11 120.6      +--- org.skyscreamer:jsonassert:1.5.1
+#11 120.6      |    \--- com.vaadin.external.google:android-json:0.0.20131108.vaadin1
+#11 120.6      +--- org.springframework:spring-core:6.1.1 (*)
+#11 120.6      +--- org.springframework:spring-test:6.1.1
+#11 120.6      |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 120.6      \--- org.xmlunit:xmlunit-core:2.9.1
+#11 120.6 
+#11 120.6 testCompileOnly - Compile only dependencies for null/test. (n)
+#11 120.6 No dependencies
+#11 120.6 
+#11 120.6 testCompileOnlyDependenciesMetadata
+#11 120.6 No dependencies
+#11 120.6 
+#11 120.6 testImplementation - Implementation only dependencies for null/test. (n)
+#11 120.6 \--- org.springframework.boot:spring-boot-starter-test (n)
+#11 120.6 
+#11 120.6 testImplementationDependenciesMetadata
+#11 120.6 +--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21
+#11 120.6 +--- org.springframework.boot:spring-boot-starter-web -> 3.2.0
+#11 120.6 |    +--- org.springframework.boot:spring-boot-starter:3.2.0
+#11 120.6 |    |    +--- org.springframework.boot:spring-boot:3.2.0
+#11 120.6 |    |    |    +--- org.springframework:spring-core:6.1.1
+#11 120.6 |    |    |    |    \--- org.springframework:spring-jcl:6.1.1
+#11 120.7 |    |    |    \--- org.springframework:spring-context:6.1.1
+#11 120.7 |    |    |         +--- org.springframework:spring-aop:6.1.1
+#11 120.7 |    |    |         |    +--- org.springframework:spring-beans:6.1.1
+#11 120.7 |    |    |         |    |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 120.7 |    |    |         |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 120.7 |    |    |         +--- org.springframework:spring-beans:6.1.1 (*)
+#11 120.7 |    |    |         +--- org.springframework:spring-core:6.1.1 (*)
+#11 120.7 |    |    |         +--- org.springframework:spring-expression:6.1.1
+#11 120.7 |    |    |         |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 120.7 |    |    |         \--- io.micrometer:micrometer-observation:1.12.0
+#11 120.7 |    |    |              \--- io.micrometer:micrometer-commons:1.12.0
+#11 120.7 |    |    +--- org.springframework.boot:spring-boot-autoconfigure:3.2.0
+#11 120.7 |    |    |    \--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 120.7 |    |    +--- org.springframework.boot:spring-boot-starter-logging:3.2.0
+#11 120.7 |    |    |    +--- ch.qos.logback:logback-classic:1.4.11
+#11 120.7 |    |    |    |    +--- ch.qos.logback:logback-core:1.4.11
+#11 120.7 |    |    |    |    \--- org.slf4j:slf4j-api:2.0.7 -> 2.0.9
+#11 120.7 |    |    |    +--- org.apache.logging.log4j:log4j-to-slf4j:2.21.1
+#11 120.7 |    |    |    |    +--- org.apache.logging.log4j:log4j-api:2.21.1
+#11 120.7 |    |    |    |    \--- org.slf4j:slf4j-api:1.7.36 -> 2.0.9
+#11 120.7 |    |    |    \--- org.slf4j:jul-to-slf4j:2.0.9
+#11 120.7 |    |    |         \--- org.slf4j:slf4j-api:2.0.9
+#11 120.7 |    |    +--- jakarta.annotation:jakarta.annotation-api:2.1.1
+#11 120.7 |    |    +--- org.springframework:spring-core:6.1.1 (*)
+#11 120.7 |    |    \--- org.yaml:snakeyaml:2.2
+#11 120.7 |    +--- org.springframework.boot:spring-boot-starter-json:3.2.0
+#11 120.7 |    |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 120.7 |    |    +--- org.springframework:spring-web:6.1.1
+#11 120.7 |    |    |    +--- org.springframework:spring-beans:6.1.1 (*)
+#11 120.7 |    |    |    +--- org.springframework:spring-core:6.1.1 (*)
+#11 120.7 |    |    |    \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 120.7 |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3
+#11 120.7 |    |    |    +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3
+#11 120.7 |    |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3
+#11 120.7 |    |    |    |         +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3 (c)
+#11 120.7 |    |    |    |         +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (c)
+#11 120.7 |    |    |    |         +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (c)
+#11 120.7 |    |    |    |         +--- com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.15.3 (c)
+#11 120.7 |    |    |    |         +--- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.15.3 (c)
+#11 120.7 |    |    |    |         +--- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3 (c)
+#11 120.7 |    |    |    |         +--- com.fasterxml.jackson.module:jackson-module-kotlin:2.15.3 (c)
+#11 120.7 |    |    |    |         \--- com.fasterxml.jackson.module:jackson-module-parameter-names:2.15.3 (c)
+#11 120.7 |    |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3
+#11 120.7 |    |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 120.7 |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 120.7 |    |    +--- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.15.3
+#11 120.7 |    |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 120.7 |    |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 120.7 |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 120.7 |    |    +--- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3
+#11 120.7 |    |    |    +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3 (*)
+#11 120.7 |    |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 120.7 |    |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 120.7 |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 120.7 |    |    \--- com.fasterxml.jackson.module:jackson-module-parameter-names:2.15.3
+#11 120.7 |    |         +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 120.7 |    |         +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 120.7 |    |         \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 120.7 |    +--- org.springframework.boot:spring-boot-starter-tomcat:3.2.0
+#11 120.7 |    |    +--- jakarta.annotation:jakarta.annotation-api:2.1.1
+#11 120.7 |    |    +--- org.apache.tomcat.embed:tomcat-embed-core:10.1.16
+#11 120.7 |    |    +--- org.apache.tomcat.embed:tomcat-embed-el:10.1.16
+#11 120.7 |    |    \--- org.apache.tomcat.embed:tomcat-embed-websocket:10.1.16
+#11 120.7 |    |         \--- org.apache.tomcat.embed:tomcat-embed-core:10.1.16
+#11 120.7 |    +--- org.springframework:spring-web:6.1.1 (*)
+#11 120.7 |    \--- org.springframework:spring-webmvc:6.1.1
+#11 120.7 |         +--- org.springframework:spring-aop:6.1.1 (*)
+#11 120.7 |         +--- org.springframework:spring-beans:6.1.1 (*)
+#11 120.7 |         +--- org.springframework:spring-context:6.1.1 (*)
+#11 120.7 |         +--- org.springframework:spring-core:6.1.1 (*)
+#11 120.7 |         +--- org.springframework:spring-expression:6.1.1 (*)
+#11 120.7 |         \--- org.springframework:spring-web:6.1.1 (*)
+#11 120.7 +--- org.springframework.boot:spring-boot-starter-actuator -> 3.2.0
+#11 120.7 |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 120.7 |    +--- org.springframework.boot:spring-boot-actuator-autoconfigure:3.2.0
+#11 120.7 |    |    +--- org.springframework.boot:spring-boot-actuator:3.2.0
+#11 120.7 |    |    |    \--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 120.7 |    |    +--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 120.7 |    |    \--- org.springframework.boot:spring-boot-autoconfigure:3.2.0 (*)
+#11 120.7 |    +--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 120.7 |    \--- io.micrometer:micrometer-jakarta9:1.12.0
+#11 120.7 |         +--- io.micrometer:micrometer-core:1.12.0
+#11 120.7 |         |    +--- io.micrometer:micrometer-commons:1.12.0
+#11 120.7 |         |    \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 120.7 |         +--- io.micrometer:micrometer-commons:1.12.0
+#11 120.7 |         \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 120.7 +--- org.springframework.boot:spring-boot-starter-data-jpa -> 3.2.0
+#11 120.7 |    +--- org.springframework.boot:spring-boot-starter-aop:3.2.0
+#11 120.7 |    |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 120.7 |    |    +--- org.springframework:spring-aop:6.1.1 (*)
+#11 120.7 |    |    \--- org.aspectj:aspectjweaver:1.9.20.1
+#11 120.7 |    +--- org.springframework.boot:spring-boot-starter-jdbc:3.2.0
+#11 120.7 |    |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 120.7 |    |    +--- com.zaxxer:HikariCP:5.0.1
+#11 120.7 |    |    |    \--- org.slf4j:slf4j-api:1.7.30 -> 2.0.9
+#11 120.7 |    |    \--- org.springframework:spring-jdbc:6.1.1
+#11 120.7 |    |         +--- org.springframework:spring-beans:6.1.1 (*)
+#11 120.7 |    |         +--- org.springframework:spring-core:6.1.1 (*)
+#11 120.7 |    |         \--- org.springframework:spring-tx:6.1.1
+#11 120.7 |    |              +--- org.springframework:spring-beans:6.1.1 (*)
+#11 120.7 |    |              \--- org.springframework:spring-core:6.1.1 (*)
+#11 120.7 |    +--- org.hibernate.orm:hibernate-core:6.3.1.Final
+#11 120.7 |    |    +--- jakarta.persistence:jakarta.persistence-api:3.1.0
+#11 120.7 |    |    \--- jakarta.transaction:jakarta.transaction-api:2.0.1
+#11 120.7 |    +--- org.springframework.data:spring-data-jpa:3.2.0
+#11 120.7 |    |    +--- org.springframework.data:spring-data-commons:3.2.0
+#11 120.7 |    |    |    +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 120.7 |    |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 120.7 |    |    |    \--- org.slf4j:slf4j-api:2.0.2 -> 2.0.9
+#11 120.7 |    |    +--- org.springframework:spring-orm:6.1.0 -> 6.1.1
+#11 120.7 |    |    |    +--- org.springframework:spring-beans:6.1.1 (*)
+#11 120.7 |    |    |    +--- org.springframework:spring-core:6.1.1 (*)
+#11 120.7 |    |    |    +--- org.springframework:spring-jdbc:6.1.1 (*)
+#11 120.7 |    |    |    \--- org.springframework:spring-tx:6.1.1 (*)
+#11 120.7 |    |    +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 120.7 |    |    +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 120.7 |    |    +--- org.springframework:spring-tx:6.1.0 -> 6.1.1 (*)
+#11 120.7 |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 120.7 |    |    +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 120.7 |    |    +--- org.antlr:antlr4-runtime:4.10.1
+#11 120.7 |    |    +--- jakarta.annotation:jakarta.annotation-api:2.0.0 -> 2.1.1
+#11 120.7 |    |    \--- org.slf4j:slf4j-api:2.0.2 -> 2.0.9
+#11 120.7 |    \--- org.springframework:spring-aspects:6.1.1
+#11 120.7 |         \--- org.aspectj:aspectjweaver:1.9.20.1
+#11 120.7 +--- org.springframework.boot:spring-boot-starter-validation -> 3.2.0
+#11 120.7 |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 120.7 |    +--- org.apache.tomcat.embed:tomcat-embed-el:10.1.16
+#11 120.7 |    \--- org.hibernate.validator:hibernate-validator:8.0.1.Final
+#11 120.7 |         +--- jakarta.validation:jakarta.validation-api:3.0.2
+#11 120.7 |         +--- org.jboss.logging:jboss-logging:3.4.3.Final -> 3.5.3.Final
+#11 120.7 |         \--- com.fasterxml:classmate:1.5.1 -> 1.6.0
+#11 120.7 +--- org.springframework.boot:spring-boot-starter-security -> 3.2.0
+#11 120.7 |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 120.7 |    +--- org.springframework:spring-aop:6.1.1 (*)
+#11 120.7 |    +--- org.springframework.security:spring-security-config:6.2.0
+#11 120.7 |    |    +--- org.springframework.security:spring-security-core:6.2.0
+#11 120.7 |    |    |    +--- org.springframework.security:spring-security-crypto:6.2.0
+#11 120.7 |    |    |    +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 120.7 |    |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 120.7 |    |    |    +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 120.7 |    |    |    +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 120.7 |    |    |    +--- org.springframework:spring-expression:6.1.0 -> 6.1.1 (*)
+#11 120.7 |    |    |    \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 120.7 |    |    +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 120.7 |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 120.7 |    |    +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 120.7 |    |    \--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 120.7 |    \--- org.springframework.security:spring-security-web:6.2.0
+#11 120.7 |         +--- org.springframework.security:spring-security-core:6.2.0 (*)
+#11 120.7 |         +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 120.7 |         +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 120.7 |         +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 120.7 |         +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 120.7 |         +--- org.springframework:spring-expression:6.1.0 -> 6.1.1 (*)
+#11 120.7 |         \--- org.springframework:spring-web:6.1.0 -> 6.1.1 (*)
+#11 120.7 +--- org.flywaydb:flyway-core -> 9.22.3
+#11 120.7 |    +--- com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.15.2 -> 2.15.3
+#11 120.7 |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 120.7 |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 120.7 |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 120.7 |    \--- com.google.code.gson:gson:2.10.1
+#11 120.7 +--- com.fasterxml.jackson.module:jackson-module-kotlin -> 2.15.3
+#11 120.7 |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 120.7 |    +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3 (*)
+#11 120.7 |    +--- org.jetbrains.kotlin:kotlin-reflect:1.5.32 -> 1.9.21
+#11 120.7 |    |    \--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21
+#11 120.7 |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 120.7 +--- org.jetbrains.kotlin:kotlin-reflect:1.9.21 (*)
+#11 120.7 +--- io.jsonwebtoken:jjwt-api:0.12.3
+#11 120.7 +--- io.jsonwebtoken:jjwt-impl:0.12.3
+#11 120.7 |    \--- io.jsonwebtoken:jjwt-api:0.12.3
+#11 120.7 +--- io.jsonwebtoken:jjwt-jackson:0.12.3
+#11 120.7 |    +--- io.jsonwebtoken:jjwt-api:0.12.3
+#11 120.7 |    \--- com.fasterxml.jackson.core:jackson-databind:2.12.7.1 -> 2.15.3 (*)
+#11 120.7 \--- org.springframework.boot:spring-boot-starter-test -> 3.2.0
+#11 120.7      +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 120.7      +--- org.springframework.boot:spring-boot-test:3.2.0
+#11 120.7      |    \--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 120.7      +--- org.springframework.boot:spring-boot-test-autoconfigure:3.2.0
+#11 120.7      |    +--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 120.7      |    +--- org.springframework.boot:spring-boot-test:3.2.0 (*)
+#11 120.7      |    \--- org.springframework.boot:spring-boot-autoconfigure:3.2.0 (*)
+#11 120.7      +--- com.jayway.jsonpath:json-path:2.8.0
+#11 120.7      +--- jakarta.xml.bind:jakarta.xml.bind-api:4.0.1
+#11 120.7      |    \--- jakarta.activation:jakarta.activation-api:2.1.2
+#11 120.7      +--- net.minidev:json-smart:2.5.0
+#11 120.7      |    \--- net.minidev:accessors-smart:2.5.0
+#11 120.7      |         \--- org.ow2.asm:asm:9.3
+#11 120.7      +--- org.assertj:assertj-core:3.24.2
+#11 120.7      |    \--- net.bytebuddy:byte-buddy:1.12.21 -> 1.14.10
+#11 120.7      +--- org.awaitility:awaitility:4.2.0
+#11 120.7      |    \--- org.hamcrest:hamcrest:2.1 -> 2.2
+#11 120.7      +--- org.hamcrest:hamcrest:2.2
+#11 120.7      +--- org.junit.jupiter:junit-jupiter:5.10.1
+#11 120.7      |    +--- org.junit:junit-bom:5.10.1
+#11 120.7      |    |    +--- org.junit.jupiter:junit-jupiter:5.10.1 (c)
+#11 120.7      |    |    +--- org.junit.jupiter:junit-jupiter-api:5.10.1 (c)
+#11 120.7      |    |    +--- org.junit.jupiter:junit-jupiter-params:5.10.1 (c)
+#11 120.7      |    |    \--- org.junit.platform:junit-platform-commons:1.10.1 (c)
+#11 120.7      |    +--- org.junit.jupiter:junit-jupiter-api:5.10.1
+#11 120.7      |    |    +--- org.junit:junit-bom:5.10.1 (*)
+#11 120.7      |    |    +--- org.opentest4j:opentest4j:1.3.0
+#11 120.7      |    |    +--- org.junit.platform:junit-platform-commons:1.10.1
+#11 120.7      |    |    |    +--- org.junit:junit-bom:5.10.1 (*)
+#11 120.7      |    |    |    \--- org.apiguardian:apiguardian-api:1.1.2
+#11 120.7      |    |    \--- org.apiguardian:apiguardian-api:1.1.2
+#11 120.7      |    \--- org.junit.jupiter:junit-jupiter-params:5.10.1
+#11 120.7      |         +--- org.junit:junit-bom:5.10.1 (*)
+#11 120.7      |         +--- org.junit.jupiter:junit-jupiter-api:5.10.1 (*)
+#11 120.7      |         \--- org.apiguardian:apiguardian-api:1.1.2
+#11 120.7      +--- org.mockito:mockito-core:5.7.0
+#11 120.7      |    +--- net.bytebuddy:byte-buddy:1.14.9 -> 1.14.10
+#11 120.7      |    \--- net.bytebuddy:byte-buddy-agent:1.14.9 -> 1.14.10
+#11 120.7      +--- org.mockito:mockito-junit-jupiter:5.7.0
+#11 120.7      |    \--- org.mockito:mockito-core:5.7.0 (*)
+#11 120.7      +--- org.skyscreamer:jsonassert:1.5.1
+#11 120.7      |    \--- com.vaadin.external.google:android-json:0.0.20131108.vaadin1
+#11 120.7      +--- org.springframework:spring-core:6.1.1 (*)
+#11 120.7      +--- org.springframework:spring-test:6.1.1
+#11 120.7      |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 120.7      \--- org.xmlunit:xmlunit-core:2.9.1
+#11 120.7 
+#11 120.7 testIntransitiveDependenciesMetadata
+#11 120.7 No dependencies
+#11 120.7 
+#11 120.7 testKotlinScriptDef - Script filename extensions discovery classpath configuration
+#11 120.7 No dependencies
+#11 120.7 
+#11 120.7 testKotlinScriptDefExtensions
+#11 120.7 No dependencies
+#11 120.7 
+#11 120.7 testRuntimeClasspath - Runtime classpath of null/test.
+#11 120.8 +--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21
+#11 120.8 |    \--- org.jetbrains:annotations:13.0
+#11 120.8 +--- org.springframework.boot:spring-boot-starter-web -> 3.2.0
+#11 120.8 |    +--- org.springframework.boot:spring-boot-starter:3.2.0
+#11 120.8 |    |    +--- org.springframework.boot:spring-boot:3.2.0
+#11 120.8 |    |    |    +--- org.springframework:spring-core:6.1.1
+#11 120.8 |    |    |    |    \--- org.springframework:spring-jcl:6.1.1
+#11 120.8 |    |    |    \--- org.springframework:spring-context:6.1.1
+#11 120.8 |    |    |         +--- org.springframework:spring-aop:6.1.1
+#11 120.8 |    |    |         |    +--- org.springframework:spring-beans:6.1.1
+#11 120.8 |    |    |         |    |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 120.8 |    |    |         |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 120.8 |    |    |         +--- org.springframework:spring-beans:6.1.1 (*)
+#11 120.8 |    |    |         +--- org.springframework:spring-core:6.1.1 (*)
+#11 120.8 |    |    |         +--- org.springframework:spring-expression:6.1.1
+#11 120.8 |    |    |         |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 120.8 |    |    |         \--- io.micrometer:micrometer-observation:1.12.0
+#11 120.8 |    |    |              \--- io.micrometer:micrometer-commons:1.12.0
+#11 120.8 |    |    +--- org.springframework.boot:spring-boot-autoconfigure:3.2.0
+#11 120.8 |    |    |    \--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 120.8 |    |    +--- org.springframework.boot:spring-boot-starter-logging:3.2.0
+#11 120.8 |    |    |    +--- ch.qos.logback:logback-classic:1.4.11
+#11 120.8 |    |    |    |    +--- ch.qos.logback:logback-core:1.4.11
+#11 120.8 |    |    |    |    \--- org.slf4j:slf4j-api:2.0.7 -> 2.0.9
+#11 120.8 |    |    |    +--- org.apache.logging.log4j:log4j-to-slf4j:2.21.1
+#11 120.8 |    |    |    |    +--- org.apache.logging.log4j:log4j-api:2.21.1
+#11 120.8 |    |    |    |    \--- org.slf4j:slf4j-api:1.7.36 -> 2.0.9
+#11 120.8 |    |    |    \--- org.slf4j:jul-to-slf4j:2.0.9
+#11 120.8 |    |    |         \--- org.slf4j:slf4j-api:2.0.9
+#11 120.8 |    |    +--- jakarta.annotation:jakarta.annotation-api:2.1.1
+#11 120.8 |    |    +--- org.springframework:spring-core:6.1.1 (*)
+#11 120.8 |    |    \--- org.yaml:snakeyaml:2.2
+#11 120.8 |    +--- org.springframework.boot:spring-boot-starter-json:3.2.0
+#11 120.8 |    |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 120.8 |    |    +--- org.springframework:spring-web:6.1.1
+#11 120.8 |    |    |    +--- org.springframework:spring-beans:6.1.1 (*)
+#11 120.8 |    |    |    +--- org.springframework:spring-core:6.1.1 (*)
+#11 120.8 |    |    |    \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 120.8 |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3
+#11 120.8 |    |    |    +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3
+#11 120.8 |    |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3
+#11 120.8 |    |    |    |         +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3 (c)
+#11 120.8 |    |    |    |         +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (c)
+#11 120.8 |    |    |    |         +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (c)
+#11 120.8 |    |    |    |         +--- com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.15.3 (c)
+#11 120.8 |    |    |    |         +--- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.15.3 (c)
+#11 120.8 |    |    |    |         +--- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3 (c)
+#11 120.8 |    |    |    |         +--- com.fasterxml.jackson.module:jackson-module-kotlin:2.15.3 (c)
+#11 120.8 |    |    |    |         \--- com.fasterxml.jackson.module:jackson-module-parameter-names:2.15.3 (c)
+#11 120.8 |    |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3
+#11 120.8 |    |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 120.8 |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 120.8 |    |    +--- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.15.3
+#11 120.8 |    |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 120.8 |    |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 120.8 |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 120.8 |    |    +--- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3
+#11 120.8 |    |    |    +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3 (*)
+#11 120.8 |    |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 120.8 |    |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 120.8 |    |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 120.8 |    |    \--- com.fasterxml.jackson.module:jackson-module-parameter-names:2.15.3
+#11 120.8 |    |         +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 120.8 |    |         +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 120.8 |    |         \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 120.8 |    +--- org.springframework.boot:spring-boot-starter-tomcat:3.2.0
+#11 120.8 |    |    +--- jakarta.annotation:jakarta.annotation-api:2.1.1
+#11 120.8 |    |    +--- org.apache.tomcat.embed:tomcat-embed-core:10.1.16
+#11 120.8 |    |    +--- org.apache.tomcat.embed:tomcat-embed-el:10.1.16
+#11 120.8 |    |    \--- org.apache.tomcat.embed:tomcat-embed-websocket:10.1.16
+#11 120.8 |    |         \--- org.apache.tomcat.embed:tomcat-embed-core:10.1.16
+#11 120.8 |    +--- org.springframework:spring-web:6.1.1 (*)
+#11 120.8 |    \--- org.springframework:spring-webmvc:6.1.1
+#11 120.8 |         +--- org.springframework:spring-aop:6.1.1 (*)
+#11 120.8 |         +--- org.springframework:spring-beans:6.1.1 (*)
+#11 120.8 |         +--- org.springframework:spring-context:6.1.1 (*)
+#11 120.8 |         +--- org.springframework:spring-core:6.1.1 (*)
+#11 120.8 |         +--- org.springframework:spring-expression:6.1.1 (*)
+#11 120.8 |         \--- org.springframework:spring-web:6.1.1 (*)
+#11 120.8 +--- org.springframework.boot:spring-boot-starter-actuator -> 3.2.0
+#11 120.8 |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 120.8 |    +--- org.springframework.boot:spring-boot-actuator-autoconfigure:3.2.0
+#11 120.8 |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 120.8 |    |    +--- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3 (*)
+#11 120.8 |    |    +--- org.springframework.boot:spring-boot-actuator:3.2.0
+#11 120.8 |    |    |    \--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 120.8 |    |    +--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 120.8 |    |    \--- org.springframework.boot:spring-boot-autoconfigure:3.2.0 (*)
+#11 120.8 |    +--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 120.8 |    \--- io.micrometer:micrometer-jakarta9:1.12.0
+#11 120.8 |         +--- io.micrometer:micrometer-core:1.12.0
+#11 120.8 |         |    +--- io.micrometer:micrometer-commons:1.12.0
+#11 120.8 |         |    +--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 120.8 |         |    +--- org.hdrhistogram:HdrHistogram:2.1.12
+#11 120.8 |         |    \--- org.latencyutils:LatencyUtils:2.0.3
+#11 120.8 |         +--- io.micrometer:micrometer-commons:1.12.0
+#11 120.8 |         \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 120.8 +--- org.springframework.boot:spring-boot-starter-data-jpa -> 3.2.0
+#11 120.8 |    +--- org.springframework.boot:spring-boot-starter-aop:3.2.0
+#11 120.8 |    |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 120.8 |    |    +--- org.springframework:spring-aop:6.1.1 (*)
+#11 120.8 |    |    \--- org.aspectj:aspectjweaver:1.9.20.1
+#11 120.8 |    +--- org.springframework.boot:spring-boot-starter-jdbc:3.2.0
+#11 120.8 |    |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 120.8 |    |    +--- com.zaxxer:HikariCP:5.0.1
+#11 120.8 |    |    |    \--- org.slf4j:slf4j-api:1.7.30 -> 2.0.9
+#11 120.8 |    |    \--- org.springframework:spring-jdbc:6.1.1
+#11 120.8 |    |         +--- org.springframework:spring-beans:6.1.1 (*)
+#11 120.8 |    |         +--- org.springframework:spring-core:6.1.1 (*)
+#11 120.8 |    |         \--- org.springframework:spring-tx:6.1.1
+#11 120.8 |    |              +--- org.springframework:spring-beans:6.1.1 (*)
+#11 120.8 |    |              \--- org.springframework:spring-core:6.1.1 (*)
+#11 120.8 |    +--- org.hibernate.orm:hibernate-core:6.3.1.Final
+#11 120.8 |    |    +--- jakarta.persistence:jakarta.persistence-api:3.1.0
+#11 120.8 |    |    +--- jakarta.transaction:jakarta.transaction-api:2.0.1
+#11 120.8 |    |    +--- org.jboss.logging:jboss-logging:3.5.0.Final -> 3.5.3.Final
+#11 120.8 |    |    +--- org.hibernate.common:hibernate-commons-annotations:6.0.6.Final
+#11 120.8 |    |    +--- io.smallrye:jandex:3.1.2
+#11 120.8 |    |    +--- com.fasterxml:classmate:1.5.1 -> 1.6.0
+#11 120.8 |    |    +--- net.bytebuddy:byte-buddy:1.14.7 -> 1.14.10
+#11 120.8 |    |    +--- jakarta.xml.bind:jakarta.xml.bind-api:4.0.0 -> 4.0.1
+#11 120.8 |    |    |    \--- jakarta.activation:jakarta.activation-api:2.1.2
+#11 120.8 |    |    +--- org.glassfish.jaxb:jaxb-runtime:4.0.2 -> 4.0.4
+#11 120.8 |    |    |    \--- org.glassfish.jaxb:jaxb-core:4.0.4
+#11 120.8 |    |    |         +--- jakarta.xml.bind:jakarta.xml.bind-api:4.0.1 (*)
+#11 120.8 |    |    |         +--- jakarta.activation:jakarta.activation-api:2.1.2
+#11 120.8 |    |    |         +--- org.eclipse.angus:angus-activation:2.0.1
+#11 120.8 |    |    |         |    \--- jakarta.activation:jakarta.activation-api:2.1.2
+#11 120.8 |    |    |         +--- org.glassfish.jaxb:txw2:4.0.4
+#11 120.8 |    |    |         \--- com.sun.istack:istack-commons-runtime:4.1.2
+#11 120.8 |    |    +--- jakarta.inject:jakarta.inject-api:2.0.1
+#11 120.8 |    |    \--- org.antlr:antlr4-runtime:4.10.1
+#11 120.8 |    +--- org.springframework.data:spring-data-jpa:3.2.0
+#11 120.8 |    |    +--- org.springframework.data:spring-data-commons:3.2.0
+#11 120.8 |    |    |    +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 120.8 |    |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 120.8 |    |    |    \--- org.slf4j:slf4j-api:2.0.2 -> 2.0.9
+#11 120.8 |    |    +--- org.springframework:spring-orm:6.1.0 -> 6.1.1
+#11 120.8 |    |    |    +--- org.springframework:spring-beans:6.1.1 (*)
+#11 120.8 |    |    |    +--- org.springframework:spring-core:6.1.1 (*)
+#11 120.8 |    |    |    +--- org.springframework:spring-jdbc:6.1.1 (*)
+#11 120.8 |    |    |    \--- org.springframework:spring-tx:6.1.1 (*)
+#11 120.8 |    |    +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 120.8 |    |    +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 120.8 |    |    +--- org.springframework:spring-tx:6.1.0 -> 6.1.1 (*)
+#11 120.8 |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 120.8 |    |    +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 120.8 |    |    +--- org.antlr:antlr4-runtime:4.10.1
+#11 120.8 |    |    +--- jakarta.annotation:jakarta.annotation-api:2.0.0 -> 2.1.1
+#11 120.8 |    |    \--- org.slf4j:slf4j-api:2.0.2 -> 2.0.9
+#11 120.8 |    \--- org.springframework:spring-aspects:6.1.1
+#11 120.8 |         \--- org.aspectj:aspectjweaver:1.9.20.1
+#11 120.8 +--- org.springframework.boot:spring-boot-starter-validation -> 3.2.0
+#11 120.8 |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 120.8 |    +--- org.apache.tomcat.embed:tomcat-embed-el:10.1.16
+#11 120.8 |    \--- org.hibernate.validator:hibernate-validator:8.0.1.Final
+#11 120.8 |         +--- jakarta.validation:jakarta.validation-api:3.0.2
+#11 120.8 |         +--- org.jboss.logging:jboss-logging:3.4.3.Final -> 3.5.3.Final
+#11 120.8 |         \--- com.fasterxml:classmate:1.5.1 -> 1.6.0
+#11 120.8 +--- org.springframework.boot:spring-boot-starter-security -> 3.2.0
+#11 120.8 |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 120.8 |    +--- org.springframework:spring-aop:6.1.1 (*)
+#11 120.8 |    +--- org.springframework.security:spring-security-config:6.2.0
+#11 120.8 |    |    +--- org.springframework.security:spring-security-core:6.2.0
+#11 120.8 |    |    |    +--- org.springframework.security:spring-security-crypto:6.2.0
+#11 120.8 |    |    |    +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 120.8 |    |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 120.8 |    |    |    +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 120.8 |    |    |    +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 120.8 |    |    |    +--- org.springframework:spring-expression:6.1.0 -> 6.1.1 (*)
+#11 120.8 |    |    |    \--- io.micrometer:micrometer-observation:1.12.0 (*)
+#11 120.8 |    |    +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 120.8 |    |    +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 120.9 |    |    +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 120.9 |    |    \--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 120.9 |    \--- org.springframework.security:spring-security-web:6.2.0
+#11 120.9 |         +--- org.springframework.security:spring-security-core:6.2.0 (*)
+#11 120.9 |         +--- org.springframework:spring-core:6.1.0 -> 6.1.1 (*)
+#11 120.9 |         +--- org.springframework:spring-aop:6.1.0 -> 6.1.1 (*)
+#11 120.9 |         +--- org.springframework:spring-beans:6.1.0 -> 6.1.1 (*)
+#11 120.9 |         +--- org.springframework:spring-context:6.1.0 -> 6.1.1 (*)
+#11 120.9 |         +--- org.springframework:spring-expression:6.1.0 -> 6.1.1 (*)
+#11 120.9 |         \--- org.springframework:spring-web:6.1.0 -> 6.1.1 (*)
+#11 120.9 +--- org.flywaydb:flyway-core -> 9.22.3
+#11 120.9 |    +--- com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.15.2 -> 2.15.3
+#11 120.9 |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 120.9 |    |    +--- com.fasterxml.jackson.core:jackson-core:2.15.3 (*)
+#11 120.9 |    |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 120.9 |    \--- com.google.code.gson:gson:2.10.1
+#11 120.9 +--- com.fasterxml.jackson.module:jackson-module-kotlin -> 2.15.3
+#11 120.9 |    +--- com.fasterxml.jackson.core:jackson-databind:2.15.3 (*)
+#11 120.9 |    +--- com.fasterxml.jackson.core:jackson-annotations:2.15.3 (*)
+#11 120.9 |    +--- org.jetbrains.kotlin:kotlin-reflect:1.5.32 -> 1.9.21
+#11 120.9 |    |    \--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21 (*)
+#11 120.9 |    \--- com.fasterxml.jackson:jackson-bom:2.15.3 (*)
+#11 120.9 +--- org.jetbrains.kotlin:kotlin-reflect:1.9.21 (*)
+#11 120.9 +--- io.jsonwebtoken:jjwt-api:0.12.3
+#11 120.9 +--- io.jsonwebtoken:jjwt-impl:0.12.3
+#11 120.9 |    \--- io.jsonwebtoken:jjwt-api:0.12.3
+#11 120.9 +--- io.jsonwebtoken:jjwt-jackson:0.12.3
+#11 120.9 |    +--- io.jsonwebtoken:jjwt-api:0.12.3
+#11 120.9 |    \--- com.fasterxml.jackson.core:jackson-databind:2.12.7.1 -> 2.15.3 (*)
+#11 120.9 +--- org.postgresql:postgresql -> 42.6.0
+#11 120.9 |    \--- org.checkerframework:checker-qual:3.31.0
+#11 120.9 +--- org.springframework.boot:spring-boot-starter-test -> 3.2.0
+#11 120.9 |    +--- org.springframework.boot:spring-boot-starter:3.2.0 (*)
+#11 120.9 |    +--- org.springframework.boot:spring-boot-test:3.2.0
+#11 120.9 |    |    \--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 120.9 |    +--- org.springframework.boot:spring-boot-test-autoconfigure:3.2.0
+#11 120.9 |    |    +--- org.springframework.boot:spring-boot:3.2.0 (*)
+#11 120.9 |    |    +--- org.springframework.boot:spring-boot-test:3.2.0 (*)
+#11 120.9 |    |    \--- org.springframework.boot:spring-boot-autoconfigure:3.2.0 (*)
+#11 120.9 |    +--- com.jayway.jsonpath:json-path:2.8.0
+#11 120.9 |    |    +--- net.minidev:json-smart:2.4.10 -> 2.5.0
+#11 120.9 |    |    |    \--- net.minidev:accessors-smart:2.5.0
+#11 120.9 |    |    |         \--- org.ow2.asm:asm:9.3
+#11 120.9 |    |    \--- org.slf4j:slf4j-api:1.7.36 -> 2.0.9
+#11 120.9 |    +--- jakarta.xml.bind:jakarta.xml.bind-api:4.0.1 (*)
+#11 120.9 |    +--- net.minidev:json-smart:2.5.0 (*)
+#11 120.9 |    +--- org.assertj:assertj-core:3.24.2
+#11 120.9 |    |    \--- net.bytebuddy:byte-buddy:1.12.21 -> 1.14.10
+#11 120.9 |    +--- org.awaitility:awaitility:4.2.0
+#11 120.9 |    |    \--- org.hamcrest:hamcrest:2.1 -> 2.2
+#11 120.9 |    +--- org.hamcrest:hamcrest:2.2
+#11 120.9 |    +--- org.junit.jupiter:junit-jupiter:5.10.1
+#11 120.9 |    |    +--- org.junit:junit-bom:5.10.1
+#11 120.9 |    |    |    +--- org.junit.jupiter:junit-jupiter:5.10.1 (c)
+#11 120.9 |    |    |    +--- org.junit.jupiter:junit-jupiter-api:5.10.1 (c)
+#11 120.9 |    |    |    +--- org.junit.jupiter:junit-jupiter-engine:5.10.1 (c)
+#11 120.9 |    |    |    +--- org.junit.jupiter:junit-jupiter-params:5.10.1 (c)
+#11 120.9 |    |    |    +--- org.junit.platform:junit-platform-commons:1.10.1 (c)
+#11 120.9 |    |    |    \--- org.junit.platform:junit-platform-engine:1.10.1 (c)
+#11 120.9 |    |    +--- org.junit.jupiter:junit-jupiter-api:5.10.1
+#11 120.9 |    |    |    +--- org.junit:junit-bom:5.10.1 (*)
+#11 120.9 |    |    |    +--- org.opentest4j:opentest4j:1.3.0
+#11 120.9 |    |    |    \--- org.junit.platform:junit-platform-commons:1.10.1
+#11 120.9 |    |    |         \--- org.junit:junit-bom:5.10.1 (*)
+#11 120.9 |    |    +--- org.junit.jupiter:junit-jupiter-params:5.10.1
+#11 120.9 |    |    |    +--- org.junit:junit-bom:5.10.1 (*)
+#11 120.9 |    |    |    \--- org.junit.jupiter:junit-jupiter-api:5.10.1 (*)
+#11 120.9 |    |    \--- org.junit.jupiter:junit-jupiter-engine:5.10.1
+#11 120.9 |    |         +--- org.junit:junit-bom:5.10.1 (*)
+#11 120.9 |    |         +--- org.junit.platform:junit-platform-engine:1.10.1
+#11 120.9 |    |         |    +--- org.junit:junit-bom:5.10.1 (*)
+#11 120.9 |    |         |    +--- org.opentest4j:opentest4j:1.3.0
+#11 120.9 |    |         |    \--- org.junit.platform:junit-platform-commons:1.10.1 (*)
+#11 120.9 |    |         \--- org.junit.jupiter:junit-jupiter-api:5.10.1 (*)
+#11 120.9 |    +--- org.mockito:mockito-core:5.7.0
+#11 120.9 |    |    +--- net.bytebuddy:byte-buddy:1.14.9 -> 1.14.10
+#11 120.9 |    |    +--- net.bytebuddy:byte-buddy-agent:1.14.9 -> 1.14.10
+#11 120.9 |    |    \--- org.objenesis:objenesis:3.3
+#11 120.9 |    +--- org.mockito:mockito-junit-jupiter:5.7.0
+#11 120.9 |    |    +--- org.mockito:mockito-core:5.7.0 (*)
+#11 120.9 |    |    \--- org.junit.jupiter:junit-jupiter-api:5.10.0 -> 5.10.1 (*)
+#11 120.9 |    +--- org.skyscreamer:jsonassert:1.5.1
+#11 120.9 |    |    \--- com.vaadin.external.google:android-json:0.0.20131108.vaadin1
+#11 120.9 |    +--- org.springframework:spring-core:6.1.1 (*)
+#11 120.9 |    +--- org.springframework:spring-test:6.1.1
+#11 120.9 |    |    \--- org.springframework:spring-core:6.1.1 (*)
+#11 120.9 |    \--- org.xmlunit:xmlunit-core:2.9.1
+#11 120.9 \--- com.h2database:h2 -> 2.2.224
+#11 120.9 
+#11 120.9 testRuntimeOnly - Runtime only dependencies for null/test. (n)
+#11 120.9 \--- com.h2database:h2 (n)
+#11 120.9 
+#11 120.9 (c) - A dependency constraint, not a dependency. The dependency affected by the constraint occurs elsewhere in the tree.
+#11 120.9 (*) - Indicates repeated occurrences of a transitive dependency subtree. Gradle expands transitive dependency subtrees only once per project; repeat occurrences only display the root of the subtree, followed by this annotation.
+#11 120.9 
+#11 120.9 (n) - A dependency or dependency configuration that cannot be resolved.
+#11 120.9 
+#11 120.9 A web-based, searchable dependency report is available by adding the --scan option.
+#11 121.1 
+#11 121.1 BUILD SUCCESSFUL in 2m
+#11 121.1 1 actionable task: 1 executed
+#11 DONE 122.0s
+
+#12 [backend build 6/7] COPY src ./src
+#12 DONE 0.2s
+
+#13 [backend build 7/7] RUN gradle bootJar --no-daemon
+#13 1.758 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.5/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+#13 3.855 Daemon will be stopped at the end of the build 
+#13 14.86 > Task :checkKotlinGradlePluginConfigurationErrors
+#13 32.55 > Task :processResources
+#13 44.95 > Task :compileKotlin
+#13 56.15 e: file:///app/src/main/kotlin/com/j15/backend/application/service/AuthService.kt:10:41 Unresolved reference: auth
+#13 56.15 e: file:///app/src/main/kotlin/com/j15/backend/application/service/AuthService.kt:11:41 Unresolved reference: auth
+#13 56.15 e: file:///app/src/main/kotlin/com/j15/backend/application/service/AuthService.kt:12:41 Unresolved reference: auth
+#13 56.15 e: file:///app/src/main/kotlin/com/j15/backend/application/service/AuthService.kt:13:41 Unresolved reference: auth
+#13 56.15 e: file:///app/src/main/kotlin/com/j15/backend/application/service/AuthService.kt:27:25 Unresolved reference: SignInRequest
+#13 56.15 e: file:///app/src/main/kotlin/com/j15/backend/application/service/AuthService.kt:27:41 Unresolved reference: SignInResponse
+#13 56.15 e: file:///app/src/main/kotlin/com/j15/backend/application/service/AuthService.kt:39:16 Unresolved reference: SignInResponse
+#13 56.16 e: file:///app/src/main/kotlin/com/j15/backend/application/service/AuthService.kt:50:25 Unresolved reference: SignUpRequest
+#13 56.16 e: file:///app/src/main/kotlin/com/j15/backend/application/service/AuthService.kt:50:41 Unresolved reference: SignUpResponse
+#13 56.16 e: file:///app/src/main/kotlin/com/j15/backend/application/service/AuthService.kt:74:16 Unresolved reference: SignUpResponse
+#13 56.16 
+#13 56.16 > Task :compileKotlin FAILED
+#13 56.25 
+#13 56.25 FAILURE: Build failed with an exception.
+#13 56.25 
+#13 56.25 * What went wrong:
+#13 56.25 Execution failed for task ':compileKotlin'.
+#13 56.25 > A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+#13 56.25    > Compilation error. See log for more details
+#13 56.25 
+#13 56.25 * Try:
+#13 56.25 > Run with --stacktrace option to get the stack trace.
+#13 56.25 > Run with --info or --debug option to get more log output.
+#13 56.26 > Run with --scan to get full insights.
+#13 56.26 > Get more help at https://help.gradle.org.
+#13 56.26 
+#13 56.26 BUILD FAILED in 55s
+#13 56.26 3 actionable tasks: 3 executed
+#13 ERROR: process "/bin/sh -c gradle bootJar --no-daemon" did not complete successfully: exit code: 1
+------
+ > [backend build 7/7] RUN gradle bootJar --no-daemon:
+56.25    > Compilation error. See log for more details
+56.25 
+56.25 * Try:
+56.25 > Run with --stacktrace option to get the stack trace.
+56.25 > Run with --info or --debug option to get more log output.
+56.26 > Run with --scan to get full insights.
+56.26 > Get more help at https://help.gradle.org.
+56.26 
+56.26 BUILD FAILED in 55s
+56.26 3 actionable tasks: 3 executed
+------
+failed to solve: process "/bin/sh -c gradle bootJar --no-daemon" did not complete successfully: exit code: 1

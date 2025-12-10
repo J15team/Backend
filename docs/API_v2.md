@@ -30,7 +30,23 @@ http://localhost:8080
 
 ### 認証
 
-現在、認証は基本的な検証のみ実装されています。将来的に JWT トークン認証を実装予定です。
+本APIはJWTトークンによる認証を実装しています。
+
+**認証が必要なエンドポイント**
+- 進捗管理API（`/api/progress/**`）
+- 題材の作成・更新・削除
+
+**認証方法**
+
+リクエストヘッダーに以下を含めます：
+
+```
+Authorization: Bearer {accessToken}
+```
+
+**トークンの取得**
+
+サインインAPIでアクセストークンとリフレッシュトークンを取得できます。
 
 ---
 
@@ -56,6 +72,8 @@ ISO 8601 形式（UTC）を使用します。
 | 201    | 成功（作成）                 |
 | 204    | 成功（レスポンスボディなし） |
 | 400    | リクエストが不正             |
+| 401    | 認証が必要                   |
+| 403    | アクセス権限なし             |
 | 404    | リソースが見つからない       |
 | 409    | リソースの競合（重複など）   |
 | 500    | サーバーエラー               |
@@ -71,7 +89,7 @@ ISO 8601 形式（UTC）を使用します。
 **エンドポイント**
 
 ```http
-POST /api/users/signup
+POST /api/auth/signup
 ```
 
 **認証**: 不要
@@ -156,15 +174,77 @@ Content-Type: application/json
 
 ```json
 {
-  "userId": "123e4567-e89b-12d3-a456-426614174000",
-  "username": "testuser",
-  "email": "test@example.com"
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "username": "testuser",
+    "email": "test@example.com"
+  }
 }
 ```
+
+| フィールド   | 型     | 説明                                     |
+| ------------ | ------ | ---------------------------------------- |
+| accessToken  | string | アクセストークン（JWT）、APIリクエストに使用 |
+| refreshToken | string | リフレッシュトークン（JWT）、トークン更新に使用 |
+| user         | object | ユーザー情報                             |
+| user.id      | string | ユーザーID（UUID形式）                   |
+| user.username | string | ユーザー名                               |
+| user.email   | string | メールアドレス                           |
 
 **エラー**
 
 - **400 Bad Request**: メールアドレスまたはパスワードが不正
+
+---
+
+### トークンリフレッシュ
+
+```
+POST /api/auth/refresh
+```
+
+**認証**: 不要
+
+**リクエストヘッダー**
+
+```
+Content-Type: application/json
+```
+
+**リクエストボディ**
+
+```json
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+| フィールド   | 型     | 必須 | 説明                   |
+| ------------ | ------ | ---- | ---------------------- |
+| refreshToken | string | ○    | リフレッシュトークン   |
+
+**レスポンス**
+
+**成功時 (200 OK)**
+
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+| フィールド   | 型     | 説明                                     |
+| ------------ | ------ | ---------------------------------------- |
+| accessToken  | string | 新しいアクセストークン（JWT）             |
+| refreshToken | string | リフレッシュトークン（JWT）               |
+
+**エラー**
+
+- **400 Bad Request**: リフレッシュトークンが無効または期限切れ
+- **400 Bad Request**: ユーザーが見つからない
 
 ---
 
@@ -478,20 +558,27 @@ GET /api/subjects/{subjectId}/sections/{sectionId}
 
 ### 進捗状態取得
 
-ユーザーの特定題材における進捗状態を取得します。
+認証済みユーザーの特定題材における進捗状態を取得します。
 
 **エンドポイント**
 
 ```http
-GET /api/progress/{userId}/subjects/{subjectId}
+GET /api/progress/subjects/{subjectId}
+```
+
+**認証**: 必須（JWTトークン）
+
+**リクエストヘッダー**
+
+```
+Authorization: Bearer {accessToken}
 ```
 
 **パスパラメータ**
 
-| パラメータ | 型          | 説明        |
-| ---------- | ----------- | ----------- |
-| userId     | UUID string | ユーザー ID |
-| subjectId  | long        | 題材 ID     |
+| パラメータ | 型   | 説明    |
+| ---------- | ---- | ------- |
+| subjectId  | long | 題材 ID |
 
 **レスポンス**
 
@@ -536,13 +623,18 @@ GET /api/progress/{userId}/subjects/{subjectId}
 
 **エラー**
 
-- **404 Not Found**: ユーザーまたは題材が存在しない
+- **401 Unauthorized**: 認証トークンが無効または期限切れ
+- **404 Not Found**: 題材が存在しない
 
 **フロントエンド実装例**
 
 ```typescript
-// 進捗バーの表示
-const progress = await fetch(`/api/progress/${userId}/subjects/${subjectId}`);
+// 進捗バーの表示（認証トークンを含める）
+const progress = await fetch(`/api/progress/subjects/${subjectId}`, {
+  headers: {
+    'Authorization': `Bearer ${accessToken}`
+  }
+});
 const data = await progress.json();
 
 // プログレスバーに表示
@@ -559,24 +651,26 @@ if (data.nextSectionId !== null) {
 
 ### セクション完了記録
 
-ユーザーがセクションを完了したことを記録します。
+認証済みユーザーがセクションを完了したことを記録します。
 
 **エンドポイント**
 
 ```http
-POST /api/progress/{userId}/subjects/{subjectId}/sections
+POST /api/progress/subjects/{subjectId}/sections
 ```
+
+**認証**: 必須（JWTトークン）
 
 **パスパラメータ**
 
-| パラメータ | 型          | 説明        |
-| ---------- | ----------- | ----------- |
-| userId     | UUID string | ユーザー ID |
-| subjectId  | long        | 題材 ID     |
+| パラメータ | 型   | 説明    |
+| ---------- | ---- | ------- |
+| subjectId  | long | 題材 ID |
 
 **リクエストヘッダー**
 
 ```
+Authorization: Bearer {accessToken}
 Content-Type: application/json
 ```
 
@@ -612,18 +706,22 @@ Content-Type: application/json
     "error": "セクション 5 は既に完了しています"
   }
   ```
-- **404 Not Found**: ユーザーまたは題材が存在しない
+- **401 Unauthorized**: 認証トークンが無効または期限切れ
+- **404 Not Found**: 題材が存在しない
 
 **フロントエンド実装例**
 
 ```typescript
-// セクション完了時に呼び出す
+// セクション完了時に呼び出す（認証トークンを含める）
 async function markSectionComplete(sectionId: number) {
   const response = await fetch(
-    `/api/progress/${userId}/subjects/${subjectId}/sections`,
+    `/api/progress/subjects/${subjectId}/sections`,
     {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({ sectionId }),
     }
   );
@@ -643,21 +741,28 @@ async function markSectionComplete(sectionId: number) {
 
 ### セクション完了状態チェック
 
-特定のセクションが完了済みかチェックします。
+認証済みユーザーの特定セクションが完了済みかチェックします。
 
 **エンドポイント**
 
 ```http
-GET /api/progress/{userId}/subjects/{subjectId}/sections/{sectionId}
+GET /api/progress/subjects/{subjectId}/sections/{sectionId}
+```
+
+**認証**: 必須（JWTトークン）
+
+**リクエストヘッダー**
+
+```
+Authorization: Bearer {accessToken}
 ```
 
 **パスパラメータ**
 
-| パラメータ | 型          | 説明                   |
-| ---------- | ----------- | ---------------------- |
-| userId     | UUID string | ユーザー ID            |
-| subjectId  | long        | 題材 ID                |
-| sectionId  | int         | セクション ID（0~100） |
+| パラメータ | 型   | 説明                   |
+| ---------- | ---- | ---------------------- |
+| subjectId  | long | 題材 ID                |
+| sectionId  | int  | セクション ID（0~100） |
 
 **レスポンス**
 
@@ -673,12 +778,21 @@ GET /api/progress/{userId}/subjects/{subjectId}/sections/{sectionId}
 | ---------- | ------- | ----------------------------- |
 | isCleared  | boolean | true: 完了済み、false: 未完了 |
 
+**エラー**
+
+- **401 Unauthorized**: 認証トークンが無効または期限切れ
+
 **フロントエンド実装例**
 
 ```typescript
-// セクションにチェックマークを表示するか判定
+// セクションにチェックマークを表示するか判定（認証トークンを含める）
 const result = await fetch(
-  `/api/progress/${userId}/subjects/${subjectId}/sections/${sectionId}`
+  `/api/progress/subjects/${subjectId}/sections/${sectionId}`,
+  {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`
+    }
+  }
 );
 const { isCleared } = await result.json();
 
@@ -692,21 +806,28 @@ if (isCleared) {
 
 ### セクション完了削除（デバッグ用）
 
-セクションの完了記録を削除します。
+認証済みユーザーのセクション完了記録を削除します。
 
 **エンドポイント**
 
 ```http
-DELETE /api/progress/{userId}/subjects/{subjectId}/sections/{sectionId}
+DELETE /api/progress/subjects/{subjectId}/sections/{sectionId}
+```
+
+**認証**: 必須（JWTトークン）
+
+**リクエストヘッダー**
+
+```
+Authorization: Bearer {accessToken}
 ```
 
 **パスパラメータ**
 
-| パラメータ | 型          | 説明                   |
-| ---------- | ----------- | ---------------------- |
-| userId     | UUID string | ユーザー ID            |
-| subjectId  | long        | 題材 ID                |
-| sectionId  | int         | セクション ID（0~100） |
+| パラメータ | 型   | 説明                   |
+| ---------- | ---- | ---------------------- |
+| subjectId  | long | 題材 ID                |
+| sectionId  | int  | セクション ID（0~100） |
 
 **レスポンス**
 
@@ -726,6 +847,7 @@ DELETE /api/progress/{userId}/subjects/{subjectId}/sections/{sectionId}
     "error": "削除に失敗しました"
   }
   ```
+- **401 Unauthorized**: 認証トークンが無効または期限切れ
 
 ---
 
@@ -773,7 +895,7 @@ DELETE /api/progress/{userId}/subjects/{subjectId}/sections/{sectionId}
 ```typescript
 // サインアップ
 const signup = async (username: string, email: string, password: string) => {
-  const response = await fetch("/api/users/signup", {
+  const response = await fetch("/api/auth/signup", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, email, password }),

@@ -3,6 +3,7 @@ package com.j15.backend.infrastructure.service
 import com.j15.backend.domain.model.auth.AccessToken
 import com.j15.backend.domain.model.auth.RefreshToken
 import com.j15.backend.domain.model.user.UserId
+import com.j15.backend.domain.model.user.UserRole
 import com.j15.backend.domain.service.JwtTokenService
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
@@ -23,13 +24,13 @@ class JwtTokenServiceImpl(
         Keys.hmacShaKeyFor(secret.toByteArray(Charsets.UTF_8))
     }
 
-    override fun generateAccessToken(userId: UserId): AccessToken {
-        val token = createToken(userId, accessTokenExpiration)
+    override fun generateAccessToken(userId: UserId, role: UserRole): AccessToken {
+        val token = createToken(userId, role, accessTokenExpiration)
         return AccessToken(token)
     }
 
-    override fun generateRefreshToken(userId: UserId): RefreshToken {
-        val token = createToken(userId, refreshTokenExpiration)
+    override fun generateRefreshToken(userId: UserId, role: UserRole): RefreshToken {
+        val token = createToken(userId, role, refreshTokenExpiration)
         return RefreshToken(token)
     }
 
@@ -37,6 +38,13 @@ class JwtTokenServiceImpl(
         val claims = extractAllClaims(token)
         val userIdString = claims.subject
         return UserId(UUID.fromString(userIdString))
+    }
+
+    override fun getRoleFromToken(token: String): UserRole {
+        val claims = extractAllClaims(token)
+        val roleString = claims.get("role", String::class.java)
+            ?: throw IllegalArgumentException("トークンにロール情報が含まれていません")
+        return UserRole.fromString(roleString)
     }
 
     override fun validateToken(token: String): Boolean {
@@ -48,12 +56,13 @@ class JwtTokenServiceImpl(
         }
     }
 
-    private fun createToken(userId: UserId, expiration: Long): String {
+    private fun createToken(userId: UserId, role: UserRole, expiration: Long): String {
         val now = Date()
         val expiryDate = Date(now.time + expiration)
 
         return Jwts.builder()
             .subject(userId.value.toString())
+            .claim("role", role.name)
             .issuedAt(now)
             .expiration(expiryDate)
             .signWith(secretKey)

@@ -83,7 +83,10 @@ CI/CDではGitHub Actionsで自動的にE2Eテストが実行されます。
 
 ## API エンドポイント
 
-詳細なAPI仕様については [API仕様書](./docs/API.md) を参照してください。
+APIドキュメント:
+
+- [APIリファレンス（エンドポイントとJSONの一覧）](./docs/API_reference.md)
+- [詳細なAPI仕様書 v2](./docs/API_v2.md)
 
 ### 概要
 
@@ -96,7 +99,7 @@ CI/CDではGitHub Actionsで自動的にE2Eテストが実行されます。
 
 | カテゴリ | メソッド | エンドポイント | 説明 |
 |---------|---------|---------------|------|
-| 認証 | POST | `/api/users/signup` | 新規ユーザー登録 |
+| 認証 | POST | `/api/auth/signup` | 新規ユーザー登録 |
 | 認証 | POST | `/api/auth/signin` | ログイン |
 | セクション | GET | `/api/sections` | 全セクション一覧 |
 | セクション | GET | `/api/sections/{sectionId}` | セクション詳細 |
@@ -111,7 +114,7 @@ CI/CDではGitHub Actionsで自動的にE2Eテストが実行されます。
 #### サインアップ
 
 ```bash
-curl -X POST http://localhost:8080/api/users/signup \
+curl -X POST http://localhost:8080/api/auth/signup \
   -H "Content-Type: application/json" \
   -d '{
     "username": "testuser",
@@ -141,7 +144,7 @@ curl http://localhost:8080/api/sections
 
 ```bash
 curl http://localhost:8080/api/progress/{userId}
-詳細なリクエスト/レスポンス形式、エラーハンドリング、バリデーションルールについては [API仕様書](./docs/API.md) を参照してください。
+詳細なリクエスト/レスポンス形式、エラーハンドリング、バリデーションルールは [APIリファレンス](./docs/API_reference.md) および [API仕様書 v2](./docs/API_v2.md) を参照してください。
 
 ## データベース設計
 
@@ -178,6 +181,36 @@ user_cleared_sections
 ```
 
 ## 開発ガイドライン
+
+### セキュリティ
+
+#### レート制限
+
+APIは**レート制限機能**を実装しており、DDOS攻撃などの連続したアクセスから保護されています。
+
+**デフォルト設定:**
+- **制限**: 60秒あたり100リクエスト（IPアドレス単位）
+- **超過時**: HTTP 429 (Too Many Requests) を返す
+- **ヘッダー**: 
+  - `X-RateLimit-Limit`: 制限値
+  - `X-RateLimit-Remaining`: 残りリクエスト数
+
+**設定のカスタマイズ:**
+
+`application.yml` で設定を変更できます：
+
+```yaml
+rate-limit:
+  enabled: true                   # レート制限の有効/無効
+  capacity: 100                   # 最大リクエスト数
+  refill-tokens: 100              # 補充するトークン数
+  refill-period-seconds: 60       # 補充間隔（秒）
+  max-cache-size: 10000           # キャッシュする最大IPアドレス数
+```
+
+**注意事項:**
+- プロキシ経由のアクセスでは `X-Forwarded-For` ヘッダーを使用してIPアドレスを判定します
+- 本番環境では信頼できるプロキシのみを使用することを推奨します
 
 ### コーディング規約
 
