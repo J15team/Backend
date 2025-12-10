@@ -56,8 +56,8 @@ class SecurityConfig(
                     .anyRequest().authenticated()
             }
             // RateLimit -> JWT -> UsernamePassword の順序で評価
-            .addFilterBefore(rateLimitFilter, JwtAuthenticationFilter::class.java)
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(rateLimitFilter, JwtAuthenticationFilter::class.java)
 
         return http.build()
     }
