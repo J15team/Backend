@@ -7,11 +7,13 @@ import com.j15.backend.domain.model.user.UserRole
 import com.j15.backend.domain.model.user.Username
 import com.j15.backend.domain.model.user.UserId
 import com.j15.backend.domain.repository.UserRepository
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.security.MessageDigest
+import jakarta.annotation.PostConstruct
 
 /**
  * 管理者操作のユースケース
@@ -24,6 +26,22 @@ class AdminUseCase(
     @Value("\${admin.api-key:}")
     private val adminApiKey: String
 ) {
+    private val logger = LoggerFactory.getLogger(AdminUseCase::class.java)
+
+    /**
+     * 起動時にADMIN_API_KEYが適切に設定されているか検証
+     */
+    @PostConstruct
+    fun validateConfig() {
+        if (adminApiKey.isBlank()) {
+            logger.error("ADMIN_API_KEY is not properly configured!")
+            throw IllegalStateException("ADMIN_API_KEY must be set in production")
+        }
+        if (adminApiKey == "admin-secret-key-change-this-in-production") {
+            logger.error("ADMIN_API_KEY is using default value!")
+            throw IllegalStateException("ADMIN_API_KEY must be changed from default value")
+        }
+    }
 
     /**
      * 管理者ユーザー作成の結果
@@ -81,14 +99,14 @@ class AdminUseCase(
         }
         
         if (adminApiKey.isBlank()) {
-            throw IllegalArgumentException("Invalid admin API key")
+            throw SecurityException("Admin API key not configured")
         }
 
         if (!MessageDigest.isEqual(
             providedKey.toByteArray(Charsets.UTF_8),
             adminApiKey.toByteArray(Charsets.UTF_8)
         )) {
-            throw IllegalArgumentException("Invalid admin API key")
+            throw SecurityException("Invalid admin API key")
         }
     }
 }

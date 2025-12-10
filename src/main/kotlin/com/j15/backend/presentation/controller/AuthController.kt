@@ -1,6 +1,9 @@
 package com.j15.backend.presentation.controller
 
 import com.j15.backend.application.service.AuthService
+import com.j15.backend.application.command.SignInCommand
+import com.j15.backend.application.command.SignUpCommand
+import com.j15.backend.application.command.RefreshTokenCommand
 import com.j15.backend.presentation.dto.request.SignInRequest
 import com.j15.backend.presentation.dto.response.SignInResponse
 import com.j15.backend.presentation.dto.request.SignUpRequest
@@ -27,7 +30,17 @@ class AuthController(
     @PostMapping("/signin")
     fun signIn(@RequestBody request: SignInRequest): ResponseEntity<Any> {
         return try {
-            val response = authService.signIn(request)
+            val command = SignInCommand(
+                email = request.email,
+                password = request.password
+            )
+            val result = authService.signIn(command)
+            val response = SignInResponse(
+                userId = result.userId,
+                email = result.email,
+                accessToken = result.accessToken,
+                refreshToken = result.refreshToken
+            )
             ResponseEntity.ok(response)
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -42,7 +55,17 @@ class AuthController(
     @PostMapping("/signup")
     fun signUp(@RequestBody request: SignUpRequest): ResponseEntity<Any> {
         return try {
-            val response = authService.signUp(request)
+            val command = SignUpCommand(
+                email = request.email,
+                username = request.username,
+                password = request.password
+            )
+            val result = authService.signUp(command)
+            val response = SignUpResponse(
+                userId = result.userId,
+                email = result.email,
+                username = result.username
+            )
             ResponseEntity.status(HttpStatus.CREATED).body(response)
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(HttpStatus.CONFLICT)
@@ -57,8 +80,14 @@ class AuthController(
     @PostMapping("/refresh")
     fun refreshToken(@RequestBody request: TokenRefreshRequest): ResponseEntity<Any> {
         return try {
-            val accessToken = authService.refreshToken(request.refreshToken)
-            ResponseEntity.ok(TokenRefreshResponse(accessToken = accessToken))
+            val command = RefreshTokenCommand(
+                refreshToken = request.refreshToken
+            )
+            val result = authService.refreshToken(command)
+            val response = TokenRefreshResponse(
+                accessToken = result.accessToken
+            )
+            ResponseEntity.ok(response)
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(mapOf("error" to e.message))
