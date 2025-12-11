@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
@@ -27,6 +28,20 @@ class GlobalExceptionHandler {
                 }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse(message = errors, status = HttpStatus.BAD_REQUEST.value()))
+    }
+
+    // JSONパースエラー（必須フィールド欠落など）
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    fun handleHttpMessageNotReadableException(
+            ex: HttpMessageNotReadableException
+    ): ResponseEntity<ErrorResponse> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(
+                        ErrorResponse(
+                                message = "リクエストの形式が不正です",
+                                status = HttpStatus.BAD_REQUEST.value()
+                        )
+                )
     }
 
     // ビジネスロジックエラー（IllegalArgumentException）
@@ -54,6 +69,21 @@ class GlobalExceptionHandler {
                         ErrorResponse(
                                 message = "アクセスが拒否されました",
                                 status = HttpStatus.FORBIDDEN.value()
+                        )
+                )
+    }
+
+    // 認証エラー（SecurityException）
+    @ExceptionHandler(SecurityException::class)
+    fun handleSecurityException(
+            ex: SecurityException
+    ): ResponseEntity<ErrorResponse> {
+        logger.warn("Authentication failed: {}", ex.message)
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(
+                        ErrorResponse(
+                                message = "認証に失敗しました",
+                                status = HttpStatus.UNAUTHORIZED.value()
                         )
                 )
     }
