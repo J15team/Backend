@@ -5,3 +5,9 @@ data class AdminUserCreateRequest(
     val password: String,
     val username: String
 )
+
+data class AdminUserUpdateRequest(
+    val email: String? = null,
+    val username: String? = null,
+    val password: String? = null
+)

@@ -90,6 +90,87 @@ class AdminUseCase(
     }
 
     /**
+     * 管理者ユーザーを更新
+     */
+    fun updateAdminUser(
+        userId: String,
+        email: String?,
+        username: String?,
+        password: String?
+    ): AdminUserCreationResult {
+        val userId = UserId(java.util.UUID.fromString(userId))
+        val existingUser = userRepository.findById(userId)
+            ?: throw IllegalArgumentException("ユーザーが見つかりません")
+
+        // 管理者権限の確認
+        if (existingUser.role != UserRole.ROLE_ADMIN) {
+            throw IllegalArgumentException("このユーザーは管理者ユーザーではありません")
+        }
+
+        val updatedEmail = email?.let { Email(it) } ?: existingUser.email
+        val updatedUsername = username?.let { Username(it) } ?: existingUser.username
+        val updatedPasswordHash = password?.let { PasswordHash(passwordEncoder.encode(it)) } ?: existingUser.passwordHash
+
+        // メールアドレスとユーザー名の重複チェック（自分自身は除外）
+        if (email != null && email != existingUser.email.value && userRepository.existsByEmail(updatedEmail)) {
+            throw IllegalArgumentException("このメールアドレスは既に登録されています")
+        }
+        if (username != null && username != existingUser.username.value && userRepository.existsByUsername(updatedUsername)) {
+            throw IllegalArgumentException("このユーザー名は既に使用されています")
+        }
+
+        val updatedUser = existingUser.copy(
+            email = updatedEmail,
+            username = updatedUsername,
+            passwordHash = updatedPasswordHash
+        )
+
+        val savedUser = userRepository.save(updatedUser)
+        return AdminUserCreationResult(user = savedUser)
+    }
+
+    /**
+     * 管理者ユーザーを削除
+     */
+    fun deleteAdminUser(userId: String) {
+        val userId = UserId(java.util.UUID.fromString(userId))
+        val user = userRepository.findById(userId)
+            ?: throw IllegalArgumentException("ユーザーが見つかりません")
+
+        // 管理者権限の確認
+        if (user.role != UserRole.ROLE_ADMIN) {
+            throw IllegalArgumentException("このユーザーは管理者ユーザーではありません")
+        }
+
+        userRepository.deleteById(userId)
+    }
+
+    /**
+     * 管理者ユーザー一覧を取得
+     */
+    @Transactional(readOnly = true)
+    fun getAllAdminUsers(): List<User> {
+        return userRepository.findAll()
+            .filter { it.role == UserRole.ROLE_ADMIN }
+    }
+
+    /**
+     * 管理者ユーザーを取得
+     */
+    @Transactional(readOnly = true)
+    fun getAdminUser(userId: String): User? {
+        val userId = UserId(java.util.UUID.fromString(userId))
+        val user = userRepository.findById(userId) ?: return null
+        
+        // 管理者権限の確認
+        if (user.role != UserRole.ROLE_ADMIN) {
+            return null
+        }
+        
+        return user
+    }
+
+    /**
      * 管理者キーを検証（定数時間比較）
      */
     private fun validateAdminKey(providedKey: String) {
