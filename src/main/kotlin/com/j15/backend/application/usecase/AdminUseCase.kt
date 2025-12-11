@@ -92,7 +92,7 @@ class AdminUseCase(
     /**
      * 管理者キーを検証（定数時間比較）
      */
-    private fun validateAdminKey(providedKey: String) {
+    fun validateAdminKey(providedKey: String) {
         // 長さ制限を追加してDoS攻撃を防止
         if (providedKey.length > 1000) {
             throw IllegalArgumentException("Invalid admin API key")
