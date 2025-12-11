@@ -3,10 +3,13 @@ package com.j15.backend.presentation.controller
 import com.j15.backend.application.usecase.AdminUseCase
 import com.j15.backend.presentation.dto.request.AdminUserCreateRequest
 import com.j15.backend.presentation.dto.response.AdminUserCreateResponse
+import com.j15.backend.presentation.dto.response.ErrorResponse
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.BindingResult
+import org.springframework.validation.FieldError
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
@@ -33,12 +36,27 @@ class AdminController(
     @PostMapping("/users")
     fun createAdminUser(
         @Valid @RequestBody request: AdminUserCreateRequest,
+        bindingResult: BindingResult,
         @RequestHeader("X-Admin-Key") adminKey: String?
     ): ResponseEntity<Any> {
+        // 1. まず認証チェック (401)
         if (adminKey == null) {
             throw SecurityException("X-Admin-Key header is required")
         }
+        adminUseCase.validateAdminKey(adminKey)
 
+        // 2. 次にバリデーションチェック (400)
+        if (bindingResult.hasErrors()) {
+            val errors = bindingResult.allErrors.joinToString(", ") { error ->
+                val fieldName = (error as? FieldError)?.field ?: "field"
+                val errorMessage = error.defaultMessage ?: "invalid"
+                "$fieldName: $errorMessage"
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse(message = errors, status = HttpStatus.BAD_REQUEST.value()))
+        }
+
+        // 3. 正常系の処理
         val result = adminUseCase.createAdminUser(
             email = request.email,
             username = request.username,
