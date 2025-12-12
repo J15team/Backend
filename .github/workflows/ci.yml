@@ -271,7 +271,7 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{"email":"admin@example.com","password":"adminpass123"}')
           ADMIN_TOKEN=$(echo "$ADMIN_SIGNIN" | grep -o '"accessToken":"[^"]*"' | cut -d'"' -f4)
-          ADMIN_ID=$(echo "$ADMIN_SIGNIN" | grep -o '"userId":"[^"]*"' | cut -d'"' -f4)
+          ADMIN_ID=$(echo "$ADMIN_SIGNIN" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
           echo "Admin token obtained: $ADMIN_TOKEN"
           echo "Admin ID: $ADMIN_ID"
 
