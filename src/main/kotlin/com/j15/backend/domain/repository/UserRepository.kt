@@ -9,6 +9,7 @@ import com.j15.backend.domain.model.user.Username
 interface UserRepository {
     fun findById(id: UserId): User?
     fun findByEmail(email: Email): User?
+    fun findAll(): List<User>
     fun existsByEmail(email: Email): Boolean
     fun existsByUsername(username: Username): Boolean
     fun save(user: User): User

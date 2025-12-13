@@ -18,3 +18,9 @@ data class AdminUserCreateRequest(
     @field:Size(min = 3, max = 20, message = "ユーザー名は3〜20文字で入力してください")
     val username: String
 )
+
+data class AdminUserUpdateRequest(
+    val email: String? = null,
+    val username: String? = null,
+    val password: String? = null
+)
