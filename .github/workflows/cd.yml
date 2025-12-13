@@ -109,10 +109,25 @@ jobs:
         id: deploy-ecs
         run: |
           NEW_TASK_DEF="${{ steps.update-task.outputs.new_task_def }}"
+
+          # 現在のdesired-countを取得、0なら1に設定
+          CURRENT_COUNT=$(aws ecs describe-services \
+            --cluster $ECS_CLUSTER \
+            --services $ECS_SERVICE \
+            --query 'services[0].desiredCount' \
+            --output text)
+
+          if [ "$CURRENT_COUNT" -eq 0 ]; then
+            DESIRED_COUNT=1
+          else
+            DESIRED_COUNT=$CURRENT_COUNT
+          fi
+
           aws ecs update-service \
             --cluster $ECS_CLUSTER \
             --service $ECS_SERVICE \
             --task-definition $NEW_TASK_DEF \
+            --desired-count $DESIRED_COUNT \
             --force-new-deployment
 
           echo "Waiting for new task with definition: $NEW_TASK_DEF"
