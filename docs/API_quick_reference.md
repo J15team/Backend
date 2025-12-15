@@ -57,7 +57,7 @@
 - 最大サイズ: 5MB
 - 画像が登録されている場合、レスポンスの `imageUrl` にS3のURLが含まれます
 
-詳細: [題材・セクションAPI詳細](detailed/subjects_sections.md) / [画像アップロード詳細](detailed/image_upload.md)
+詳細: [題材・セクションAPI詳細](detailed/subjects_sections.md)
 
 ### 進捗 API（認証必須）
 
