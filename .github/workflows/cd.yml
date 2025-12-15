@@ -14,6 +14,7 @@ env:
   ECS_SERVICE: j15-backend-service-dev
   ECS_TASK_FAMILY: j15-backend-dev
   API_GATEWAY_ID: zu9mkxoir4
+  AWS_S3_BUCKET_NAME: j15-backend-images
 
 jobs:
   deploy:
@@ -96,9 +97,27 @@ jobs:
             --task-definition $ECS_TASK_FAMILY \
             --query 'taskDefinition' > current-task-def.json
           NEW_IMAGE="${ECR_REGISTRY}/${ECR_REPOSITORY}:${{ github.sha }}"
+          
+          # 環境変数を追加/更新
           jq --arg IMAGE "$NEW_IMAGE" \
-            '.containerDefinitions[0].image = $IMAGE | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' \
+            --arg AWS_ACCESS_KEY_ID "${{ secrets.AWS_ACCESS_KEY_ID }}" \
+            --arg AWS_SECRET_ACCESS_KEY "${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
+            --arg AWS_REGION "${{ env.AWS_REGION }}" \
+            --arg AWS_S3_BUCKET_NAME "${{ env.AWS_S3_BUCKET_NAME }}" \
+            '.containerDefinitions[0].image = $IMAGE |
+             .containerDefinitions[0].environment = (
+               (.containerDefinitions[0].environment // []) |
+               map(select(.name != "AWS_ACCESS_KEY_ID" and .name != "AWS_SECRET_ACCESS_KEY" and .name != "AWS_REGION" and .name != "AWS_S3_BUCKET_NAME")) +
+               [
+                 {name: "AWS_ACCESS_KEY_ID", value: $AWS_ACCESS_KEY_ID},
+                 {name: "AWS_SECRET_ACCESS_KEY", value: $AWS_SECRET_ACCESS_KEY},
+                 {name: "AWS_REGION", value: $AWS_REGION},
+                 {name: "AWS_S3_BUCKET_NAME", value: $AWS_S3_BUCKET_NAME}
+               ]
+             ) |
+             del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' \
             current-task-def.json > new-task-def.json
+          
           NEW_TASK_DEF_ARN=$(aws ecs register-task-definition \
             --cli-input-json file://new-task-def.json \
             --query 'taskDefinition.taskDefinitionArn' \
@@ -109,10 +128,25 @@ jobs:
         id: deploy-ecs
         run: |
           NEW_TASK_DEF="${{ steps.update-task.outputs.new_task_def }}"
+
+          # 現在のdesired-countを取得、0なら1に設定
+          CURRENT_COUNT=$(aws ecs describe-services \
+            --cluster $ECS_CLUSTER \
+            --services $ECS_SERVICE \
+            --query 'services[0].desiredCount' \
+            --output text)
+
+          if [ "$CURRENT_COUNT" -eq 0 ]; then
+            DESIRED_COUNT=1
+          else
+            DESIRED_COUNT=$CURRENT_COUNT
+          fi
+
           aws ecs update-service \
             --cluster $ECS_CLUSTER \
             --service $ECS_SERVICE \
             --task-definition $NEW_TASK_DEF \
+            --desired-count $DESIRED_COUNT \
             --force-new-deployment
 
           echo "Waiting for new task with definition: $NEW_TASK_DEF"

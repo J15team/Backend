@@ -32,6 +32,8 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build --no-daemon -x test
+        # Note: S3関連のコードはビルド時には実行されないため、
+        # S3環境変数の設定は不要です（エンドポイント呼び出し時のみ必要）
 
       - name: Start services with Docker Compose
         run: docker compose up -d
@@ -263,6 +265,114 @@ jobs:
           fi
 
           echo "✅ Admin can create subjects!"
+
+      - name: Test admin user management (list, get, update, delete)
+        run: |
+          # 管理者でサインイン
+          ADMIN_SIGNIN=$(curl -s -X POST http://localhost:8080/api/auth/signin \
+            -H "Content-Type: application/json" \
+            -d '{"email":"admin@example.com","password":"adminpass123"}')
+          ADMIN_TOKEN=$(echo "$ADMIN_SIGNIN" | grep -o '"accessToken":"[^"]*"' | cut -d'"' -f4)
+          ADMIN_ID=$(echo "$ADMIN_SIGNIN" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+          echo "Admin token obtained: $ADMIN_TOKEN"
+          echo "Admin ID: $ADMIN_ID"
+
+          # 管理者一覧取得テスト
+          LIST_RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:8080/api/admin/users \
+            -H "Authorization: Bearer $ADMIN_TOKEN")
+          HTTP_CODE=$(echo "$LIST_RESPONSE" | tail -n 1)
+          BODY=$(echo "$LIST_RESPONSE" | head -n -1)
+
+          echo "Admin users list HTTP Status: $HTTP_CODE"
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "Admin users list failed with status $HTTP_CODE"
+            exit 1
+          fi
+
+          if ! echo "$BODY" | grep -q "adminuser"; then
+            echo "Admin user not found in list"
+            exit 1
+          fi
+
+          echo "✅ Admin users list test passed!"
+
+          # 管理者詳細取得テスト
+          GET_RESPONSE=$(curl -s -w "\n%{http_code}" "http://localhost:8080/api/admin/users/$ADMIN_ID" \
+            -H "Authorization: Bearer $ADMIN_TOKEN")
+          HTTP_CODE=$(echo "$GET_RESPONSE" | tail -n 1)
+          BODY=$(echo "$GET_RESPONSE" | head -n -1)
+
+          echo "Admin user detail HTTP Status: $HTTP_CODE"
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "Admin user detail failed with status $HTTP_CODE"
+            exit 1
+          fi
+
+          if ! echo "$BODY" | grep -q "adminuser"; then
+            echo "Admin username not found in detail response"
+            exit 1
+          fi
+
+          echo "✅ Admin user detail test passed!"
+
+          # 管理者ユーザー更新テスト
+          UPDATE_RESPONSE=$(curl -s -w "\n%{http_code}" -X PUT "http://localhost:8080/api/admin/users/$ADMIN_ID" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $ADMIN_TOKEN" \
+            -d '{"username":"updatedadmin","email":"updated@example.com"}')
+          HTTP_CODE=$(echo "$UPDATE_RESPONSE" | tail -n 1)
+          BODY=$(echo "$UPDATE_RESPONSE" | head -n -1)
+
+          echo "Admin user update HTTP Status: $HTTP_CODE"
+          echo "Response Body: $BODY"
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "Admin user update failed with status $HTTP_CODE"
+            exit 1
+          fi
+
+          if ! echo "$BODY" | grep -q "updatedadmin"; then
+            echo "Updated username not found in response"
+            exit 1
+          fi
+
+          echo "✅ Admin user update test passed!"
+
+          # 新しい管理者を作成して削除テスト
+          ADMIN_KEY="admin-secret-key-change-in-production"
+          DELETE_ADMIN=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/admin/users \
+            -H "Content-Type: application/json" \
+            -H "X-Admin-Key: $ADMIN_KEY" \
+            -d '{"email":"delete@example.com","username":"deleteadmin","password":"pass123"}')
+          DELETE_ADMIN_ID=$(echo "$DELETE_ADMIN" | grep -o '"userId":"[^"]*"' | cut -d'"' -f4)
+          echo "Admin user to delete ID: $DELETE_ADMIN_ID"
+
+          # 削除テスト
+          DELETE_RESPONSE=$(curl -s -w "\n%{http_code}" -X DELETE "http://localhost:8080/api/admin/users/$DELETE_ADMIN_ID" \
+            -H "Authorization: Bearer $ADMIN_TOKEN")
+          HTTP_CODE=$(echo "$DELETE_RESPONSE" | tail -n 1)
+
+          echo "Admin user delete HTTP Status: $HTTP_CODE"
+
+          if [ "$HTTP_CODE" -ne 204 ]; then
+            echo "Admin user delete failed with status $HTTP_CODE"
+            exit 1
+          fi
+
+          # 削除したユーザーを取得しようとする（404期待）
+          GET_DELETED=$(curl -s -w "\n%{http_code}" "http://localhost:8080/api/admin/users/$DELETE_ADMIN_ID" \
+            -H "Authorization: Bearer $ADMIN_TOKEN")
+          HTTP_CODE=$(echo "$GET_DELETED" | tail -n 1)
+
+          if [ "$HTTP_CODE" -ne 404 ]; then
+            echo "Expected 404 for deleted user but got $HTTP_CODE"
+            exit 1
+          fi
+
+          echo "✅ Admin user delete test passed!"
+          echo "✅ All admin user management tests passed!"
 
       - name: Test subjects API
         run: |

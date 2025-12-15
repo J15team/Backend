@@ -20,6 +20,10 @@ class UserRepositoryImpl(private val jpaUserRepository: JpaUserRepository) : Use
         return jpaUserRepository.findByEmail(email.value)?.let { UserConverter.toDomain(it) }
     }
 
+    override fun findAll(): List<User> {
+        return jpaUserRepository.findAll().map { UserConverter.toDomain(it) }
+    }
+
     override fun existsByEmail(email: Email): Boolean = jpaUserRepository.existsByEmail(email.value)
 
     override fun existsByUsername(username: Username): Boolean =
