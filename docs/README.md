@@ -18,7 +18,6 @@
 - **[authentication.md](detailed/authentication.md)** - 認証API詳細
 - **[subjects_sections.md](detailed/subjects_sections.md)** - 題材・セクション管理API詳細
 - **[progress.md](detailed/progress.md)** - 進捗管理API詳細
-- **[image_upload.md](detailed/image_upload.md)** - 画像アップロード機能詳細
 - **[admin.md](detailed/admin.md)** - 管理者API詳細
 
 ## 使い方
