@@ -306,6 +306,25 @@ src/
         └── ci.yml                   # E2Eテスト定義
 ```
 
+## AWS 開発環境の管理
+
+開発環境（RDS + ECS）の起動/停止スクリプトを用意しています。コスト節約のため、使用しない時は停止してください。
+
+```bash
+# 起動（RDS + ECS + API Gateway更新）
+./scripts/aws-dev.sh start
+
+# 停止（RDS + ECS）
+./scripts/aws-dev.sh stop
+
+# 状態確認
+./scripts/aws-dev.sh status
+```
+
+**本番 URL**: `https://zu9mkxoir4.execute-api.ap-northeast-1.amazonaws.com`
+
+**注意**: RDS は停止後 7 日で自動再起動されます。長期間使用しない場合は定期的に停止してください。
+
 ## トラブルシューティング
 
 ### Docker コンテナが起動しない
