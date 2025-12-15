@@ -13,12 +13,6 @@ Spring Boot 3.2 + Kotlin によるバックエンドアプリケーション。�
 3. **Infrastructure（インフラストラクチャ層）** - リポジトリ実装、外部サービス連携
 4. **Presentation（プレゼンテーション層）** - Controller、API エンドポイント
 
-### 依存関係のルール
-
-- 依存は常に**外側から内側**へ向かう
-- 内側のレイヤーは外側のレイヤーを参照してはならない
-- インターフェースはドメイン層で定義し、実装はインフラ層で行う
-
 ## 技術スタック
 
 - **言語**: Kotlin 1.9.21
@@ -46,7 +40,7 @@ git clone https://github.com/J15team/Backend.git
 cd backend
 ```
 
-1. Docker Composeで起動
+1. Docker Compose で起動
 
 ```bash
 docker-compose up -d
@@ -68,7 +62,7 @@ curl http://localhost:8080/api/health
 
 ### テスト
 
-テストはDocker Compose環境でのE2Eテストのみ実行されます。
+テストは Docker Compose 環境での E2E テストのみ実行されます。
 
 ```bash
 # アプリケーションを起動
@@ -79,35 +73,48 @@ curl http://localhost:8080/api/health
 curl http://localhost:8080/api/sections
 ```
 
-CI/CDではGitHub Actionsで自動的にE2Eテストが実行されます。
+CI/CD では GitHub Actions で自動的に E2E テストが実行されます。
 
 ## API エンドポイント
 
-APIドキュメント:
+API ドキュメント:
 
-- [APIリファレンス（エンドポイントとJSONの一覧）](./docs/API_reference.md)
-- [詳細なAPI仕様書 v2](./docs/API_v2.md)
+- [API クイックリファレンス](./docs/API_quick_reference.md)
+- [詳細ドキュメント (docs/detailed/)](./docs/detailed/)
 
 ### 概要
 
-- **認証API**: サインアップ、サインイン
-- **セクションAPI**: セクション一覧取得、セクション詳細取得
-- **進捗管理API**: 進捗状態取得、セクション完了マーク、完了状態チェック、完了削除
-- **ヘルスチェックAPI**: アプリケーション稼働状態確認
+- **認証 API**: サインアップ、サインイン
+- **セクション API**: セクション一覧取得、セクション詳細取得
+- **進捗管理 API**: 進捗状態取得、セクション完了マーク、完了状態チェック、完了削除
+- **ヘルスチェック API**: アプリケーション稼働状態確認
 
 ### 主要エンドポイント一覧
 
-| カテゴリ | メソッド | エンドポイント | 説明 |
-|---------|---------|---------------|------|
-| 認証 | POST | `/api/auth/signup` | 新規ユーザー登録 |
-| 認証 | POST | `/api/auth/signin` | ログイン |
-| セクション | GET | `/api/sections` | 全セクション一覧 |
-| セクション | GET | `/api/sections/{sectionId}` | セクション詳細 |
-| 進捗 | GET | `/api/progress/{userId}` | ユーザー進捗取得 |
-| 進捗 | POST | `/api/progress/{userId}/sections` | セクション完了マーク |
-| 進捗 | GET | `/api/progress/{userId}/sections/{sectionId}` | 完了状態チェック |
-| 進捗 | DELETE | `/api/progress/{userId}/sections/{sectionId}` | 完了削除 |
-| ヘルスチェック | GET | `/api/health` | 稼働状態確認 |
+| カテゴリ   | メソッド | エンドポイント                                   | 説明                                     |
+| ---------- | -------- | ------------------------------------------------ | ---------------------------------------- |
+| 認証       | POST     | `/api/auth/signup`                               | 新規ユーザー登録                         |
+| 認証       | POST     | `/api/auth/signin`                               | ログイン                                 |
+| 題材       | GET      | `/api/subjects`                                  | 題材一覧取得                             |
+| 題材       | GET      | `/api/subjects/{subjectId}`                      | 題材詳細取得                             |
+| 題材       | POST     | `/api/subjects`                                  | 題材作成 (Admin)                         |
+| 題材       | PUT      | `/api/subjects/{subjectId}`                      | 題材更新 (Admin)                         |
+| 題材       | DELETE   | `/api/subjects/{subjectId}`                      | 題材削除 (Admin)                         |
+| セクション | POST     | `/api/subjects/{subjectId}/sections`             | セクション作成・画像アップロード (Admin) |
+| セクション | GET      | `/api/subjects/{subjectId}/sections`             | セクション一覧                           |
+| セクション | GET      | `/api/subjects/{subjectId}/sections/{sectionId}` | セクション詳細                           |
+| セクション | PUT      | `/api/subjects/{subjectId}/sections/{sectionId}` | セクション更新・画像アップロード (Admin) |
+| セクション | DELETE   | `/api/subjects/{subjectId}/sections/{sectionId}` | セクション削除 (Admin)                   |
+| 進捗       | GET      | `/api/progress/subjects/{subjectId}`             | 進捗取得                                 |
+| 進捗       | POST     | `/api/progress/subjects/{subjectId}/sections`    | セクション完了マーク                     |
+| 管理者     | POST     | `/api/admin/users`                               | 管理者作成                               |
+| 管理者     | GET      | `/api/admin/users`                               | 管理者一覧取得                           |
+| 管理者     | GET      | `/api/admin/users/{userId}`                      | 管理者詳細取得                           |
+| 管理者     | PUT      | `/api/admin/users/{userId}`                      | 管理者更新                               |
+| 管理者     | DELETE   | `/api/admin/users/{userId}`                      | 管理者削除                               |
+
+※ セクション作成・更新時は `multipart/form-data` で画像アップロードが可能です。
+詳細な仕様は [API クイックリファレンス](./docs/API_quick_reference.md) を参照してください。
 
 ### クイックスタート例
 
@@ -134,64 +141,93 @@ curl -X POST http://localhost:8080/api/auth/signin \
   }'
 ```
 
+#### 題材一覧取得
+
+```bash
+curl http://localhost:8080/api/subjects
+```
+
 #### セクション一覧取得
 
 ```bash
-curl http://localhost:8080/api/sections
+curl http://localhost:8080/api/subjects/1/sections
 ```
 
-#### 進捗状態取得
+#### 進捗状態取得 (要認証)
 
 ```bash
-curl http://localhost:8080/api/progress/{userId}
-詳細なリクエスト/レスポンス形式、エラーハンドリング、バリデーションルールは [APIリファレンス](./docs/API_reference.md) および [API仕様書 v2](./docs/API_v2.md) を参照してください。
+# サインインで取得したアクセストークンを使用
+curl -H "Authorization: Bearer <ACCESS_TOKEN>" \
+  http://localhost:8080/api/progress/subjects/1
+```
+
+詳細なリクエスト/レスポンス形式、エラーハンドリング、バリデーションルールは [API クイックリファレンス](./docs/API_quick_reference.md) および [詳細ドキュメント](./docs/detailed/) を参照してください。
 
 ## データベース設計
 
 ### マイグレーション
 
-Flywayを使用してデータベースマイグレーションを管理しています。
+Flyway を使用してデータベースマイグレーションを管理しています。(ローカルと GithubActions のみ)
+本番環境は AWS RDS を使用しています。
 
 マイグレーションファイルは `src/main/resources/db/migration/` に配置されています。
 
 - `V1__create_users_table.sql` - ユーザーテーブルの作成
 - `V2__create_sections_and_progress_tables.sql` - セクションと進捗管理テーブルの作成
 
-### ER図
+### ER 図
 
-```text
-users
-├── user_id (UUID, PK)
-├── username (VARCHAR, UNIQUE)
-├── email (VARCHAR, UNIQUE)
-├── password_hash (VARCHAR)
-└── created_at (TIMESTAMP)
+```mermaid
+erDiagram
+    users {
+        UUID user_id PK
+        VARCHAR username UK
+        VARCHAR email UK
+        VARCHAR password_hash
+        TIMESTAMP created_at
+    }
 
-sections
-├── section_id (INTEGER, PK) ← 0~100の進捗ステップ
-├── title (VARCHAR)
-└── description (TEXT)
+    subjects {
+        BIGINT subject_id PK
+        VARCHAR title
+        TEXT description
+        INTEGER max_sections
+        TIMESTAMP created_at
+    }
 
-user_cleared_sections
-├── user_cleared_section_id (SERIAL, PK)
-├── user_id (UUID, FK → users)
-├── section_id (INTEGER, FK → sections)
-├── completed_at (TIMESTAMP)
-└── UNIQUE(user_id, section_id) ← 重複防止
+    sections {
+        BIGINT subject_id PK, FK
+        INTEGER section_id PK
+        VARCHAR title
+        TEXT description
+        VARCHAR image_url
+    }
+
+    user_cleared_sections {
+        SERIAL user_cleared_section_id PK
+        UUID user_id FK
+        BIGINT subject_id FK
+        INTEGER section_id FK
+        TIMESTAMP completed_at
+    }
+
+    users ||--o{ user_cleared_sections : "has completed"
+    subjects ||--o{ sections : "contains"
+    subjects ||--o{ user_cleared_sections : "referenced by"
+    sections ||--o{ user_cleared_sections : "is completed"
 ```
 
 ## 開発ガイドライン
 
-### セキュリティ
-
 #### レート制限
 
-APIは**レート制限機能**を実装しており、DDOS攻撃などの連続したアクセスから保護されています。
+API は**レート制限機能**を実装しており、DDOS 攻撃などの連続したアクセスから保護されています。
 
 **デフォルト設定:**
-- **制限**: 60秒あたり100リクエスト（IPアドレス単位）
+
+- **制限**: 60 秒あたり 100 リクエスト（IP アドレス単位）
 - **超過時**: HTTP 429 (Too Many Requests) を返す
-- **ヘッダー**: 
+- **ヘッダー**:
   - `X-RateLimit-Limit`: 制限値
   - `X-RateLimit-Remaining`: 残りリクエスト数
 
@@ -201,22 +237,17 @@ APIは**レート制限機能**を実装しており、DDOS攻撃などの連続
 
 ```yaml
 rate-limit:
-  enabled: true                   # レート制限の有効/無効
-  capacity: 100                   # 最大リクエスト数
-  refill-tokens: 100              # 補充するトークン数
-  refill-period-seconds: 60       # 補充間隔（秒）
-  max-cache-size: 10000           # キャッシュする最大IPアドレス数
+  enabled: true # レート制限の有効/無効
+  capacity: 100 # 最大リクエスト数
+  refill-tokens: 100 # 補充するトークン数
+  refill-period-seconds: 60 # 補充間隔（秒）
+  max-cache-size: 10000 # キャッシュする最大IPアドレス数
 ```
 
 **注意事項:**
-- プロキシ経由のアクセスでは `X-Forwarded-For` ヘッダーを使用してIPアドレスを判定します
+
+- プロキシ経由のアクセスでは `X-Forwarded-For` ヘッダーを使用して IP アドレスを判定します
 - 本番環境では信頼できるプロキシのみを使用することを推奨します
-
-### コーディング規約
-
-- すべてのコード、コメント、ドキュメントは**日本語**で記述
-- オニオンアーキテクチャの原則を厳守
-- 依存関係の方向が正しいか常に確認
 
 ### ブランチ戦略
 
@@ -226,25 +257,10 @@ rate-limit:
 
 ### CI/CD
 
-GitHub Actionsを使用してCI/CDパイプラインを構築しています。
+GitHub Actions を使用して CI/CD パイプラインを構築しています。
 
-- **トリガー**: `main`, `develop` へのプッシュ、全てのPull Request
-- **テスト**: Docker Composeを使用したE2Eテスト
-  - サインアップ・サインイン機能
-  - バリデーション・エラーハンドリング
-  - セクション一覧取得
-  - 進捗管理フロー（完了マーク・進捗取得・重複チェック）
-- **除外**: `*.md`, `docs/**` のみの変更時はCIをスキップ
-
-ワークフローファイル: `.github/workflows/ci.yml`
-
-### Pull Request レビュー
-
-- レビューコメントは日本語で記述
-- 指摘事項は具体的かつ建設的に
-- 改善提案がある場合はコード例も含める
-- 良い点があれば積極的に褒める
-- オニオンアーキテクチャの原則に沿っているか確認
+- **トリガー**: `main`, `develop` へのプッシュ、全ての Pull Request
+- **テスト**: Docker Compose を使用した E2E テスト
 
 ## ディレクトリ構造
 
@@ -257,7 +273,7 @@ src/
 │   │       ├── domain/              # ドメイン層
 │   │       │   ├── model/
 │   │       │   │   ├── user/        # ユーザー関連モデル
-│   │       │   │   ├── section/     # セクション関連モデル
+│   │       │   │   ├── subject/     # 題材・セクション関連モデル
 │   │       │   │   └── progress/    # 進捗管理モデル
 │   │       │   ├── repository/
 │   │       │   └── service/
@@ -273,6 +289,11 @@ src/
 │   │       │   └── service/
 │   │       └── presentation/        # プレゼンテーション層
 │   │           ├── controller/
+│   │           │   ├── admin/       # 管理者用
+│   │           │   ├── auth/        # 認証用
+│   │           │   ├── health/      # ヘルスチェック
+│   │           │   ├── progress/    # 進捗管理
+│   │           │   └── subject/     # 題材・セクション管理
 │   │           ├── dto/
 │   │           │   ├── request/
 │   │           │   └── response/
@@ -285,30 +306,9 @@ src/
         └── ci.yml                   # E2Eテスト定義
 ```
 
-## 将来実装予定の機能
-
-### セクション動的管理API
-
-現在、セクションはデータベースマイグレーションによる静的管理のみ対応していますが、将来的に以下の動的管理APIの実装を予定しています。
-
-**予定機能:**
-
-- セクション新規登録 (`POST /api/sections`)
-- セクション更新 (`PUT /api/sections/{sectionId}`)
-- セクション削除 (`DELETE /api/sections/{sectionId}`)
-
-**実装時の考慮事項:**
-
-- 管理者権限の実装
-- 既存進捗データとの整合性保持
-- セクション順序管理
-- 監査ログ機能
-
-詳細は [API仕様書 - 将来実装予定](./docs/API.md#将来実装予定-セクション管理api) を参照してください。
-
 ## トラブルシューティング
 
-### Dockerコンテナが起動しない
+### Docker コンテナが起動しない
 
 ```bash
 docker-compose down -v
@@ -321,7 +321,7 @@ docker-compose up -d
 
 ### ポートが既に使用されている
 
-8080ポートが使用中の場合は、`docker-compose.yml` のポート設定を変更してください。
+8080 ポートが使用中の場合は、`docker-compose.yml` のポート設定を変更してください。
 
 ## ライセンス
 
