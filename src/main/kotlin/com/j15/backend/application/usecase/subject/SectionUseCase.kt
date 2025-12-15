@@ -46,4 +46,31 @@ class SectionUseCase(
         }
         return sectionRepository.save(section)
     }
+
+    /** セクションを更新（管理者用） */
+    fun updateSection(
+            subjectId: SubjectId,
+            sectionId: SectionId,
+            title: String?,
+            description: String?,
+            imageUrl: String?
+    ): Section {
+        // 題材の存在確認
+        if (!subjectRepository.existsById(subjectId)) {
+            throw IllegalArgumentException("題材が見つかりません: ${subjectId.value}")
+        }
+
+        // 既存セクションの取得
+        val existingSection = sectionRepository.findById(subjectId, sectionId)
+                ?: throw IllegalArgumentException("セクションが見つかりません: ${sectionId.value}")
+
+        // 更新されたセクションを作成
+        val updatedSection = existingSection.copy(
+                title = title ?: existingSection.title,
+                description = description ?: existingSection.description,
+                imageUrl = imageUrl ?: existingSection.imageUrl
+        )
+
+        return sectionRepository.save(updatedSection)
+    }
 }

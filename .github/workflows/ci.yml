@@ -32,6 +32,8 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build --no-daemon -x test
+        # Note: S3関連のコードはビルド時には実行されないため、
+        # S3環境変数の設定は不要です（エンドポイント呼び出し時のみ必要）
 
       - name: Start services with Docker Compose
         run: docker compose up -d
