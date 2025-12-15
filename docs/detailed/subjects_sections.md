@@ -612,5 +612,43 @@ const updateSection = async (
 
 ---
 
-詳細: [画像アップロード詳細](image_upload.md)
+## セクション画像機能（補助機能）
+
+セクション作成・更新時に画像ファイルを添付できます。画像は任意（`image`フィールドは必須ではありません）。
+
+### 画像ファイル制約
+
+| 項目 | 制約 |
+| --- | --- |
+| 許可される形式 | JPEG, PNG, GIF, WebP |
+| 最大ファイルサイズ | 5MB |
+| ファイル名 | 自動生成（UUIDベース） |
+| Content-Type | `multipart/form-data` |
+
+### 画像URLの取得
+
+セクション情報を取得すると、画像が登録されている場合は`imageUrl`フィールドにURLが含まれます。画像が登録されていない場合、`imageUrl`は`null`になります。
+
+### S3バケット設定
+
+- **バケット名**: `j15-backend-images`
+- **リージョン**: `ap-northeast-1`
+- **公開パス**: `images/*`（パブリック読み取り可能）
+
+S3バケットの設定確認や作成方法については、AWS CLIを使用して確認できます：
+
+```bash
+# バケットの存在確認
+aws s3 ls | grep j15-backend-images
+
+# バケットポリシー確認
+aws s3api get-bucket-policy --bucket j15-backend-images
+```
+
+### 注意事項
+
+- 画像アップロードには管理者権限（`ROLE_ADMIN`）が必要です
+- 画像ファイルは自動的にUUIDベースのファイル名に変換されます
+- 同じセクションに対して画像を再アップロードすると、既存の画像URLが上書きされます
+- S3の認証情報は環境変数（`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`）で設定してください
 
