@@ -32,6 +32,7 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-jackson:0.12.3")
     implementation("com.bucket4j:bucket4j-core:8.7.0")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+    implementation("software.amazon.awssdk:s3:2.20.26")
     
     runtimeOnly("org.postgresql:postgresql")
     

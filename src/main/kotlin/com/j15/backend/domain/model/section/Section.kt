@@ -8,7 +8,8 @@ data class Section(
         val subjectId: SubjectId,
         val sectionId: SectionId,
         val title: String,
-        val description: String? = null
+        val description: String? = null,
+        val imageUrl: String? = null
 ) {
     init {
         require(title.isNotBlank()) { "セクションのタイトルは空にできません" }

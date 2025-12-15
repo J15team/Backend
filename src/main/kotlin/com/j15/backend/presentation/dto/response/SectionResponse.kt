@@ -7,7 +7,8 @@ data class SectionResponse(
         val subjectId: Long,
         val sectionId: Int,
         val title: String,
-        val description: String?
+        val description: String?,
+        val imageUrl: String?
 ) {
     companion object {
         fun from(section: Section): SectionResponse {
@@ -15,7 +16,8 @@ data class SectionResponse(
                     subjectId = section.subjectId.value,
                     sectionId = section.sectionId.value,
                     title = section.title,
-                    description = section.description
+                    description = section.description,
+                    imageUrl = section.imageUrl
             )
         }
     }

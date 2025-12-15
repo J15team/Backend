@@ -1,0 +1,127 @@
+package com.j15.backend.presentation.controller.subject
+
+import com.j15.backend.application.usecase.subject.SectionUseCase
+import com.j15.backend.domain.model.section.Section
+import com.j15.backend.domain.model.section.SectionId
+import com.j15.backend.domain.model.subject.SubjectId
+import com.j15.backend.infrastructure.service.S3UploadService
+import com.j15.backend.presentation.dto.request.CreateSectionRequest
+import com.j15.backend.presentation.dto.request.UpdateSectionRequest
+import com.j15.backend.presentation.dto.response.SectionResponse
+import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.*
+
+/**
+ * セクション操作コントローラー
+ * 責務: セクションの作成・更新（画像アップロード含む）
+ */
+@RestController
+@RequestMapping("/api/subjects/{subjectId}/sections")
+class SectionCommandController(
+        private val sectionUseCase: SectionUseCase,
+        private val s3UploadService: S3UploadService
+) {
+    private val logger = LoggerFactory.getLogger(SectionCommandController::class.java)
+
+    /**
+     * セクションを作成（画像アップロード含む）
+     */
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    fun createSection(
+            @PathVariable subjectId: Long,
+            @ModelAttribute request: CreateSectionRequest,
+            @AuthenticationPrincipal userId: String
+    ): ResponseEntity<Any> {
+        return try {
+            // 画像がアップロードされている場合、S3にアップロードしてURLを取得
+            val imageUrl = request.image?.let { file ->
+                try {
+                    s3UploadService.uploadImage(file)
+                } catch (e: IllegalArgumentException) {
+                    logger.warn("画像アップロード検証エラー: ${e.message}", e)
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(mapOf("error" to e.message))
+                } catch (e: Exception) {
+                    logger.error("S3アップロードエラー: ${e.message}", e)
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(mapOf("error" to "画像のアップロードに失敗しました"))
+                }
+            }
+
+            // セクションを作成
+            val section = Section(
+                    subjectId = SubjectId(subjectId),
+                    sectionId = SectionId(request.sectionId),
+                    title = request.title,
+                    description = request.description,
+                    imageUrl = imageUrl
+            )
+
+            val createdSection = sectionUseCase.createSection(section)
+
+            ResponseEntity.status(HttpStatus.CREATED).body(SectionResponse.from(createdSection))
+        } catch (e: IllegalArgumentException) {
+            logger.warn("セクション作成エラー: ${e.message}", e)
+            ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(mapOf("error" to e.message))
+        } catch (e: Exception) {
+            logger.error("予期しないエラー: ${e.message}", e)
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(mapOf("error" to "セクションの作成中にエラーが発生しました"))
+        }
+    }
+
+    /**
+     * セクションを更新（画像アップロード含む）
+     */
+    @PutMapping("/{sectionId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    fun updateSection(
+            @PathVariable subjectId: Long,
+            @PathVariable sectionId: Int,
+            @ModelAttribute request: UpdateSectionRequest,
+            @AuthenticationPrincipal userId: String
+    ): ResponseEntity<Any> {
+        return try {
+            // 画像がアップロードされている場合、S3にアップロードしてURLを取得
+            val imageUrl = request.image?.let { file ->
+                try {
+                    s3UploadService.uploadImage(file)
+                } catch (e: IllegalArgumentException) {
+                    logger.warn("画像アップロード検証エラー: ${e.message}", e)
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(mapOf("error" to e.message))
+                } catch (e: Exception) {
+                    logger.error("S3アップロードエラー: ${e.message}", e)
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(mapOf("error" to "画像のアップロードに失敗しました"))
+                }
+            }
+
+            // セクションを更新
+            val updatedSection = sectionUseCase.updateSection(
+                    subjectId = SubjectId(subjectId),
+                    sectionId = SectionId(sectionId),
+                    title = request.title,
+                    description = request.description,
+                    imageUrl = imageUrl
+            )
+
+            ResponseEntity.ok(SectionResponse.from(updatedSection))
+        } catch (e: IllegalArgumentException) {
+            logger.warn("セクション更新エラー: ${e.message}", e)
+            ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(mapOf("error" to e.message))
+        } catch (e: Exception) {
+            logger.error("予期しないエラー: ${e.message}", e)
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(mapOf("error" to "セクションの更新中にエラーが発生しました"))
+        }
+    }
+}
+
