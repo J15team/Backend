@@ -4,11 +4,11 @@ import org.springframework.web.multipart.MultipartFile
 
 /**
  * セクション作成リクエスト
+ * SpringのModelAttributeでバインドできるよう、引数なしコンストラクタ + var プロパティで定義
  */
-data class CreateSectionRequest(
-        val sectionId: Int,
-        val title: String,
-        val description: String? = null,
-        val image: MultipartFile? = null
-)
-
+class CreateSectionRequest {
+        var sectionId: Int? = null
+        var title: String? = null
+        var description: String? = null
+        var image: MultipartFile? = null
+}
