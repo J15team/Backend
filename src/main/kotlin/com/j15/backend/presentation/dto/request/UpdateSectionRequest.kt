@@ -5,9 +5,8 @@ import org.springframework.web.multipart.MultipartFile
 /**
  * セクション更新リクエスト
  */
-data class UpdateSectionRequest(
-        val title: String? = null,
-        val description: String? = null,
-        val image: MultipartFile? = null
-)
-
+class UpdateSectionRequest {
+        var title: String? = null
+        var description: String? = null
+        var image: MultipartFile? = null
+}

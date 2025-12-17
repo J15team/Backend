@@ -38,6 +38,13 @@ class SectionCommandController(
             @AuthenticationPrincipal userId: String
     ): ResponseEntity<Any> {
         return try {
+            val sectionId = request.sectionId
+                    ?: return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(mapOf("error" to "sectionIdは必須です"))
+            val title = request.title?.takeIf { it.isNotBlank() }
+                    ?: return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(mapOf("error" to "titleは必須です"))
+
             // 画像がアップロードされている場合、S3にアップロードしてURLを取得
             val imageUrl = request.image?.let { file ->
                 try {
@@ -56,8 +63,8 @@ class SectionCommandController(
             // セクションを作成
             val section = Section(
                     subjectId = SubjectId(subjectId),
-                    sectionId = SectionId(request.sectionId),
-                    title = request.title,
+                    sectionId = SectionId(sectionId),
+                    title = title,
                     description = request.description,
                     imageUrl = imageUrl
             )
@@ -124,4 +131,3 @@ class SectionCommandController(
         }
     }
 }
-

@@ -42,3 +42,4 @@ kotlin-js-store/
 # AWS Deployment Scripts
 scripts/
 .aws-infrastructure-ids
+docs/admin-credentials.md
