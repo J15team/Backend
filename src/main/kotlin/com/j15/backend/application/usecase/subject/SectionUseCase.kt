@@ -73,4 +73,29 @@ class SectionUseCase(
 
         return sectionRepository.save(updatedSection)
     }
+
+    /** セクションを削除（管理者用） */
+    fun deleteSection(subjectId: SubjectId, sectionId: SectionId) {
+        // 題材の存在確認
+        if (!subjectRepository.existsById(subjectId)) {
+            throw IllegalArgumentException("題材が見つかりません: ${subjectId.value}")
+        }
+
+        // セクションの存在確認
+        if (!sectionRepository.existsById(subjectId, sectionId)) {
+            throw IllegalArgumentException("セクションが見つかりません: ${sectionId.value}")
+        }
+
+        sectionRepository.deleteById(subjectId, sectionId)
+    }
+
+    /** 指定した題材の全セクションを削除（管理者用） */
+    fun deleteAllSectionsBySubjectId(subjectId: SubjectId) {
+        // 題材の存在確認
+        if (!subjectRepository.existsById(subjectId)) {
+            throw IllegalArgumentException("題材が見つかりません: ${subjectId.value}")
+        }
+
+        sectionRepository.deleteAllBySubjectId(subjectId)
+    }
 }

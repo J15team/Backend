@@ -2,6 +2,7 @@ package com.j15.backend.application.usecase.subject
 
 import com.j15.backend.domain.model.subject.Subject
 import com.j15.backend.domain.model.subject.SubjectId
+import com.j15.backend.domain.repository.SectionRepository
 import com.j15.backend.domain.repository.SubjectRepository
 import java.time.Instant
 import org.springframework.stereotype.Service
@@ -10,7 +11,10 @@ import org.springframework.transaction.annotation.Transactional
 /** 題材管理ユースケース 題材（学習プロジェクト）のCRUD操作を提供 */
 @Service
 @Transactional
-class SubjectUseCase(private val subjectRepository: SubjectRepository) {
+class SubjectUseCase(
+        private val subjectRepository: SubjectRepository,
+        private val sectionRepository: SectionRepository
+) {
 
     /**
      * maxSectionsパラメータのバリデーション
@@ -106,6 +110,9 @@ class SubjectUseCase(private val subjectRepository: SubjectRepository) {
         if (!subjectRepository.existsById(id)) {
             throw IllegalArgumentException("題材が見つかりません: $subjectId")
         }
+        // 関連するセクションをすべて削除
+        sectionRepository.deleteAllBySubjectId(id)
+        // 題材を削除
         subjectRepository.deleteById(id)
     }
 

@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.Query
 
 interface JpaSectionRepository : JpaRepository<SectionEntity, Int> {
 
-    /** 指定題材のセクション一覧を取得 */
-    fun findBySubjectId(subjectId: Long): List<SectionEntity>
+    /** 指定題材のセクション一覧を取得（sectionId昇順） */
+    fun findBySubjectIdOrderBySectionIdAsc(subjectId: Long): List<SectionEntity>
 
     /** 指定題材のセクション数をカウント */
     fun countBySubjectId(subjectId: Long): Long
@@ -17,4 +17,7 @@ interface JpaSectionRepository : JpaRepository<SectionEntity, Int> {
             "SELECT s FROM SectionEntity s WHERE s.subjectId = :subjectId AND s.sectionId = :sectionId"
     )
     fun findBySubjectIdAndSectionId(subjectId: Long, sectionId: Int): SectionEntity?
+
+    /** 指定題材の全セクションを削除 */
+    fun deleteBySubjectId(subjectId: Long)
 }
