@@ -97,11 +97,9 @@ jobs:
             --task-definition $ECS_TASK_FAMILY \
             --query 'taskDefinition' > current-task-def.json
           NEW_IMAGE="${ECR_REGISTRY}/${ECR_REPOSITORY}:${{ github.sha }}"
-          
-          # 環境変数を追加/更新
+
+          # 環境変数を追加/更新（AWS認証情報はタスクロールを使用するため不要）
           jq --arg IMAGE "$NEW_IMAGE" \
-            --arg AWS_ACCESS_KEY_ID "${{ secrets.AWS_ACCESS_KEY_ID }}" \
-            --arg AWS_SECRET_ACCESS_KEY "${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
             --arg AWS_REGION "${{ env.AWS_REGION }}" \
             --arg AWS_S3_BUCKET_NAME "${{ env.AWS_S3_BUCKET_NAME }}" \
             '.containerDefinitions[0].image = $IMAGE |
@@ -109,15 +107,13 @@ jobs:
                (.containerDefinitions[0].environment // []) |
                map(select(.name != "AWS_ACCESS_KEY_ID" and .name != "AWS_SECRET_ACCESS_KEY" and .name != "AWS_REGION" and .name != "AWS_S3_BUCKET_NAME")) +
                [
-                 {name: "AWS_ACCESS_KEY_ID", value: $AWS_ACCESS_KEY_ID},
-                 {name: "AWS_SECRET_ACCESS_KEY", value: $AWS_SECRET_ACCESS_KEY},
                  {name: "AWS_REGION", value: $AWS_REGION},
                  {name: "AWS_S3_BUCKET_NAME", value: $AWS_S3_BUCKET_NAME}
                ]
              ) |
              del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' \
             current-task-def.json > new-task-def.json
-          
+
           NEW_TASK_DEF_ARN=$(aws ecs register-task-definition \
             --cli-input-json file://new-task-def.json \
             --query 'taskDefinition.taskDefinitionArn' \
@@ -220,8 +216,9 @@ jobs:
           echo "Task IP: $NEW_IP"
 
           # タスクIPに直接アクセスできるか確認
+          # アプリ起動に約50秒かかるため、十分な待機時間を設定
           echo "Checking direct access to task..."
-          sleep 60
+          sleep 120
 
           for i in {1..15}; do
             echo "Attempt $i/15"
