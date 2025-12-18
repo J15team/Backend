@@ -130,4 +130,29 @@ class SectionCommandController(
                     .body(mapOf("error" to "セクションの更新中にエラーが発生しました"))
         }
     }
+
+    /**
+     * セクションを削除
+     */
+    @DeleteMapping("/{sectionId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    fun deleteSection(
+            @PathVariable subjectId: Long,
+            @PathVariable sectionId: Int,
+            @AuthenticationPrincipal userId: String
+    ): ResponseEntity<Void> {
+        return try {
+            sectionUseCase.deleteSection(
+                    subjectId = SubjectId(subjectId),
+                    sectionId = SectionId(sectionId)
+            )
+            ResponseEntity.noContent().build()
+        } catch (e: IllegalArgumentException) {
+            logger.warn("セクション削除エラー: ${e.message}", e)
+            ResponseEntity.notFound().build()
+        } catch (e: Exception) {
+            logger.error("予期しないエラー: ${e.message}", e)
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
+        }
+    }
 }

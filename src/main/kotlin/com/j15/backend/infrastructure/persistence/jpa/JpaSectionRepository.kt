@@ -17,4 +17,7 @@ interface JpaSectionRepository : JpaRepository<SectionEntity, Int> {
             "SELECT s FROM SectionEntity s WHERE s.subjectId = :subjectId AND s.sectionId = :sectionId"
     )
     fun findBySubjectIdAndSectionId(subjectId: Long, sectionId: Int): SectionEntity?
+
+    /** 指定題材の全セクションを削除 */
+    fun deleteBySubjectId(subjectId: Long)
 }
