@@ -11,4 +11,6 @@ interface SectionRepository {
     fun save(section: Section): Section
     fun existsById(subjectId: SubjectId, sectionId: SectionId): Boolean
     fun countBySubjectId(subjectId: SubjectId): Int // 題材ごとのセクション総数
+    fun deleteById(subjectId: SubjectId, sectionId: SectionId)
+    fun deleteAllBySubjectId(subjectId: SubjectId)
 }

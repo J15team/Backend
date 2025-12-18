@@ -37,4 +37,13 @@ class SectionRepositoryImpl(private val jpaSectionRepository: JpaSectionReposito
     override fun countBySubjectId(subjectId: SubjectId): Int {
         return jpaSectionRepository.countBySubjectId(subjectId.value).toInt()
     }
+
+    override fun deleteById(subjectId: SubjectId, sectionId: SectionId) {
+        val sectionEntity = jpaSectionRepository.findBySubjectIdAndSectionId(subjectId.value, sectionId.value)
+        sectionEntity?.let { jpaSectionRepository.delete(it) }
+    }
+
+    override fun deleteAllBySubjectId(subjectId: SubjectId) {
+        jpaSectionRepository.deleteBySubjectId(subjectId.value)
+    }
 }
