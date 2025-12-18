@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.Query
 
 interface JpaSectionRepository : JpaRepository<SectionEntity, Int> {
 
-    /** 指定題材のセクション一覧を取得 */
-    fun findBySubjectId(subjectId: Long): List<SectionEntity>
+    /** 指定題材のセクション一覧を取得（sectionId昇順） */
+    fun findBySubjectIdOrderBySectionIdAsc(subjectId: Long): List<SectionEntity>
 
     /** 指定題材のセクション数をカウント */
     fun countBySubjectId(subjectId: Long): Long
