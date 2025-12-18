@@ -18,7 +18,7 @@ class SectionRepositoryImpl(private val jpaSectionRepository: JpaSectionReposito
     }
 
     override fun findAllBySubjectId(subjectId: SubjectId): List<Section> {
-        return jpaSectionRepository.findBySubjectId(subjectId.value).map {
+        return jpaSectionRepository.findBySubjectIdOrderBySectionIdAsc(subjectId.value).map {
             SectionConverter.toDomain(it)
         }
     }
