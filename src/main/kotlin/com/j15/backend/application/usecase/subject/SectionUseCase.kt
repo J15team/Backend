@@ -5,6 +5,7 @@ import com.j15.backend.domain.model.section.SectionId
 import com.j15.backend.domain.model.subject.SubjectId
 import com.j15.backend.domain.repository.SectionRepository
 import com.j15.backend.domain.repository.SubjectRepository
+import com.j15.backend.infrastructure.service.S3UploadService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -13,7 +14,8 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class SectionUseCase(
         private val sectionRepository: SectionRepository,
-        private val subjectRepository: SubjectRepository
+        private val subjectRepository: SubjectRepository,
+        private val s3UploadService: S3UploadService
 ) {
 
     /** 特定題材の全セクション一覧を取得 フロントエンドが利用可能な全セクション情報を返す */
@@ -53,7 +55,8 @@ class SectionUseCase(
             sectionId: SectionId,
             title: String?,
             description: String?,
-            imageUrl: String?
+            newImageUrl: String?,
+            deleteImage: Boolean?
     ): Section {
         // 題材の存在確認
         if (!subjectRepository.existsById(subjectId)) {
@@ -64,11 +67,25 @@ class SectionUseCase(
         val existingSection = sectionRepository.findById(subjectId, sectionId)
                 ?: throw IllegalArgumentException("セクションが見つかりません: ${sectionId.value}")
 
+        val finalImageUrl = when {
+            newImageUrl != null -> {
+                // 新しい画像がアップロードされた場合、既存の画像を削除してから新しい画像を保存
+                existingSection.imageUrl?.let { s3UploadService.deleteImage(it) }
+                newImageUrl
+            }
+            deleteImage == true -> {
+                // 画像削除がリクエストされた場合、既存の画像を削除
+                existingSection.imageUrl?.let { s3UploadService.deleteImage(it) }
+                null
+            }
+            else -> existingSection.imageUrl // 変更なし
+        }
+
         // 更新されたセクションを作成
         val updatedSection = existingSection.copy(
                 title = title ?: existingSection.title,
                 description = description ?: existingSection.description,
-                imageUrl = imageUrl ?: existingSection.imageUrl
+                imageUrl = finalImageUrl
         )
 
         return sectionRepository.save(updatedSection)
@@ -82,9 +99,11 @@ class SectionUseCase(
         }
 
         // セクションの存在確認
-        if (!sectionRepository.existsById(subjectId, sectionId)) {
-            throw IllegalArgumentException("セクションが見つかりません: ${sectionId.value}")
-        }
+        val existingSection = sectionRepository.findById(subjectId, sectionId)
+            ?: throw IllegalArgumentException("セクションが見つかりません: ${sectionId.value}")
+
+        // 関連する画像をS3から削除
+        existingSection.imageUrl?.let { s3UploadService.deleteImage(it) }
 
         sectionRepository.deleteById(subjectId, sectionId)
     }
@@ -94,6 +113,11 @@ class SectionUseCase(
         // 題材の存在確認
         if (!subjectRepository.existsById(subjectId)) {
             throw IllegalArgumentException("題材が見つかりません: ${subjectId.value}")
+        }
+
+        // 関連する画像をS3から削除
+        sectionRepository.findAllBySubjectId(subjectId).forEach { section ->
+            section.imageUrl?.let { s3UploadService.deleteImage(it) }
         }
 
         sectionRepository.deleteAllBySubjectId(subjectId)

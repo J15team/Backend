@@ -9,4 +9,5 @@ class UpdateSectionRequest {
         var title: String? = null
         var description: String? = null
         var image: MultipartFile? = null
+        var deleteImage: Boolean? = false
 }
