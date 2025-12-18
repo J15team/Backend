@@ -9,6 +9,7 @@ import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import software.amazon.awssdk.services.s3.model.S3Exception
 import java.util.*
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest
 
 /**
  * S3画像アップロードサービス
@@ -70,6 +71,34 @@ class S3UploadService(
     }
 
     /**
+     * S3から画像を削除する
+     *
+     * @param imageUrl 削除する画像のフルURL
+     */
+    fun deleteImage(imageUrl: String) {
+        try {
+            // URLからキーを抽出
+            // 例: https://bucket-name.s3.region.amazonaws.com/images/filename.jpg
+            // キーは "images/filename.jpg"
+            val prefix = "https://${s3Properties.bucketName}.s3.${s3Properties.region}.amazonaws.com/"
+            if (!imageUrl.startsWith(prefix)) {
+                return // このバケットの画像でない場合は無視
+            }
+            val key = imageUrl.removePrefix(prefix)
+
+            val deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(s3Properties.bucketName)
+                    .key(key)
+                    .build()
+
+            s3Client.deleteObject(deleteObjectRequest)
+        } catch (e: S3Exception) {
+            // 削除失敗はログ出力のみにとどめる（または必要に応じて例外を投げる）
+            println("S3からの画像削除に失敗しました: ${e.message}")
+        }
+    }
+
+    /**
      * ファイルの検証
      */
     private fun validateFile(file: MultipartFile) {
@@ -87,4 +116,3 @@ class S3UploadService(
         }
     }
 }
-
