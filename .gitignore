@@ -43,3 +43,4 @@ kotlin-js-store/
 scripts/
 .aws-infrastructure-ids
 docs/admin-credentials.md
+.env
