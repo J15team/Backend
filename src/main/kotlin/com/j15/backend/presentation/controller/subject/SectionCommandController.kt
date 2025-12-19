@@ -4,7 +4,6 @@ import com.j15.backend.application.usecase.subject.SectionUseCase
 import com.j15.backend.domain.model.section.Section
 import com.j15.backend.domain.model.section.SectionId
 import com.j15.backend.domain.model.subject.SubjectId
-import com.j15.backend.infrastructure.service.S3UploadService
 import com.j15.backend.presentation.dto.request.CreateSectionRequest
 import com.j15.backend.presentation.dto.request.UpdateSectionRequest
 import com.j15.backend.presentation.dto.response.SectionResponse
@@ -17,18 +16,17 @@ import org.springframework.web.bind.annotation.*
 
 /**
  * セクション操作コントローラー
- * 責務: セクションの作成・更新（画像アップロード含む）
+ * 責務: セクションの作成・更新・削除
  */
 @RestController
 @RequestMapping("/api/subjects/{subjectId}/sections")
 class SectionCommandController(
-        private val sectionUseCase: SectionUseCase,
-        private val s3UploadService: S3UploadService
+        private val sectionUseCase: SectionUseCase
 ) {
     private val logger = LoggerFactory.getLogger(SectionCommandController::class.java)
 
     /**
-     * セクションを作成（画像アップロード含む）
+     * セクションを作成
      */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -45,28 +43,12 @@ class SectionCommandController(
                     ?: return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                             .body(mapOf("error" to "titleは必須です"))
 
-            // 画像がアップロードされている場合、S3にアップロードしてURLを取得
-            val imageUrl = request.image?.let { file ->
-                try {
-                    s3UploadService.uploadImage(file)
-                } catch (e: IllegalArgumentException) {
-                    logger.warn("画像アップロード検証エラー: ${e.message}", e)
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body(mapOf("error" to e.message))
-                } catch (e: Exception) {
-                    logger.error("S3アップロードエラー: ${e.message}", e)
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body(mapOf("error" to "画像のアップロードに失敗しました"))
-                }
-            }
-
             // セクションを作成
             val section = Section(
                     subjectId = SubjectId(subjectId),
                     sectionId = SectionId(sectionId),
                     title = title,
-                    description = request.description,
-                    imageUrl = imageUrl
+                    description = request.description
             )
 
             val createdSection = sectionUseCase.createSection(section)
@@ -84,7 +66,7 @@ class SectionCommandController(
     }
 
     /**
-     * セクションを更新（画像アップロード含む）
+     * セクションを更新
      */
     @PutMapping("/{sectionId}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -95,29 +77,12 @@ class SectionCommandController(
             @AuthenticationPrincipal userId: String
     ): ResponseEntity<Any> {
         return try {
-            // 画像がアップロードされている場合、S3にアップロードしてURLを取得
-            val newImageUrl = request.image?.let { file ->
-                try {
-                    s3UploadService.uploadImage(file)
-                } catch (e: IllegalArgumentException) {
-                    logger.warn("画像アップロード検証エラー: ${e.message}", e)
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body(mapOf("error" to e.message))
-                } catch (e: Exception) {
-                    logger.error("S3アップロードエラー: ${e.message}", e)
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body(mapOf("error" to "画像のアップロードに失敗しました"))
-                }
-            }
-
             // セクションを更新
             val updatedSection = sectionUseCase.updateSection(
                     subjectId = SubjectId(subjectId),
                     sectionId = SectionId(sectionId),
                     title = request.title,
-                    description = request.description,
-                    newImageUrl = newImageUrl,
-                    deleteImage = request.deleteImage
+                    description = request.description
             )
 
             ResponseEntity.ok(SectionResponse.from(updatedSection))

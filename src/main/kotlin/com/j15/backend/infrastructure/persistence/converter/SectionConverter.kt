@@ -11,8 +11,7 @@ object SectionConverter {
                 subjectId = SubjectId(entity.subjectId),
                 sectionId = SectionId(entity.sectionId!!),
                 title = entity.title,
-                description = entity.description,
-                imageUrl = entity.imageUrl
+                description = entity.description
         )
     }
 
@@ -21,8 +20,7 @@ object SectionConverter {
                 subjectId = domain.subjectId.value,
                 sectionId = domain.sectionId.value,
                 title = domain.title,
-                description = domain.description,
-                imageUrl = domain.imageUrl
+                description = domain.description
         )
     }
 }
