@@ -31,7 +31,7 @@ class SectionCommandController(
      * セクションを作成（画像アップロード含む）
      */
     @PostMapping
-    @PreAuthorize("hasRole(\'ADMIN\')")
+    @PreAuthorize("hasRole('ADMIN')")
     fun createSection(
             @PathVariable subjectId: Long,
             @ModelAttribute request: CreateSectionRequest,
@@ -87,7 +87,7 @@ class SectionCommandController(
      * セクションを更新（画像アップロード含む）
      */
     @PutMapping("/{sectionId}")
-    @PreAuthorize("hasRole(\'ADMIN\')")
+    @PreAuthorize("hasRole('ADMIN')")
     fun updateSection(
             @PathVariable subjectId: Long,
             @PathVariable sectionId: Int,
@@ -136,7 +136,7 @@ class SectionCommandController(
      * セクションを削除
      */
     @DeleteMapping("/{sectionId}")
-    @PreAuthorize("hasRole(\'ADMIN\')")
+    @PreAuthorize("hasRole('ADMIN')")
     fun deleteSection(
             @PathVariable subjectId: Long,
             @PathVariable sectionId: Int,
