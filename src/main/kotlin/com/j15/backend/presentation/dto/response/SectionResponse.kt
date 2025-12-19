@@ -8,16 +8,16 @@ data class SectionResponse(
         val sectionId: Int,
         val title: String,
         val description: String?,
-        val imageUrl: String?
+        val images: List<ImageResponse>? = null
 ) {
     companion object {
-        fun from(section: Section): SectionResponse {
+        fun from(section: Section, images: List<ImageResponse>? = null): SectionResponse {
             return SectionResponse(
                     subjectId = section.subjectId.value,
                     sectionId = section.sectionId.value,
                     title = section.title,
                     description = section.description,
-                    imageUrl = section.imageUrl
+                    images = images
             )
         }
     }
