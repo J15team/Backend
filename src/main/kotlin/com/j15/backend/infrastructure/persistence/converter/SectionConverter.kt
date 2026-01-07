@@ -9,7 +9,7 @@ object SectionConverter {
     fun toDomain(entity: SectionEntity): Section {
         return Section(
                 subjectId = SubjectId(entity.subjectId),
-                sectionId = SectionId(entity.sectionId!!),
+                sectionId = SectionId(entity.sectionId),
                 title = entity.title,
                 description = entity.description
         )
