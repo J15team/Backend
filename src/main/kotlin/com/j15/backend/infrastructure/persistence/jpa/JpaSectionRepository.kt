@@ -1,10 +1,11 @@
 package com.j15.backend.infrastructure.persistence.jpa
 
 import com.j15.backend.infrastructure.persistence.entity.SectionEntity
+import com.j15.backend.infrastructure.persistence.entity.SectionEntityId
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 
-interface JpaSectionRepository : JpaRepository<SectionEntity, Int> {
+interface JpaSectionRepository : JpaRepository<SectionEntity, SectionEntityId> {
 
     /** 指定題材のセクション一覧を取得（sectionId昇順） */
     fun findBySubjectIdOrderBySectionIdAsc(subjectId: Long): List<SectionEntity>
