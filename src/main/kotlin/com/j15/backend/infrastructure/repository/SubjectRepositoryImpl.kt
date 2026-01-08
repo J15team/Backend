@@ -21,7 +21,9 @@ class SubjectRepositoryImpl(
     }
 
     override fun findAll(): List<Subject> {
-        return jpaSubjectRepository.findAll().map { subjectConverter.toDomain(it) }
+        return jpaSubjectRepository.findAllByOrderBySubjectIdAsc().map {
+            subjectConverter.toDomain(it)
+        }
     }
 
     override fun save(subject: Subject): Subject {
