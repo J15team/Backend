@@ -13,12 +13,18 @@ object UserConverter {
     // エンティティからドメインモデルへの変換
     fun toDomain(entity: UserEntity): User {
         return User(
-                userId = UserId(entity.userId ?: throw IllegalStateException("userId must not be null")),
+                userId =
+                        UserId(
+                                entity.userId
+                                        ?: throw IllegalStateException("userId must not be null")
+                        ),
                 username = Username(entity.username),
                 email = Email(entity.email),
                 passwordHash = PasswordHash(entity.passwordHash),
                 role = UserRole.fromString(entity.role),
-                createdAt = entity.createdAt ?: throw IllegalStateException("createdAt must not be null")
+                profileImageUrl = entity.profileImageUrl,
+                createdAt = entity.createdAt
+                                ?: throw IllegalStateException("createdAt must not be null")
         )
     }
 
@@ -30,6 +36,7 @@ object UserConverter {
                 email = domain.email.value,
                 passwordHash = domain.passwordHash.value,
                 role = domain.role.name,
+                profileImageUrl = domain.profileImageUrl,
                 createdAt = domain.createdAt
         )
     }
