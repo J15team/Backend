@@ -70,6 +70,22 @@
 
 詳細: [進捗管理API詳細](detailed/progress.md)
 
+### プロフィール API（認証必須）
+
+| メソッド | パス | リクエスト例 | レスポンス例 |
+| --- | --- | --- | --- |
+| GET | `/api/profile` | - | `{userId, username, email, profileImageUrl, createdAt}` |
+| POST | `/api/profile/image` | `multipart/form-data: image` | `{message, profile}` |
+| DELETE | `/api/profile/image` | - | `{message, profile}` |
+| PUT | `/api/profile/username` | `{username}` | `{message, profile}` |
+
+**画像アップロード（POST）**
+- Content-Type: `multipart/form-data`
+- 画像形式: JPEG, PNG, GIF, WebP
+- 最大サイズ: 5MB
+
+詳細: [プロフィールAPI詳細](detailed/profile.md)
+
 ### 管理者 API
 
 | メソッド | パス | 認証 | リクエスト例 | レスポンス例 |
@@ -124,6 +140,29 @@ const updateSectionWithImage = async (
       body: formData
     }
   );
+  return await res.json();
+};
+
+// プロフィール取得
+const fetchProfile = async () => {
+  const token = localStorage.getItem('accessToken');
+  const res = await fetch('/api/profile', {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return await res.json();
+};
+
+// プロフィール画像アップロード
+const uploadProfileImage = async (imageFile: File) => {
+  const token = localStorage.getItem('accessToken');
+  const formData = new FormData();
+  formData.append('image', imageFile);
+  
+  const res = await fetch('/api/profile/image', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}` },
+    body: formData
+  });
   return await res.json();
 };
 ```

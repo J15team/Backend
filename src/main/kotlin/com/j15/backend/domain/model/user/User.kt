@@ -9,5 +9,6 @@ data class User(
         val email: Email,
         val passwordHash: PasswordHash,
         val role: UserRole = UserRole.ROLE_USER,
+        val profileImageUrl: String? = null,
         val createdAt: Instant = Instant.now()
 )
