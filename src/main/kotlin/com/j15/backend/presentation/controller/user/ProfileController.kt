@@ -112,4 +112,18 @@ class ProfileController(private val profileUseCase: ProfileUseCase) {
                     )
         }
     }
+
+    /** アカウントを削除（関連する進捗データも削除される） */
+    @DeleteMapping
+    fun deleteAccount(
+            @AuthenticationPrincipal userId: String
+    ): ResponseEntity<Map<String, String>> {
+        return try {
+            val userIdObj = UserId(UUID.fromString(userId))
+            profileUseCase.deleteAccount(userIdObj)
+            ResponseEntity.ok(mapOf("message" to "アカウントを削除しました"))
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.notFound().build()
+        }
+    }
 }
