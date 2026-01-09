@@ -28,6 +28,8 @@ object UserConverter {
                         profileImageUrl = entity.profileImageUrl,
                         oauthProvider = entity.oauthProvider?.let { OAuthProvider.fromValue(it) },
                         oauthProviderId = entity.oauthProviderId,
+                        loginCount = entity.loginCount,
+                        lastLoginAt = entity.lastLoginAt,
                         createdAt = entity.createdAt
                                         ?: throw IllegalStateException("createdAt must not be null")
                 )
@@ -44,6 +46,8 @@ object UserConverter {
                         profileImageUrl = domain.profileImageUrl,
                         oauthProvider = domain.oauthProvider?.value,
                         oauthProviderId = domain.oauthProviderId,
+                        loginCount = domain.loginCount,
+                        lastLoginAt = domain.lastLoginAt,
                         createdAt = domain.createdAt
                 )
         }

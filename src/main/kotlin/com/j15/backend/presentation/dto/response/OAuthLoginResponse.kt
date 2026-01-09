@@ -6,12 +6,14 @@ data class OAuthLoginResponse(
         val refreshToken: String,
         val user: UserInfo,
         val isNewUser: Boolean, // 新規登録されたユーザーかどうか
+        val isFirstLogin: Boolean, // 初回ログインかどうか（チュートリアル表示用）
         val message: String
 ) {
-    data class UserInfo(
-            val id: String,
-            val username: String,
-            val email: String,
-            val profileImageUrl: String? = null
-    )
+        data class UserInfo(
+                val id: String,
+                val username: String,
+                val email: String,
+                val profileImageUrl: String? = null,
+                val loginCount: Int
+        )
 }
