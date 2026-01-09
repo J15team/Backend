@@ -53,7 +53,10 @@ rate-limit:
 # 管理者設定
 admin:
   # 本番環境では必ず環境変数ADMIN_API_KEYを設定してください
+  # ステークホルダー向け（管理者アカウント作成用）
   api-key: ${ADMIN_API_KEY}
+  # 開発者専用キー（危険な操作用、絶対に外部に出さない）
+  dev-key: ${DEV_API_KEY:}
 
 # AWS S3設定
 aws:
