@@ -69,3 +69,9 @@ google:
     client-secret: ${GOOGLE_CLIENT_SECRET:}
     # フロントエンドからのコールバックURL（Google Cloudコンソールで設定が必要）
     redirect-uri: ${GOOGLE_REDIRECT_URI:http://localhost:3000/auth/google/callback}
+
+# GitHub OAuth2.0設定
+github:
+  oauth:
+    client-id: ${GITHUB_CLIENT_ID:}
+    client-secret: ${GITHUB_CLIENT_SECRET:}

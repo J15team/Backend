@@ -1,10 +1,12 @@
 package com.j15.backend.presentation.controller.auth
 
 import com.j15.backend.application.usecase.auth.AuthUseCase
+import com.j15.backend.application.usecase.auth.GitHubOAuthUseCase
 import com.j15.backend.application.usecase.auth.GoogleOAuthUseCase
 import com.j15.backend.application.usecase.auth.TokenManagementUseCase
 import com.j15.backend.application.usecase.user.RegisterUserCommand
 import com.j15.backend.application.usecase.user.UserCommandUseCase
+import com.j15.backend.presentation.dto.request.GitHubOAuthRequest
 import com.j15.backend.presentation.dto.request.GoogleIdTokenRequest
 import com.j15.backend.presentation.dto.request.GoogleOAuthRequest
 import com.j15.backend.presentation.dto.request.LoginRequest
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*
 class AuthController(
         private val authUseCase: AuthUseCase,
         private val googleOAuthUseCase: GoogleOAuthUseCase,
+        private val gitHubOAuthUseCase: GitHubOAuthUseCase,
         private val tokenManagementUseCase: TokenManagementUseCase,
         private val userCommandUseCase: UserCommandUseCase
 ) {
@@ -104,6 +107,26 @@ class AuthController(
         @PostMapping("/google")
         fun googleOAuth(@Valid @RequestBody request: GoogleOAuthRequest): OAuthLoginResponse {
                 val result = googleOAuthUseCase.authenticateWithGoogle(request.code)
+
+                return OAuthLoginResponse(
+                        accessToken = result.tokens.accessToken.value,
+                        refreshToken = result.tokens.refreshToken.value,
+                        user =
+                                OAuthLoginResponse.UserInfo(
+                                        id = result.user.userId.value.toString(),
+                                        username = result.user.username.value,
+                                        email = result.user.email.value,
+                                        profileImageUrl = result.user.profileImageUrl
+                                ),
+                        isNewUser = result.isNewUser,
+                        message = if (result.isNewUser) "アカウントを作成しました" else "ログインに成功しました"
+                )
+        }
+
+        /** GitHub OAuth2.0認証 フロントエンドから受け取った認証コードを使用してログイン/登録を行う */
+        @PostMapping("/github")
+        fun gitHubOAuth(@Valid @RequestBody request: GitHubOAuthRequest): OAuthLoginResponse {
+                val result = gitHubOAuthUseCase.authenticateWithGitHub(request.code)
 
                 return OAuthLoginResponse(
                         accessToken = result.tokens.accessToken.value,
