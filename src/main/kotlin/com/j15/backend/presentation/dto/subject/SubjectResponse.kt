@@ -9,6 +9,7 @@ data class SubjectResponse(
         val title: String,
         val description: String?,
         val maxSections: Int,
+        val weight: Int,
         val createdAt: Instant
 ) {
     companion object {
@@ -18,6 +19,7 @@ data class SubjectResponse(
                     title = subject.title,
                     description = subject.description,
                     maxSections = subject.maxSections,
+                    weight = subject.weight,
                     createdAt = subject.createdAt
             )
         }
