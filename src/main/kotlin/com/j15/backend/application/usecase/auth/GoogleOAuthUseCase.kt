@@ -16,10 +16,9 @@ import org.springframework.transaction.annotation.Transactional
 /**
  * Google OAuth認証ユースケース（アプリケーション層）
  *
- * フロントエンドから受け取った認証コードを使用して:
- * 1. Googleからユーザー情報を取得
- * 2. 既存ユーザーの場合はログイン、新規の場合は自動登録
- * 3. JWTトークンを発行
+ * 2つの認証方式をサポート:
+ * 1. ID Token方式（推奨）: Google Identity Services (GIS) からのID Token
+ * 2. Authorization Code方式（レガシー）: リダイレクトフローの認証コード
  */
 @Service
 @Transactional
@@ -36,7 +35,20 @@ class GoogleOAuthUseCase(
     )
 
     /**
-     * Googleの認証コードを使用してログイン/登録を行う
+     * ID Tokenを使用してログイン/登録を行う（推奨方式） Google Identity Services (GIS) のポップアップログインで取得したID Tokenを検証
+     *
+     * @param idToken Google Sign-Inから受け取ったID Token (credential)
+     * @return 認証結果（ユーザー情報とトークン）
+     */
+    fun authenticateWithIdToken(idToken: String): OAuthResult {
+        // GoogleでID Tokenを検証してユーザー情報を取得
+        val googleUser = googleOAuthService.verifyIdToken(idToken)
+
+        return processGoogleUser(googleUser)
+    }
+
+    /**
+     * Googleの認証コードを使用してログイン/登録を行う（レガシー方式）
      *
      * @param authorizationCode Googleから受け取った認証コード
      * @return 認証結果（ユーザー情報とトークン）
@@ -45,6 +57,11 @@ class GoogleOAuthUseCase(
         // Googleからユーザー情報を取得
         val googleUser = googleOAuthService.authenticateWithCode(authorizationCode)
 
+        return processGoogleUser(googleUser)
+    }
+
+    /** Googleユーザー情報を処理してログイン/登録を行う（共通処理） */
+    private fun processGoogleUser(googleUser: GoogleOAuthService.GoogleUserInfo): OAuthResult {
         // 既存ユーザーを検索（GoogleのユーザーIDで）
         val existingUser = userRepository.findByOAuthProvider(OAuthProvider.GOOGLE, googleUser.id)
 

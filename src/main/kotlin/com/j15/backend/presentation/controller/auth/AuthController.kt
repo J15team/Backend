@@ -5,6 +5,7 @@ import com.j15.backend.application.usecase.auth.GoogleOAuthUseCase
 import com.j15.backend.application.usecase.auth.TokenManagementUseCase
 import com.j15.backend.application.usecase.user.RegisterUserCommand
 import com.j15.backend.application.usecase.user.UserCommandUseCase
+import com.j15.backend.presentation.dto.request.GoogleIdTokenRequest
 import com.j15.backend.presentation.dto.request.GoogleOAuthRequest
 import com.j15.backend.presentation.dto.request.LoginRequest
 import com.j15.backend.presentation.dto.request.RefreshTokenRequest
@@ -76,7 +77,30 @@ class AuthController(
                 )
         }
 
-        /** Google OAuth2.0認証 フロントエンドから受け取った認証コードを使用してログイン/登録を行う */
+        /**
+         * Google OAuth2.0認証（ID Token方式 - 推奨） Google Identity Services (GIS) のポップアップログインで取得したID
+         * Tokenを検証
+         */
+        @PostMapping("/google/token")
+        fun googleIdToken(@Valid @RequestBody request: GoogleIdTokenRequest): OAuthLoginResponse {
+                val result = googleOAuthUseCase.authenticateWithIdToken(request.credential)
+
+                return OAuthLoginResponse(
+                        accessToken = result.tokens.accessToken.value,
+                        refreshToken = result.tokens.refreshToken.value,
+                        user =
+                                OAuthLoginResponse.UserInfo(
+                                        id = result.user.userId.value.toString(),
+                                        username = result.user.username.value,
+                                        email = result.user.email.value,
+                                        profileImageUrl = result.user.profileImageUrl
+                                ),
+                        isNewUser = result.isNewUser,
+                        message = if (result.isNewUser) "アカウントを作成しました" else "ログインに成功しました"
+                )
+        }
+
+        /** Google OAuth2.0認証（Authorization Code方式 - レガシー） フロントエンドから受け取った認証コードを使用してログイン/登録を行う */
         @PostMapping("/google")
         fun googleOAuth(@Valid @RequestBody request: GoogleOAuthRequest): OAuthLoginResponse {
                 val result = googleOAuthUseCase.authenticateWithGoogle(request.code)
