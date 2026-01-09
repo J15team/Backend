@@ -21,7 +21,8 @@ import org.springframework.transaction.annotation.Transactional
 class AdminUseCase(
         private val userRepository: UserRepository,
         private val passwordEncoder: PasswordEncoder,
-        @Value("\${admin.api-key:}") private val adminApiKey: String
+        @Value("\${admin.api-key:}") private val adminApiKey: String,
+        @Value("\${admin.dev-key:}") private val devApiKey: String
 ) {
     private val logger = LoggerFactory.getLogger(AdminUseCase::class.java)
 
@@ -35,6 +36,25 @@ class AdminUseCase(
         if (adminApiKey == "admin-secret-key-change-this-in-production") {
             logger.error("ADMIN_API_KEY is using default value!")
             throw IllegalStateException("ADMIN_API_KEY must be changed from default value")
+        }
+    }
+
+    /** 開発者キーを検証（定数時間比較） */
+    fun validateDevKey(providedKey: String) {
+        if (providedKey.length > 1000) {
+            throw IllegalArgumentException("Invalid dev API key")
+        }
+
+        if (devApiKey.isBlank()) {
+            throw SecurityException("Dev API key not configured")
+        }
+
+        if (!MessageDigest.isEqual(
+                        providedKey.toByteArray(Charsets.UTF_8),
+                        devApiKey.toByteArray(Charsets.UTF_8)
+                )
+        ) {
+            throw SecurityException("Invalid dev API key")
         }
     }
 

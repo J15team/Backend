@@ -166,11 +166,21 @@ class AdminController(private val adminUseCase: AdminUseCase) {
         }
     }
 
-    /** 全ユーザー一覧を取得（管理者用） GET /api/admin/all-users */
+    /**
+     * 全ユーザー一覧を取得（開発者専用） GET /api/admin/all-users
+     *
+     * 必須ヘッダー: X-Dev-Key (開発者専用キー) 注意: このエンドポイントは開発者専用。ステークホルダーには絶対に公開しない
+     */
     @GetMapping("/all-users")
-    @PreAuthorize("hasRole('ADMIN')")
-    fun getAllUsers(): ResponseEntity<Any> {
+    fun getAllUsers(@RequestHeader("X-Dev-Key") devKey: String?): ResponseEntity<Any> {
         return try {
+            if (devKey == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(mapOf("error" to "X-Dev-Key header is required"))
+            }
+
+            adminUseCase.validateDevKey(devKey)
+
             val users = adminUseCase.getAllUsers()
             val userResponses =
                     users.map { user ->
@@ -182,6 +192,9 @@ class AdminController(private val adminUseCase: AdminUseCase) {
                         )
                     }
             ResponseEntity.ok(mapOf("users" to userResponses))
+        } catch (e: SecurityException) {
+            logger.warn("All users fetch failed due to invalid key", e)
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(mapOf("error" to "認証に失敗しました"))
         } catch (e: Exception) {
             logger.error("Error fetching all users: ${e.message}", e)
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -189,13 +202,26 @@ class AdminController(private val adminUseCase: AdminUseCase) {
         }
     }
 
-    /** 一般ユーザー（非管理者）を全て削除 DELETE /api/admin/non-admin-users */
+    /**
+     * 一般ユーザー（非管理者）を全て削除（開発者専用） DELETE /api/admin/non-admin-users
+     *
+     * 必須ヘッダー: X-Dev-Key (開発者専用キー) 注意: このエンドポイントは開発者専用。ステークホルダーには絶対に公開しない
+     */
     @DeleteMapping("/non-admin-users")
-    @PreAuthorize("hasRole('ADMIN')")
-    fun deleteAllNonAdminUsers(): ResponseEntity<Any> {
+    fun deleteAllNonAdminUsers(@RequestHeader("X-Dev-Key") devKey: String?): ResponseEntity<Any> {
         return try {
+            if (devKey == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(mapOf("error" to "X-Dev-Key header is required"))
+            }
+
+            adminUseCase.validateDevKey(devKey)
+
             val deletedCount = adminUseCase.deleteAllNonAdminUsers()
             ResponseEntity.ok(mapOf("message" to "一般ユーザーを削除しました", "deletedCount" to deletedCount))
+        } catch (e: SecurityException) {
+            logger.warn("Non-admin users deletion failed due to invalid key", e)
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(mapOf("error" to "認証に失敗しました"))
         } catch (e: Exception) {
             logger.error("Error deleting non-admin users: ${e.message}", e)
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
