@@ -1,6 +1,7 @@
 package com.j15.backend.infrastructure.persistence.repository
 
 import com.j15.backend.domain.model.user.Email
+import com.j15.backend.domain.model.user.OAuthProvider
 import com.j15.backend.domain.model.user.User
 import com.j15.backend.domain.model.user.UserId
 import com.j15.backend.domain.model.user.Username
@@ -8,7 +9,7 @@ import com.j15.backend.domain.repository.UserRepository
 import com.j15.backend.infrastructure.persistence.converter.UserConverter
 import org.springframework.stereotype.Repository
 
-// ユーザーリポジトリ実装（インフラ層）
+/** ユーザーリポジトリ実装（インフラ層） */
 @Repository
 class UserRepositoryImpl(private val jpaUserRepository: JpaUserRepository) : UserRepository {
 
@@ -18,6 +19,11 @@ class UserRepositoryImpl(private val jpaUserRepository: JpaUserRepository) : Use
 
     override fun findByEmail(email: Email): User? {
         return jpaUserRepository.findByEmail(email.value)?.let { UserConverter.toDomain(it) }
+    }
+
+    override fun findByOAuthProvider(provider: OAuthProvider, providerId: String): User? {
+        return jpaUserRepository.findByOauthProviderAndOauthProviderId(provider.value, providerId)
+                ?.let { UserConverter.toDomain(it) }
     }
 
     override fun findAll(): List<User> {

@@ -6,6 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface JpaUserRepository : JpaRepository<UserEntity, UUID> {
     fun findByEmail(email: String): UserEntity?
+    fun findByOauthProviderAndOauthProviderId(
+            oauthProvider: String,
+            oauthProviderId: String
+    ): UserEntity?
     fun existsByEmail(email: String): Boolean
     fun existsByUsername(username: String): Boolean
 }
