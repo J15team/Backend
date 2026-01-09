@@ -16,6 +16,7 @@ class SubjectConverter {
                 title = entity.title,
                 description = entity.description,
                 maxSections = entity.maxSections,
+                weight = entity.weight,
                 createdAt = entity.createdAt.toInstant(ZoneOffset.UTC)
         )
     }
@@ -25,6 +26,7 @@ class SubjectConverter {
                 title = domain.title,
                 description = domain.description,
                 maxSections = domain.maxSections,
+                weight = domain.weight,
                 createdAt = LocalDateTime.ofInstant(domain.createdAt, ZoneOffset.UTC)
         )
     }

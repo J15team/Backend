@@ -5,5 +5,6 @@ data class CreateSubjectRequest(
         val subjectId: Long,
         val title: String,
         val description: String?,
-        val maxSections: Int
+        val maxSections: Int,
+        val weight: Int = 1
 )

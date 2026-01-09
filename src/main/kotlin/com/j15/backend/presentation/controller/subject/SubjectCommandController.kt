@@ -24,7 +24,8 @@ class SubjectCommandController(private val subjectUseCase: SubjectUseCase) {
                         subjectId = request.subjectId,
                         title = request.title,
                         description = request.description,
-                        maxSections = request.maxSections
+                        maxSections = request.maxSections,
+                        weight = request.weight
                 )
 
         return ResponseEntity.status(HttpStatus.CREATED).body(SubjectResponse.from(subject))
@@ -43,7 +44,8 @@ class SubjectCommandController(private val subjectUseCase: SubjectUseCase) {
                             subjectId = subjectId,
                             title = request.title,
                             description = request.description,
-                            maxSections = request.maxSections
+                            maxSections = request.maxSections,
+                            weight = request.weight
                     )
             ResponseEntity.ok(SubjectResponse.from(subject))
         } catch (e: IllegalArgumentException) {

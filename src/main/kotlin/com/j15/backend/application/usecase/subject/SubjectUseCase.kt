@@ -33,15 +33,17 @@ class SubjectUseCase(
      * @param title タイトル
      * @param description 説明（任意）
      * @param maxSections 最大セクション数（1-1000）
+     * @param weight 重み（1-5）
      * @return 作成された題材
      */
     fun createSubject(
             subjectId: Long,
             title: String,
             description: String?,
-            maxSections: Int
+            maxSections: Int,
+            weight: Int
     ): Subject {
-        validateSubjectInput(title, maxSections)
+        validateSubjectInput(title, maxSections, weight)
 
         val subject =
                 Subject(
@@ -49,6 +51,7 @@ class SubjectUseCase(
                         title = title,
                         description = description,
                         maxSections = maxSections,
+                        weight = weight,
                         createdAt = Instant.now()
                 )
 
@@ -61,6 +64,7 @@ class SubjectUseCase(
      * @param title 新しいタイトル
      * @param description 新しい説明
      * @param maxSections 新しい最大セクション数
+     * @param weight 新しい重み
      * @return 更新された題材
      * @throws IllegalArgumentException 題材が存在しない場合
      */
@@ -68,16 +72,22 @@ class SubjectUseCase(
             subjectId: Long,
             title: String,
             description: String?,
-            maxSections: Int
+            maxSections: Int,
+            weight: Int
     ): Subject {
         val id = SubjectId(subjectId)
         val existing =
                 subjectRepository.findById(id)
                         ?: throw IllegalArgumentException("題材が見つかりません: $subjectId")
-        validateSubjectInput(title, maxSections)
+        validateSubjectInput(title, maxSections, weight)
 
         val updated =
-                existing.copy(title = title, description = description, maxSections = maxSections)
+                existing.copy(
+                        title = title,
+                        description = description,
+                        maxSections = maxSections,
+                        weight = weight
+                )
 
         return subjectRepository.save(updated)
     }
@@ -120,12 +130,16 @@ class SubjectUseCase(
      * 題材の入力値を検証
      * @param title タイトル
      * @param maxSections 最大セクション数
+     * @param weight 重み
      * @throws IllegalArgumentException バリデーションエラー時
      */
-    private fun validateSubjectInput(title: String, maxSections: Int) {
+    private fun validateSubjectInput(title: String, maxSections: Int, weight: Int) {
         require(title.isNotBlank()) { "タイトルは必須です" }
         require(maxSections in Subject.MIN_MAX_SECTIONS..Subject.MAX_MAX_SECTIONS) {
             "最大セクション数は${Subject.MIN_MAX_SECTIONS}以上${Subject.MAX_MAX_SECTIONS}以下である必要があります"
+        }
+        require(weight in Subject.MIN_WEIGHT..Subject.MAX_WEIGHT) {
+            "重みは${Subject.MIN_WEIGHT}以上${Subject.MAX_WEIGHT}以下である必要があります"
         }
     }
 }
