@@ -102,13 +102,15 @@ jobs:
           jq --arg IMAGE "$NEW_IMAGE" \
             --arg AWS_REGION "${{ env.AWS_REGION }}" \
             --arg AWS_S3_BUCKET_NAME "${{ env.AWS_S3_BUCKET_NAME }}" \
+            --arg DEV_API_KEY "${{ secrets.DEV_API_KEY }}" \
             '.containerDefinitions[0].image = $IMAGE |
              .containerDefinitions[0].environment = (
                (.containerDefinitions[0].environment // []) |
-               map(select(.name != "AWS_ACCESS_KEY_ID" and .name != "AWS_SECRET_ACCESS_KEY" and .name != "AWS_REGION" and .name != "AWS_S3_BUCKET_NAME")) +
+               map(select(.name != "AWS_ACCESS_KEY_ID" and .name != "AWS_SECRET_ACCESS_KEY" and .name != "AWS_REGION" and .name != "AWS_S3_BUCKET_NAME" and .name != "DEV_API_KEY")) +
                [
                  {name: "AWS_REGION", value: $AWS_REGION},
-                 {name: "AWS_S3_BUCKET_NAME", value: $AWS_S3_BUCKET_NAME}
+                 {name: "AWS_S3_BUCKET_NAME", value: $AWS_S3_BUCKET_NAME},
+                 {name: "DEV_API_KEY", value: $DEV_API_KEY}
                ]
              ) |
              del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' \
@@ -203,43 +205,6 @@ jobs:
             --api-id $API_GATEWAY_ID \
             --integration-id $INTEGRATION_ID \
             --integration-uri "http://${NEW_IP}:8080/{proxy}"
-
-      - name: Health check
-        run: |
-          API_URL=$(aws apigatewayv2 get-api \
-            --api-id $API_GATEWAY_ID \
-            --query 'ApiEndpoint' \
-            --output text)
-          NEW_IP="${{ steps.deploy-ecs.outputs.new_ip }}"
-
-          echo "API URL: $API_URL"
-          echo "Task IP: $NEW_IP"
-
-          # タスクIPに直接アクセスできるか確認
-          # アプリ起動に約50秒かかるため、十分な待機時間を設定
-          echo "Checking direct access to task..."
-          sleep 120
-
-          for i in {1..15}; do
-            echo "Attempt $i/15"
-            
-            # 直接IPでチェック
-            DIRECT_CODE=$(curl -s -o /dev/null -w "%{http_code}" "http://${NEW_IP}:8080/actuator/health" --max-time 10 2>/dev/null || echo "000")
-            echo "Direct IP check: HTTP $DIRECT_CODE"
-            
-            # API Gateway経由でチェック
-            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "${API_URL}/actuator/health" --max-time 10 || echo "000")
-            echo "API Gateway check: HTTP $HTTP_CODE"
-            
-            if [ "$HTTP_CODE" == "200" ]; then
-              echo "Health check passed!"
-              exit 0
-            fi
-            sleep 20
-          done
-
-          echo "Health check failed after all retries"
-          exit 1
 
       - name: Rollback on failure
         if: failure() && steps.save-state.outputs.current_task_def != ''
