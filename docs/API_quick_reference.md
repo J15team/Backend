@@ -26,6 +26,7 @@
 | POST | `/api/auth/signup` | 不要 | `{"username":"alice","email":"alice@example.com","password":"pass1234"}` | `{accessToken, refreshToken, user}` |
 | POST | `/api/auth/signin` | 不要 | `{"email":"alice@example.com","password":"pass1234"}` | `{accessToken, refreshToken, user}` |
 | POST | `/api/auth/refresh` | 不要 | `{"refreshToken":"<token>"}` | `{accessToken, refreshToken}` |
+| POST | `/api/auth/google` | 不要 | `{"code":"<authorization_code>"}` | `{accessToken, refreshToken, user, isNewUser}` |
 
 詳細: [認証API詳細](detailed/authentication.md)
 
