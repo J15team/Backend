@@ -4,6 +4,9 @@
 
 set -e
 
+# AWS CLIのページャーを無効化（非対話環境での実行を安定させる）
+export AWS_PAGER=""
+
 CLUSTER="j15-backend-cluster-dev"
 SERVICE="j15-backend-service-dev"
 DB_INSTANCE="j15-backend-db-dev"

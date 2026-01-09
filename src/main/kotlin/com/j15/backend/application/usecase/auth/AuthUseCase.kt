@@ -26,8 +26,13 @@ class AuthUseCase(
         val emailVo = Email(email)
         val user = userRepository.findByEmail(emailVo)
 
+        // OAuthユーザーの場合はパスワードログイン不可
+        if (user != null && user.passwordHash == null) {
+            throw IllegalArgumentException("このアカウントはGoogleログインで作成されています。Googleでログインしてください。")
+        }
+
         val isPasswordValid =
-                if (user != null) {
+                if (user != null && user.passwordHash != null) {
                     passwordHashService.verify(plainPassword, user.passwordHash.value)
                 } else {
                     passwordHashService.verify(plainPassword, dummyHash)
