@@ -1,6 +1,7 @@
 package com.j15.backend.presentation.exception
 
 import com.j15.backend.application.usecase.auth.OAuthUserExistsException
+import com.j15.backend.infrastructure.service.GitHubOAuthException
 import com.j15.backend.infrastructure.service.GoogleOAuthException
 import com.j15.backend.presentation.dto.response.ErrorResponse
 import org.slf4j.LoggerFactory
@@ -99,6 +100,19 @@ class GlobalExceptionHandler {
                         .body(
                                 ErrorResponse(
                                         message = "Google認証に失敗しました",
+                                        status = HttpStatus.BAD_REQUEST.value()
+                                )
+                        )
+        }
+
+        // GitHub OAuth認証エラー
+        @ExceptionHandler(GitHubOAuthException::class)
+        fun handleGitHubOAuthException(ex: GitHubOAuthException): ResponseEntity<ErrorResponse> {
+                logger.warn("GitHub OAuth error: {}", ex.message)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(
+                                ErrorResponse(
+                                        message = "GitHub認証に失敗しました",
                                         status = HttpStatus.BAD_REQUEST.value()
                                 )
                         )
