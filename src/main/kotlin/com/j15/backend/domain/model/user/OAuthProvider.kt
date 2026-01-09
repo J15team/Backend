@@ -3,9 +3,7 @@ package com.j15.backend.domain.model.user
 /** OAuth認証プロバイダーを表す値オブジェクト */
 enum class OAuthProvider(val value: String) {
     GOOGLE("google"),
-    // 将来的に他のプロバイダーを追加可能
-    // GITHUB("github"),
-    // LINE("line"),
+    GITHUB("github"),
     ;
 
     companion object {
