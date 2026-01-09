@@ -122,4 +122,22 @@ class ProfileUseCase(
 
         return userRepository.save(user)
     }
+
+    /** アカウントを削除（関連する進捗データもCASCADE削除される） */
+    fun deleteAccount(userId: UserId) {
+        val user =
+                userRepository.findById(userId)
+                        ?: throw IllegalArgumentException("ユーザーが見つかりません: ${userId.value}")
+
+        // プロフィール画像があれば削除
+        user.profileImageUrl?.let { imageUrl ->
+            try {
+                s3UploadService.deleteImage(imageUrl)
+            } catch (e: Exception) {
+                // 削除失敗は無視（画像が既に存在しない場合など）
+            }
+        }
+
+        userRepository.deleteById(userId)
+    }
 }
