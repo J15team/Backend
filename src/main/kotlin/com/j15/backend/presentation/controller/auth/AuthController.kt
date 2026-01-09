@@ -40,8 +40,10 @@ class AuthController(
                                 LoginResponse.UserInfo(
                                         id = result.user.userId.value.toString(),
                                         username = result.user.username.value,
-                                        email = result.user.email.value
-                                )
+                                        email = result.user.email.value,
+                                        loginCount = result.user.loginCount
+                                ),
+                        isFirstLogin = result.isFirstLogin
                 )
         }
 
@@ -64,8 +66,10 @@ class AuthController(
                                 LoginResponse.UserInfo(
                                         id = result.user.userId.value.toString(),
                                         username = result.user.username.value,
-                                        email = result.user.email.value
-                                )
+                                        email = result.user.email.value,
+                                        loginCount = result.user.loginCount
+                                ),
+                        isFirstLogin = true // 新規登録は常に初回
                 )
         }
 
@@ -96,9 +100,11 @@ class AuthController(
                                         id = result.user.userId.value.toString(),
                                         username = result.user.username.value,
                                         email = result.user.email.value,
-                                        profileImageUrl = result.user.profileImageUrl
+                                        profileImageUrl = result.user.profileImageUrl,
+                                        loginCount = result.user.loginCount
                                 ),
                         isNewUser = result.isNewUser,
+                        isFirstLogin = result.isFirstLogin,
                         message = if (result.isNewUser) "アカウントを作成しました" else "ログインに成功しました"
                 )
         }
@@ -116,9 +122,11 @@ class AuthController(
                                         id = result.user.userId.value.toString(),
                                         username = result.user.username.value,
                                         email = result.user.email.value,
-                                        profileImageUrl = result.user.profileImageUrl
+                                        profileImageUrl = result.user.profileImageUrl,
+                                        loginCount = result.user.loginCount
                                 ),
                         isNewUser = result.isNewUser,
+                        isFirstLogin = result.isFirstLogin,
                         message = if (result.isNewUser) "アカウントを作成しました" else "ログインに成功しました"
                 )
         }
@@ -136,9 +144,11 @@ class AuthController(
                                         id = result.user.userId.value.toString(),
                                         username = result.user.username.value,
                                         email = result.user.email.value,
-                                        profileImageUrl = result.user.profileImageUrl
+                                        profileImageUrl = result.user.profileImageUrl,
+                                        loginCount = result.user.loginCount
                                 ),
                         isNewUser = result.isNewUser,
+                        isFirstLogin = result.isFirstLogin,
                         message = if (result.isNewUser) "アカウントを作成しました" else "ログインに成功しました"
                 )
         }

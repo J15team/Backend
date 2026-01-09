@@ -31,7 +31,8 @@ class GoogleOAuthUseCase(
     data class OAuthResult(
             val user: User,
             val tokens: AuthTokens,
-            val isNewUser: Boolean // 新規登録されたユーザーかどうか
+            val isNewUser: Boolean, // 新規登録されたユーザーかどうか
+            val isFirstLogin: Boolean // 初回ログインかどうか（チュートリアル表示用）
     )
 
     /**
@@ -76,8 +77,21 @@ class GoogleOAuthUseCase(
 
     /** 既存ユーザーのログイン処理 */
     private fun loginExistingUser(user: User): OAuthResult {
-        val tokens = generateTokens(user)
-        return OAuthResult(user = user, tokens = tokens, isNewUser = false)
+        // 初回ログインかどうかを記録（カウント更新前に判定）
+        val isFirstLogin = user.isFirstLogin
+
+        // ログインカウントを更新
+        val updatedUser =
+                user.copy(loginCount = user.loginCount + 1, lastLoginAt = java.time.Instant.now())
+        userRepository.save(updatedUser)
+
+        val tokens = generateTokens(updatedUser)
+        return OAuthResult(
+                user = updatedUser,
+                tokens = tokens,
+                isNewUser = false,
+                isFirstLogin = isFirstLogin
+        )
     }
 
     /** 新規ユーザーの登録処理 */
@@ -103,13 +117,15 @@ class GoogleOAuthUseCase(
                         passwordHash = null, // OAuthユーザーはパスワードなし
                         oauthProvider = OAuthProvider.GOOGLE,
                         oauthProviderId = googleUser.id,
-                        profileImageUrl = googleUser.picture
+                        profileImageUrl = googleUser.picture,
+                        loginCount = 1, // 新規登録時は1回目のログイン
+                        lastLoginAt = java.time.Instant.now()
                 )
 
         val savedUser = userRepository.save(newUser)
         val tokens = generateTokens(savedUser)
 
-        return OAuthResult(user = savedUser, tokens = tokens, isNewUser = true)
+        return OAuthResult(user = savedUser, tokens = tokens, isNewUser = true, isFirstLogin = true)
     }
 
     /** JWTトークンを生成 */

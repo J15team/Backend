@@ -22,6 +22,8 @@ class UserEntity(
         @Column(name = "profile_image_url", length = 2048) var profileImageUrl: String? = null,
         @Column(name = "oauth_provider", length = 50) var oauthProvider: String? = null,
         @Column(name = "oauth_provider_id", length = 255) var oauthProviderId: String? = null,
+        @Column(name = "login_count", nullable = false) var loginCount: Int = 0,
+        @Column(name = "last_login_at") var lastLoginAt: Instant? = null,
         @Column(name = "created_at", nullable = false, updatable = false)
         @CreationTimestamp
         val createdAt: Instant? = null

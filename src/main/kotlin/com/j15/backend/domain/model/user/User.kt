@@ -16,6 +16,8 @@ data class User(
         val profileImageUrl: String? = null,
         val oauthProvider: OAuthProvider? = null,
         val oauthProviderId: String? = null,
+        val loginCount: Int = 0,
+        val lastLoginAt: Instant? = null,
         val createdAt: Instant = Instant.now()
 ) {
         /** 通常のメール/パスワード認証ユーザーかどうか */
@@ -25,4 +27,8 @@ data class User(
         /** OAuth認証ユーザーかどうか */
         val isOAuthUser: Boolean
                 get() = oauthProvider != null
+
+        /** 初回ログインかどうか（チュートリアル表示用） */
+        val isFirstLogin: Boolean
+                get() = loginCount == 0
 }

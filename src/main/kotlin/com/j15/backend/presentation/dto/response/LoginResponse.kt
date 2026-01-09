@@ -5,11 +5,13 @@ data class LoginResponse(
         val accessToken: String,
         val refreshToken: String,
         val user: UserInfo,
+        val isFirstLogin: Boolean = false,
         val message: String = "ログインに成功しました"
 ) {
     data class UserInfo(
-        val id: String,
-        val username: String,
-        val email: String
+            val id: String,
+            val username: String,
+            val email: String,
+            val loginCount: Int
     )
 }
