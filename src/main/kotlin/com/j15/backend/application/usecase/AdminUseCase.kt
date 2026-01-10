@@ -110,6 +110,11 @@ class AdminUseCase(
         val existingUser =
                 userRepository.findById(userId) ?: throw IllegalArgumentException("ユーザーが見つかりません")
 
+        // ROLE_DEVELOPERは更新不可
+        if (existingUser.role == UserRole.ROLE_DEVELOPER) {
+            throw SecurityException("開発者ユーザーは更新できません")
+        }
+
         // 管理者権限の確認
         if (existingUser.role != UserRole.ROLE_ADMIN) {
             throw IllegalArgumentException("このユーザーは管理者ユーザーではありません")
@@ -150,6 +155,11 @@ class AdminUseCase(
     fun deleteAdminUser(userId: String) {
         val userId = UserId(java.util.UUID.fromString(userId))
         val user = userRepository.findById(userId) ?: throw IllegalArgumentException("ユーザーが見つかりません")
+
+        // ROLE_DEVELOPERは削除不可
+        if (user.role == UserRole.ROLE_DEVELOPER) {
+            throw SecurityException("開発者ユーザーは削除できません")
+        }
 
         // 管理者権限の確認
         if (user.role != UserRole.ROLE_ADMIN) {

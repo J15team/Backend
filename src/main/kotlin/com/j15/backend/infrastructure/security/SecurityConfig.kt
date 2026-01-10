@@ -37,6 +37,9 @@ class SecurityConfig(
                         }
                         .authorizeHttpRequests { authz ->
                                 authz
+                                        // OPTIONSリクエストは全て許可（CORSプリフライト対応）
+                                        .requestMatchers(HttpMethod.OPTIONS, "/**")
+                                        .permitAll()
                                         // ヘルスチェック、Actuator は認証不要
                                         .requestMatchers("/api/health", "/actuator/**")
                                         .permitAll()
@@ -52,6 +55,9 @@ class SecurityConfig(
                                         .permitAll()
                                         // 管理者エンドポイント（APIキーで保護、コントローラー内で検証）
                                         .requestMatchers("/api/admin/**")
+                                        .permitAll()
+                                        // 開発者エンドポイント（X-Dev-Keyで保護、コントローラー内で検証）
+                                        .requestMatchers("/api/dev/**")
                                         .permitAll()
                                         // 題材の取得（GET）は認証不要
                                         .requestMatchers(HttpMethod.GET, "/api/subjects/**")
