@@ -247,8 +247,7 @@ jobs:
           HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
           BODY=$(echo "$RESPONSE" | head -n -1)
           [ "$HTTP_CODE" -eq 201 ] || { echo "Tag creation failed: $HTTP_CODE"; exit 1; }
-          TAG_ID=$(echo "$BODY" | grep -o '"id":[0-9]*' | cut -d':' -f2)
-          echo "✅ Tag created (ID: $TAG_ID)"
+          echo "✅ Tag created"
 
           # タグ一覧
           RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:8080/api/tags)
@@ -272,8 +271,8 @@ jobs:
           echo "$BODY" | grep -q '"exists":true' || { echo "Tag should exist"; exit 1; }
           echo "✅ Tag exists test passed"
 
-          # 題材にタグ付与
-          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "http://localhost:8080/api/subjects/1/tags/$TAG_ID" \
+          # 題材にタグ付与（タグ名で指定）
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "http://localhost:8080/api/subjects/1/tags/Kotlin" \
             -H "Authorization: Bearer $ADMIN_TOKEN")
           HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
           [ "$HTTP_CODE" -eq 201 ] || { echo "Add tag to subject failed: $HTTP_CODE"; exit 1; }
@@ -287,8 +286,8 @@ jobs:
           echo "$BODY" | grep -q "Kotlin" || { echo "Subject should have Kotlin tag"; exit 1; }
           echo "✅ Subject tags test passed"
 
-          # タグで題材絞り込み
-          RESPONSE=$(curl -s -w "\n%{http_code}" "http://localhost:8080/api/subjects?tags=$TAG_ID")
+          # タグ名で題材絞り込み
+          RESPONSE=$(curl -s -w "\n%{http_code}" "http://localhost:8080/api/subjects?tags=Kotlin")
           HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
           [ "$HTTP_CODE" -eq 200 ] || { echo "Filter by tag failed: $HTTP_CODE"; exit 1; }
           echo "✅ Filter subjects by tag test passed"

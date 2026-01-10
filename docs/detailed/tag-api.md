@@ -181,7 +181,7 @@ DELETE /api/tags/{tagId}
 ### 題材にタグを付与
 
 ```
-POST /api/subjects/{subjectId}/tags/{tagId}
+POST /api/subjects/{subjectId}/tags/{tagName}
 ```
 
 **Response:** `201 Created`
@@ -197,7 +197,7 @@ POST /api/subjects/{subjectId}/tags/{tagId}
 ### 題材からタグを削除
 
 ```
-DELETE /api/subjects/{subjectId}/tags/{tagId}
+DELETE /api/subjects/{subjectId}/tags/{tagName}
 ```
 
 **Response:** `204 No Content`
@@ -235,13 +235,13 @@ GET /api/subjects/{subjectId}/tags
 ### タグで題材を絞り込み
 
 ```
-GET /api/subjects?tags=1,2,3
+GET /api/subjects?tags=Kotlin,Java
 ```
 
 **Query Parameters:**
 | パラメータ | 型 | 説明 |
 |-----------|-----|------|
-| tags | string | カンマ区切りのタグ ID（AND 条件） |
+| tags | string | カンマ区切りのタグ名（AND 条件） |
 
 **Response:** `200 OK`
 

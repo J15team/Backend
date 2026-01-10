@@ -30,8 +30,8 @@ class SubjectQueryController(
                 if (tags.isNullOrBlank()) {
                     subjectUseCase.getAllSubjects()
                 } else {
-                    val tagIds = tags.split(",").mapNotNull { it.trim().toLongOrNull() }
-                    subjectTagUseCase.getSubjectsByTags(tagIds)
+                    val tagNames = tags.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+                    subjectTagUseCase.getSubjectsByTagNames(tagNames)
                 }
         return ResponseEntity.ok(subjects.map { SubjectResponse.from(it) })
     }

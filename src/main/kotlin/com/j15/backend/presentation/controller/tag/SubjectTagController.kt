@@ -12,27 +12,27 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/subjects/{subjectId}/tags")
 class SubjectTagController(private val subjectTagUseCase: SubjectTagUseCase) {
 
-    @PostMapping("/{tagId}")
+    @PostMapping("/{tagName}")
     @PreAuthorize("hasRole('ADMIN')")
     fun addTagToSubject(
             @PathVariable subjectId: Long,
-            @PathVariable tagId: Long
+            @PathVariable tagName: String
     ): ResponseEntity<Void> {
         return try {
-            subjectTagUseCase.addTagToSubject(subjectId, tagId)
+            subjectTagUseCase.addTagToSubject(subjectId, tagName)
             ResponseEntity.status(HttpStatus.CREATED).build()
         } catch (e: IllegalArgumentException) {
             ResponseEntity.notFound().build()
         }
     }
 
-    @DeleteMapping("/{tagId}")
+    @DeleteMapping("/{tagName}")
     @PreAuthorize("hasRole('ADMIN')")
     fun removeTagFromSubject(
             @PathVariable subjectId: Long,
-            @PathVariable tagId: Long
+            @PathVariable tagName: String
     ): ResponseEntity<Void> {
-        subjectTagUseCase.removeTagFromSubject(subjectId, tagId)
+        subjectTagUseCase.removeTagFromSubject(subjectId, tagName)
         return ResponseEntity.noContent().build()
     }
 

@@ -3,7 +3,7 @@ package com.j15.backend.application.usecase.tag
 import com.j15.backend.domain.model.subject.Subject
 import com.j15.backend.domain.model.subject.SubjectId
 import com.j15.backend.domain.model.tag.Tag
-import com.j15.backend.domain.model.tag.TagId
+import com.j15.backend.domain.model.tag.TagName
 import com.j15.backend.domain.repository.SubjectRepository
 import com.j15.backend.domain.repository.SubjectTagRepository
 import com.j15.backend.domain.repository.TagRepository
@@ -19,26 +19,27 @@ class SubjectTagUseCase(
         private val subjectTagRepository: SubjectTagRepository
 ) {
 
-    /** 題材にタグを付与 */
-    fun addTagToSubject(subjectId: Long, tagId: Long) {
+    /** 題材にタグを付与（タグ名で指定） */
+    fun addTagToSubject(subjectId: Long, tagName: String) {
         val sId = SubjectId(subjectId)
-        val tId = TagId(tagId)
+        val tName = TagName(tagName)
 
         if (!subjectRepository.existsById(sId)) {
             throw IllegalArgumentException("題材が見つかりません: $subjectId")
         }
-        if (!tagRepository.existsById(tId)) {
-            throw IllegalArgumentException("タグが見つかりません: $tagId")
-        }
+        val tag =
+                tagRepository.findByName(tName)
+                        ?: throw IllegalArgumentException("タグが見つかりません: $tagName")
 
-        subjectTagRepository.addTagToSubject(sId, tId)
+        subjectTagRepository.addTagToSubject(sId, tag.id)
     }
 
-    /** 題材からタグを削除 */
-    fun removeTagFromSubject(subjectId: Long, tagId: Long) {
+    /** 題材からタグを削除（タグ名で指定） */
+    fun removeTagFromSubject(subjectId: Long, tagName: String) {
         val sId = SubjectId(subjectId)
-        val tId = TagId(tagId)
-        subjectTagRepository.removeTagFromSubject(sId, tId)
+        val tName = TagName(tagName)
+        val tag = tagRepository.findByName(tName) ?: return // 存在しないタグは無視
+        subjectTagRepository.removeTagFromSubject(sId, tag.id)
     }
 
     /** 題材のタグを取得 */
@@ -51,14 +52,24 @@ class SubjectTagUseCase(
         return subjectTagRepository.findTagsBySubjectId(sId)
     }
 
-    /** タグで題材を絞り込み（AND条件） */
+    /** タグ名で題材を絞り込み（AND条件） */
     @Transactional(readOnly = true)
-    fun getSubjectsByTags(tagIds: List<Long>): List<Subject> {
-        if (tagIds.isEmpty()) {
+    fun getSubjectsByTagNames(tagNames: List<String>): List<Subject> {
+        if (tagNames.isEmpty()) {
             return subjectRepository.findAll()
         }
-        val tIds = tagIds.map { TagId(it) }
-        val subjectIds = subjectTagRepository.findSubjectIdsByTagIds(tIds)
+        val tagIds =
+                tagNames.mapNotNull { name ->
+                    try {
+                        tagRepository.findByName(TagName(name))?.id
+                    } catch (e: IllegalArgumentException) {
+                        null
+                    }
+                }
+        if (tagIds.isEmpty()) {
+            return emptyList()
+        }
+        val subjectIds = subjectTagRepository.findSubjectIdsByTagIds(tagIds)
         return subjectIds.mapNotNull { subjectRepository.findById(it) }.sortedBy {
             it.subjectId.value
         }
