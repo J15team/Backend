@@ -15,16 +15,12 @@ interface JpaSubjectTagRepository : JpaRepository<SubjectTagJpaEntity, SubjectTa
     fun deleteByTagId(tagId: Long)
     fun existsBySubjectIdAndTagId(subjectId: Long, tagId: Long): Boolean
 
+    /** 指定したタグのいずれかを持つ題材IDを取得（OR条件） */
     @Query(
             """
-        SELECT st.subjectId FROM SubjectTagJpaEntity st 
-        WHERE st.tagId IN :tagIds 
-        GROUP BY st.subjectId 
-        HAVING COUNT(DISTINCT st.tagId) = :tagCount
+        SELECT DISTINCT st.subjectId FROM SubjectTagJpaEntity st 
+        WHERE st.tagId IN :tagIds
     """
     )
-    fun findSubjectIdsHavingAllTags(
-            @Param("tagIds") tagIds: List<Long>,
-            @Param("tagCount") tagCount: Long
-    ): List<Long>
+    fun findSubjectIdsHavingAnyTags(@Param("tagIds") tagIds: List<Long>): List<Long>
 }
