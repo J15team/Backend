@@ -37,6 +37,9 @@ class SecurityConfig(
                         }
                         .authorizeHttpRequests { authz ->
                                 authz
+                                        // OPTIONSリクエストは全て許可（CORSプリフライト対応）
+                                        .requestMatchers(HttpMethod.OPTIONS, "/**")
+                                        .permitAll()
                                         // ヘルスチェック、Actuator は認証不要
                                         .requestMatchers("/api/health", "/actuator/**")
                                         .permitAll()
