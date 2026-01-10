@@ -28,9 +28,7 @@ class SubjectTagRepositoryImpl(
     override fun findSubjectIdsByTagIds(tagIds: List<TagId>): List<SubjectId> {
         if (tagIds.isEmpty()) return emptyList()
         val ids = tagIds.map { it.value }
-        return jpaSubjectTagRepository.findSubjectIdsHavingAllTags(ids, ids.size.toLong()).map {
-            SubjectId(it)
-        }
+        return jpaSubjectTagRepository.findSubjectIdsHavingAnyTags(ids).map { SubjectId(it) }
     }
 
     override fun addTagToSubject(subjectId: SubjectId, tagId: TagId) {
