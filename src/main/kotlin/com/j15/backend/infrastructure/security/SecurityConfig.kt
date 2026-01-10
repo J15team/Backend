@@ -22,59 +22,64 @@ class SecurityConfig(
         private val corsConfigurationSource: CorsConfigurationSource
 ) {
 
-    @Bean
-    fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder()
-    }
+        @Bean
+        fun passwordEncoder(): PasswordEncoder {
+                return BCryptPasswordEncoder()
+        }
 
-    @Bean
-    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        http
-                .cors { it.configurationSource(corsConfigurationSource) }
-                .csrf { it.disable() }
-                .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-                .authorizeHttpRequests { authz ->
-                    authz
-                            // ヘルスチェック、Actuator は認証不要
-                            .requestMatchers("/api/health", "/actuator/**")
-                            .permitAll()
-                            // 認証関連エンドポイントは認証不要
-                            .requestMatchers(
-                                    HttpMethod.POST,
-                                    "/api/auth/signin",
-                                    "/api/auth/signup",
-                                    "/api/auth/refresh",
-                                    "/api/auth/google",
-                                    "/api/auth/google/token"
-                            )
-                            .permitAll()
-                            // 管理者エンドポイント（APIキーで保護、コントローラー内で検証）
-                            .requestMatchers("/api/admin/**")
-                            .permitAll()
-                            // 題材の取得（GET）は認証不要
-                            .requestMatchers(HttpMethod.GET, "/api/subjects/**")
-                            .permitAll()
-                            // 題材の作成・更新・削除は ROLE_ADMIN のみ
-                            .requestMatchers(HttpMethod.POST, "/api/subjects/**")
-                            .hasRole("ADMIN")
-                            .requestMatchers(HttpMethod.PUT, "/api/subjects/**")
-                            .hasRole("ADMIN")
-                            .requestMatchers(HttpMethod.DELETE, "/api/subjects/**")
-                            .hasRole("ADMIN")
-                            // 進捗APIは認証必須
-                            .requestMatchers("/api/progress/**")
-                            .authenticated()
-                            // その他のすべてのエンドポイントは認証必須
-                            .anyRequest()
-                            .authenticated()
-                }
-                // RateLimit -> JWT -> UsernamePassword の順序で評価
-                .addFilterBefore(
-                        jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter::class.java
-                )
-                .addFilterBefore(rateLimitFilter, JwtAuthenticationFilter::class.java)
+        @Bean
+        fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+                http
+                        .cors { it.configurationSource(corsConfigurationSource) }
+                        .csrf { it.disable() }
+                        .sessionManagement {
+                                it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        }
+                        .authorizeHttpRequests { authz ->
+                                authz
+                                        // ヘルスチェック、Actuator は認証不要
+                                        .requestMatchers("/api/health", "/actuator/**")
+                                        .permitAll()
+                                        // 認証関連エンドポイントは認証不要
+                                        .requestMatchers(
+                                                HttpMethod.POST,
+                                                "/api/auth/signin",
+                                                "/api/auth/signup",
+                                                "/api/auth/refresh",
+                                                "/api/auth/google",
+                                                "/api/auth/google/token"
+                                        )
+                                        .permitAll()
+                                        // 管理者エンドポイント（APIキーで保護、コントローラー内で検証）
+                                        .requestMatchers("/api/admin/**")
+                                        .permitAll()
+                                        // 題材の取得（GET）は認証不要
+                                        .requestMatchers(HttpMethod.GET, "/api/subjects/**")
+                                        .permitAll()
+                                        // 題材の作成・更新・削除は ROLE_ADMIN のみ
+                                        .requestMatchers(HttpMethod.POST, "/api/subjects/**")
+                                        .hasRole("ADMIN")
+                                        .requestMatchers(HttpMethod.PUT, "/api/subjects/**")
+                                        .hasRole("ADMIN")
+                                        .requestMatchers(HttpMethod.DELETE, "/api/subjects/**")
+                                        .hasRole("ADMIN")
+                                        // タグの取得（GET）は認証不要
+                                        .requestMatchers(HttpMethod.GET, "/api/tags/**")
+                                        .permitAll()
+                                        // 進捗APIは認証必須
+                                        .requestMatchers("/api/progress/**")
+                                        .authenticated()
+                                        // その他のすべてのエンドポイントは認証必須
+                                        .anyRequest()
+                                        .authenticated()
+                        }
+                        // RateLimit -> JWT -> UsernamePassword の順序で評価
+                        .addFilterBefore(
+                                jwtAuthenticationFilter,
+                                UsernamePasswordAuthenticationFilter::class.java
+                        )
+                        .addFilterBefore(rateLimitFilter, JwtAuthenticationFilter::class.java)
 
-        return http.build()
-    }
+                return http.build()
+        }
 }
