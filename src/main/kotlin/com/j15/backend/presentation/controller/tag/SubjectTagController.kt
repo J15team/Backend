@@ -7,32 +7,37 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
+/** タグ追加・削除リクエストDTO */
+data class TagNameRequest(val tagName: String)
+
 /** 題材-タグ関連コントローラー */
 @RestController
 @RequestMapping("/api/subjects/{subjectId}/tags")
 class SubjectTagController(private val subjectTagUseCase: SubjectTagUseCase) {
 
-    @PostMapping("/{tagName}")
+    /** タグを題材に追加（リクエストボディでタグ名を指定） */
+    @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     fun addTagToSubject(
             @PathVariable subjectId: Long,
-            @PathVariable tagName: String
+            @RequestBody request: TagNameRequest
     ): ResponseEntity<Void> {
         return try {
-            subjectTagUseCase.addTagToSubject(subjectId, tagName)
+            subjectTagUseCase.addTagToSubject(subjectId, request.tagName)
             ResponseEntity.status(HttpStatus.CREATED).build()
         } catch (e: IllegalArgumentException) {
             ResponseEntity.notFound().build()
         }
     }
 
-    @DeleteMapping("/{tagName}")
+    /** タグを題材から削除（リクエストボディでタグ名を指定） */
+    @DeleteMapping
     @PreAuthorize("hasRole('ADMIN')")
     fun removeTagFromSubject(
             @PathVariable subjectId: Long,
-            @PathVariable tagName: String
+            @RequestBody request: TagNameRequest
     ): ResponseEntity<Void> {
-        subjectTagUseCase.removeTagFromSubject(subjectId, tagName)
+        subjectTagUseCase.removeTagFromSubject(subjectId, request.tagName)
         return ResponseEntity.noContent().build()
     }
 
