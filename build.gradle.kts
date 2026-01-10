@@ -8,15 +8,12 @@ plugins {
 }
 
 group = "com.j15"
+
 version = "0.0.1-SNAPSHOT"
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-}
+java { sourceCompatibility = JavaVersion.VERSION_17 }
 
-repositories {
-    mavenCentral()
-}
+repositories { mavenCentral() }
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -35,9 +32,9 @@ dependencies {
     implementation("com.bucket4j:bucket4j-core:8.7.0")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
     implementation("software.amazon.awssdk:s3:2.20.26")
-    
+
     runtimeOnly("org.postgresql:postgresql")
-    
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("com.h2database:h2")
 }
@@ -49,6 +46,7 @@ tasks.withType<KotlinCompile> {
     }
 }
 
+tasks.withType<Test> { useJUnitPlatform() }
 tasks.withType<Test> {
     useJUnitPlatform()
 }
