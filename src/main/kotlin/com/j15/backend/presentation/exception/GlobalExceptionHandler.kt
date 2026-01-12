@@ -1,6 +1,5 @@
 package com.j15.backend.presentation.exception
 
-import com.j15.backend.application.usecase.auth.OAuthUserExistsException
 import com.j15.backend.infrastructure.service.GitHubOAuthException
 import com.j15.backend.infrastructure.service.GoogleOAuthException
 import com.j15.backend.presentation.dto.response.ErrorResponse
@@ -114,20 +113,6 @@ class GlobalExceptionHandler {
                                 ErrorResponse(
                                         message = "GitHub認証に失敗しました",
                                         status = HttpStatus.BAD_REQUEST.value()
-                                )
-                        )
-        }
-
-        // OAuthで既存ユーザーが存在するエラー
-        @ExceptionHandler(OAuthUserExistsException::class)
-        fun handleOAuthUserExistsException(
-                ex: OAuthUserExistsException
-        ): ResponseEntity<ErrorResponse> {
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body(
-                                ErrorResponse(
-                                        message = ex.message ?: "このメールアドレスは既に登録されています",
-                                        status = HttpStatus.CONFLICT.value()
                                 )
                         )
         }

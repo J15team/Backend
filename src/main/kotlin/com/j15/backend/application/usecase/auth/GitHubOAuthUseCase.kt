@@ -71,12 +71,13 @@ class GitHubOAuthUseCase(
         )
     }
 
-    /** 新規ユーザーの登録処理 */
+    /** 新規ユーザーの登録処理（または既存ユーザーへのログイン） */
     private fun registerNewUser(gitHubUser: GitHubOAuthService.GitHubUserInfo): OAuthResult {
         // メールアドレスが既に登録されているかチェック
         val existingEmailUser = userRepository.findByEmail(Email(gitHubUser.email))
         if (existingEmailUser != null) {
-            throw OAuthUserExistsException("このメールアドレスは既に別のアカウントで登録されています。" + "既存のアカウントでログインしてください。")
+            // 同じメールアドレスで既存アカウントがある場合は、そのユーザーとしてログイン
+            return loginExistingUser(existingEmailUser)
         }
 
         // ユーザー名を生成
