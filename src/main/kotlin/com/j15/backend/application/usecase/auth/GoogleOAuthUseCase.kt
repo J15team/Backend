@@ -94,14 +94,13 @@ class GoogleOAuthUseCase(
         )
     }
 
-    /** 新規ユーザーの登録処理 */
+    /** 新規ユーザーの登録処理（または既存ユーザーへのログイン） */
     private fun registerNewUser(googleUser: GoogleOAuthService.GoogleUserInfo): OAuthResult {
         // メールアドレスが既に登録されているかチェック
         val existingEmailUser = userRepository.findByEmail(Email(googleUser.email))
         if (existingEmailUser != null) {
-            // 同じメールアドレスで既存アカウントがある場合
-            // セキュリティ上、自動的にリンクせずエラーにする
-            throw OAuthUserExistsException("このメールアドレスは既に別のアカウントで登録されています。" + "既存のアカウントでログインしてください。")
+            // 同じメールアドレスで既存アカウントがある場合は、そのユーザーとしてログイン
+            return loginExistingUser(existingEmailUser)
         }
 
         // ユーザー名を生成（Googleの名前をベースに、重複があれば連番を追加）
@@ -161,6 +160,3 @@ class GoogleOAuthUseCase(
         return username
     }
 }
-
-/** OAuth認証時に同じメールアドレスのユーザーが既に存在する場合の例外 */
-class OAuthUserExistsException(message: String) : RuntimeException(message)
