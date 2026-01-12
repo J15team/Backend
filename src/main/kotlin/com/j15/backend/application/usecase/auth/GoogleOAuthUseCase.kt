@@ -134,25 +134,25 @@ class GoogleOAuthUseCase(
         return AuthTokens(accessToken, refreshToken)
     }
 
-    /** ユーザー名をサニタイズ（英数字とアンダースコアのみ、最大20文字） */
+    /** ユーザー名をサニタイズ（最大50文字、空の場合はデフォルト名） */
     private fun sanitizeUsername(name: String): String {
-        return name.replace(Regex("[^a-zA-Z0-9_]"), "")
-                .take(15) // 連番用に余裕を持たせる
-                .ifEmpty { "user" }
+        return name.trim().take(50).ifBlank { "user" }
     }
 
     /** 一意のユーザー名を生成（重複がある場合は連番を追加） */
     private fun generateUniqueUsername(baseUsername: String): String {
-        var username = baseUsername
+        var username = baseUsername.take(50)
         var counter = 1
 
         while (userRepository.existsByUsername(Username(username))) {
-            username = "${baseUsername}${counter}"
+            val suffix = counter.toString()
+            username = "${baseUsername.take(50 - suffix.length)}$suffix"
             counter++
 
             // 無限ループ防止
             if (counter > 1000) {
-                username = "${baseUsername}${UUID.randomUUID().toString().take(8)}"
+                val uuid = UUID.randomUUID().toString().take(8)
+                username = "${baseUsername.take(50 - uuid.length - 1)}_$uuid"
                 break
             }
         }
