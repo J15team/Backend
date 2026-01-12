@@ -50,7 +50,8 @@ class SecurityConfig(
                                                 "/api/auth/signup",
                                                 "/api/auth/refresh",
                                                 "/api/auth/google",
-                                                "/api/auth/google/token"
+                                                "/api/auth/google/token",
+                                                "/api/auth/github"
                                         )
                                         .permitAll()
                                         // 管理者エンドポイント（APIキーで保護、コントローラー内で検証）
