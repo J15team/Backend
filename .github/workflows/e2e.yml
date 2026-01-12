@@ -272,8 +272,10 @@ jobs:
           echo "✅ Tag exists test passed"
 
           # 題材にタグ付与（タグ名で指定）
-          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "http://localhost:8080/api/subjects/1/tags/Kotlin" \
-            -H "Authorization: Bearer $ADMIN_TOKEN")
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "http://localhost:8080/api/subjects/1/tags" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $ADMIN_TOKEN" \
+            -d '{"tagName":"Kotlin"}')
           HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
           [ "$HTTP_CODE" -eq 201 ] || { echo "Add tag to subject failed: $HTTP_CODE"; exit 1; }
           echo "✅ Tag added to subject"
