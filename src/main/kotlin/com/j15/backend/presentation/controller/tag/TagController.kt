@@ -5,6 +5,7 @@ import com.j15.backend.domain.model.tag.TagType
 import com.j15.backend.presentation.dto.tag.CreateTagRequest
 import com.j15.backend.presentation.dto.tag.TagExistsResponse
 import com.j15.backend.presentation.dto.tag.TagResponse
+import com.j15.backend.presentation.dto.tag.TagWithSubjectsResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -29,8 +30,15 @@ class TagController(private val tagUseCase: TagUseCase) {
 
     @GetMapping
     fun getAllTags(
-            @RequestParam(required = false) search: String?
-    ): ResponseEntity<List<TagResponse>> {
+            @RequestParam(required = false) search: String?,
+            @RequestParam(required = false, defaultValue = "false") includeSubjects: Boolean
+    ): ResponseEntity<*> {
+        if (includeSubjects && search.isNullOrBlank()) {
+            val tagsWithSubjects = tagUseCase.getAllTagsWithSubjects()
+            return ResponseEntity.ok(
+                    tagsWithSubjects.map { TagWithSubjectsResponse.from(it.tag, it.subjectIds) }
+            )
+        }
         val tags =
                 if (search.isNullOrBlank()) {
                     tagUseCase.getAllTags()
