@@ -10,6 +10,9 @@ import java.time.Instant
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+/** タグと紐づき題材IDのペア */
+data class TagWithSubjectIds(val tag: Tag, val subjectIds: List<Long>)
+
 /** タグ管理ユースケース */
 @Service
 @Transactional
@@ -75,6 +78,17 @@ class TagUseCase(
     @Transactional(readOnly = true)
     fun getTagsByType(type: TagType): List<Tag> {
         return tagRepository.findByType(type)
+    }
+
+    /** 全タグを紐づき題材ID付きで取得（N+1回避版） */
+    @Transactional(readOnly = true)
+    fun getAllTagsWithSubjects(): List<TagWithSubjectIds> {
+        val tags = tagRepository.findAll()
+        val associations = subjectTagRepository.findAllAssociations()
+        return tags.map { tag ->
+            val subjectIds = associations[tag.id]?.map { it.value } ?: emptyList()
+            TagWithSubjectIds(tag, subjectIds)
+        }
     }
 
     /** タグを削除 */

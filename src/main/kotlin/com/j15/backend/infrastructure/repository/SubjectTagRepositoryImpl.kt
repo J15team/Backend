@@ -25,10 +25,20 @@ class SubjectTagRepositoryImpl(
         return jpaTagRepository.findAllById(tagIds).map { tagConverter.toDomain(it) }
     }
 
+    override fun findSubjectIdsByTagId(tagId: TagId): List<SubjectId> {
+        return jpaSubjectTagRepository.findByTagId(tagId.value).map { SubjectId(it.subjectId) }
+    }
+
     override fun findSubjectIdsByTagIds(tagIds: List<TagId>): List<SubjectId> {
         if (tagIds.isEmpty()) return emptyList()
         val ids = tagIds.map { it.value }
         return jpaSubjectTagRepository.findSubjectIdsHavingAnyTags(ids).map { SubjectId(it) }
+    }
+
+    override fun findAllAssociations(): Map<TagId, List<SubjectId>> {
+        return jpaSubjectTagRepository
+                .findAll()
+                .groupBy({ TagId(it.tagId) }, { SubjectId(it.subjectId) })
     }
 
     override fun addTagToSubject(subjectId: SubjectId, tagId: TagId) {
