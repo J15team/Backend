@@ -70,6 +70,12 @@ class SecurityConfig(
                                         // タグの取得（GET）は認証不要
                                         .requestMatchers(HttpMethod.GET, "/api/tags/**")
                                         .permitAll()
+                                        // ランキング取得（GET）は認証不要
+                                        .requestMatchers(HttpMethod.GET, "/api/rankings/**")
+                                        .permitAll()
+                                        // 閲覧記録（POST）は認証必須
+                                        .requestMatchers(HttpMethod.POST, "/api/views/**")
+                                        .authenticated()
                                         // 進捗APIは認証必須
                                         .requestMatchers("/api/progress/**")
                                         .authenticated()
