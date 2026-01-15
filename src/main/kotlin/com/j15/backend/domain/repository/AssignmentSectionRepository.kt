@@ -10,5 +10,6 @@ interface AssignmentSectionRepository {
     fun findBySubjectId(subjectId: AssignmentSubjectId): List<AssignmentSection>
     fun save(section: AssignmentSection): AssignmentSection
     fun deleteById(subjectId: AssignmentSubjectId, sectionId: AssignmentSectionId)
+    fun deleteAllBySubjectId(subjectId: AssignmentSubjectId)
     fun existsById(subjectId: AssignmentSubjectId, sectionId: AssignmentSectionId): Boolean
 }

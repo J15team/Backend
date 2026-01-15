@@ -8,7 +8,9 @@ import org.springframework.stereotype.Repository
 @Repository
 interface JpaAssignmentSectionRepository :
         JpaRepository<AssignmentSectionJpaEntity, AssignmentSectionEntityId> {
-    fun findByAssignmentSubjectIdOrderBySectionIdAsc(
-            assignmentSubjectId: Long
-    ): List<AssignmentSectionJpaEntity>
+        fun findByAssignmentSubjectIdOrderBySectionIdAsc(
+                assignmentSubjectId: Long
+        ): List<AssignmentSectionJpaEntity>
+
+        fun deleteByAssignmentSubjectId(assignmentSubjectId: Long)
 }

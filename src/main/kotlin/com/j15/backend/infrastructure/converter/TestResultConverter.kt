@@ -26,7 +26,7 @@ class TestResultConverter {
 
     fun toEntity(domain: TestResult): TestResultJpaEntity {
         return TestResultJpaEntity(
-                id = domain.id.value,
+                id = domain.id?.value ?: 0L,
                 submissionId = domain.submissionId.value,
                 testCaseIndex = domain.testCaseIndex,
                 verdict = domain.verdict.name,

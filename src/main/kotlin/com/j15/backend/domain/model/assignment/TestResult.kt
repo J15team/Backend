@@ -2,7 +2,7 @@ package com.j15.backend.domain.model.assignment
 
 /** テスト結果エンティティ（ドメイン層） */
 data class TestResult(
-        val id: TestResultId,
+        val id: TestResultId?, // 新規作成時はnull
         val submissionId: SubmissionId,
         val testCaseIndex: Int,
         val verdict: Verdict,
