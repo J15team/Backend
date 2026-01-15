@@ -12,6 +12,7 @@ import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.multipart.MaxUploadSizeExceededException
 
 // グローバル例外ハンドラー
 @RestControllerAdvice
@@ -112,6 +113,21 @@ class GlobalExceptionHandler {
                         .body(
                                 ErrorResponse(
                                         message = "GitHub認証に失敗しました",
+                                        status = HttpStatus.BAD_REQUEST.value()
+                                )
+                        )
+        }
+
+        // ファイルアップロードサイズ超過エラー
+        @ExceptionHandler(MaxUploadSizeExceededException::class)
+        fun handleMaxUploadSizeExceededException(
+                ex: MaxUploadSizeExceededException
+        ): ResponseEntity<ErrorResponse> {
+                logger.warn("File upload size exceeded: {}", ex.message)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(
+                                ErrorResponse(
+                                        message = "ファイルサイズが上限を超えています（最大5MB）",
                                         status = HttpStatus.BAD_REQUEST.value()
                                 )
                         )
