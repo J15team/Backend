@@ -2,6 +2,8 @@ package com.j15.backend.infrastructure.entity
 
 import jakarta.persistence.*
 import java.io.Serializable
+import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
 
 /** 課題セクションの複合主キークラス */
 @Embeddable
@@ -21,7 +23,9 @@ data class AssignmentSectionJpaEntity(
         @Column(name = "title", nullable = false, length = 255) val title: String = "",
         @Column(name = "description", columnDefinition = "TEXT") val description: String? = null,
         @Column(name = "has_assignment", nullable = false) val hasAssignment: Boolean = false,
-        @Column(name = "test_cases", columnDefinition = "JSONB") val testCases: String? = null,
+        @JdbcTypeCode(SqlTypes.JSON)
+        @Column(name = "test_cases", columnDefinition = "jsonb")
+        val testCases: String? = null,
         @Column(name = "time_limit") val timeLimit: Int? = null,
         @Column(name = "memory_limit") val memoryLimit: Int? = null
 )
