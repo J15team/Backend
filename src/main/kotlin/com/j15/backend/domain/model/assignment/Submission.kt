@@ -5,7 +5,7 @@ import java.time.Instant
 
 /** 提出エンティティ（ドメイン層） INSERT only（更新・削除禁止） */
 data class Submission(
-        val id: SubmissionId,
+        val id: SubmissionId?, // 新規作成時はnull
         val userId: UserId,
         val assignmentSubjectId: AssignmentSubjectId,
         val sectionId: AssignmentSectionId,

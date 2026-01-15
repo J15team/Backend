@@ -40,6 +40,10 @@ class AssignmentSectionRepositoryImpl(
         jpaRepository.deleteById(entityId)
     }
 
+    override fun deleteAllBySubjectId(subjectId: AssignmentSubjectId) {
+        jpaRepository.deleteByAssignmentSubjectId(subjectId.value)
+    }
+
     override fun existsById(
             subjectId: AssignmentSubjectId,
             sectionId: AssignmentSectionId

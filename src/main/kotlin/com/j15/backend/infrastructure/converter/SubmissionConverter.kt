@@ -28,7 +28,7 @@ class SubmissionConverter {
 
     fun toEntity(domain: Submission): SubmissionJpaEntity {
         return SubmissionJpaEntity(
-                id = domain.id.value,
+                id = domain.id?.value ?: 0L,
                 userId = domain.userId.value,
                 assignmentSubjectId = domain.assignmentSubjectId.value,
                 sectionId = domain.sectionId.value,
