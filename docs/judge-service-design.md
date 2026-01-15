@@ -4,11 +4,77 @@
 
 Judge Service は、提出されたコードをサンドボックス環境で実行し、テストケースに対する判定結果を返す独立マイクロサービス。
 
-## アーキテクチャ
+## AWS アーキテクチャ
+
+```
+Users → API Gateway → Main Backend (ECS) → Judge Service (ECS) → Sandbox (isolate)
+                              ↓
+                      RDS PostgreSQL
+```
+
+### デプロイ構成
+
+| コンポーネント | AWS サービス | 詳細                                     |
+| -------------- | ------------ | ---------------------------------------- |
+| Judge Service  | ECS Fargate  | 既存クラスタ (j15-backend-cluster-dev)   |
+| コンテナ       | ECR          | judge-service-dev リポジトリ             |
+| ネットワーク   | VPC          | Public Subnet (10.0.1.0/24)              |
+| サービス間通信 | 内部 HTTP    | Main Backend → Judge Service (Port 8081) |
+| ログ           | CloudWatch   | /ecs/judge-service-dev                   |
+
+### ECS タスク定義
+
+```json
+{
+  "family": "judge-service-dev",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "2048",
+  "containerDefinitions": [
+    {
+      "name": "judge-service",
+      "image": "127214181395.dkr.ecr.ap-northeast-1.amazonaws.com/judge-service-dev:latest",
+      "portMappings": [
+        {
+          "containerPort": 8081,
+          "protocol": "tcp"
+        }
+      ],
+      "linuxParameters": {
+        "capabilities": {
+          "add": ["SYS_ADMIN"]
+        }
+      },
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/judge-service-dev",
+          "awslogs-region": "ap-northeast-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}
+```
+
+**注意:** isolate を使用するため `SYS_ADMIN` capability が必要。Fargate では制限があるため、EC2 起動タイプ + privileged mode も検討。
+
+## 技術スタック
+
+| コンポーネント | 技術選定         | 理由                         |
+| -------------- | ---------------- | ---------------------------- |
+| 言語           | Go               | 軽量、高速、並行処理に強い   |
+| フレームワーク | Gin or Echo      | シンプルで高性能             |
+| サンドボックス | isolate + Docker | 競技プログラミングで実績あり |
+| コンパイラ     | GCC              | C 言語対応                   |
+
+## 内部アーキテクチャ
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                   Judge Service                              │
+│                   Judge Service (ECS)                        │
 │                                                              │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐   │
 │  │   API Layer  │  │   Compiler   │  │  Result Comparator│   │
@@ -19,7 +85,7 @@ Judge Service は、提出されたコードをサンドボックス環境で実
 │  ┌─────────────────────────────────────────────────────────┐ │
 │  │                    Executor (Sandbox)                   │ │
 │  │  ┌─────────────────────────────────────────────────┐    │ │
-│  │  │           Docker Container (isolate)            │    │ │
+│  │  │                   isolate                       │    │ │
 │  │  │  - CPU制限                                      │    │ │
 │  │  │  - メモリ制限                                   │    │ │
 │  │  │  - 時間制限                                     │    │ │
@@ -29,15 +95,6 @@ Judge Service は、提出されたコードをサンドボックス環境で実
 │  └─────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────┘
 ```
-
-## 技術スタック
-
-| コンポーネント | 技術選定         | 理由                         |
-| -------------- | ---------------- | ---------------------------- |
-| 言語           | Go               | 軽量、高速、並行処理に強い   |
-| フレームワーク | Gin or Echo      | シンプルで高性能             |
-| サンドボックス | isolate + Docker | 競技プログラミングで実績あり |
-| コンパイラ     | GCC              | C 言語対応                   |
 
 ## API 仕様
 
@@ -142,7 +199,7 @@ Judge Service は、提出されたコードをサンドボックス環境で実
 ## 実行フロー
 
 ```
-1. リクエスト受信
+1. リクエスト受信 (Main Backend から)
    ↓
 2. コードをファイルに書き出し
    ↓
@@ -150,7 +207,7 @@ Judge Service は、提出されたコードをサンドボックス環境で実
    ├─ 失敗 → CE を返す
    ↓
 4. 各テストケースに対して:
-   a. Dockerコンテナ起動（isolate）
+   a. isolate でサンドボックス作成
    b. 入力をstdinに渡して実行
    c. 時間・メモリを監視
    d. 出力を取得
@@ -159,7 +216,7 @@ Judge Service は、提出されたコードをサンドボックス環境で実
 5. 結果を集約して返す
 ```
 
-## ディレクトリ構成（案）
+## ディレクトリ構成
 
 ```
 judge-service/
@@ -175,16 +232,12 @@ judge-service/
 │   │   └── gcc.go
 │   ├── executor/
 │   │   ├── executor.go
-│   │   ├── isolate.go
-│   │   └── docker.go
+│   │   └── isolate.go
 │   ├── comparator/
 │   │   └── comparator.go
 │   └── config/
 │       └── config.go
-├── docker/
-│   ├── Dockerfile
-│   └── sandbox/
-│       └── Dockerfile.sandbox
+├── Dockerfile
 ├── go.mod
 ├── go.sum
 └── README.md
@@ -192,17 +245,26 @@ judge-service/
 
 ## 設定
 
+### 環境変数
+
+| 変数名               | デフォルト | 説明                      |
+| -------------------- | ---------- | ------------------------- |
+| PORT                 | 8081       | サーバーポート            |
+| DEFAULT_TIME_LIMIT   | 2000       | デフォルト時間制限 (ms)   |
+| DEFAULT_MEMORY_LIMIT | 256        | デフォルトメモリ制限 (MB) |
+| MAX_TIME_LIMIT       | 10000      | 最大時間制限 (ms)         |
+| MAX_MEMORY_LIMIT     | 512        | 最大メモリ制限 (MB)       |
+
+### config.yaml
+
 ```yaml
-# config.yaml
 server:
   port: 8081
   timeout: 30s
 
 sandbox:
-  image: "judge-sandbox:latest"
-  network: "none"
-  defaultTimeLimit: 2000 # ms
-  defaultMemoryLimit: 256 # MB
+  defaultTimeLimit: 2000
+  defaultMemoryLimit: 256
   maxTimeLimit: 10000
   maxMemoryLimit: 512
 
@@ -213,47 +275,103 @@ compiler:
     timeout: 10s
 ```
 
-## デプロイ
+## Dockerfile
 
-### Docker Compose（開発環境）
+```dockerfile
+FROM golang:1.21-alpine AS builder
 
-```yaml
-version: "3.8"
-services:
-  judge-service:
-    build: ./judge-service
-    ports:
-      - "8081:8081"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    privileged: true # isolate用
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -o judge-service ./cmd/server
+
+FROM ubuntu:22.04
+
+# isolate と GCC をインストール
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libc6-dev \
+    libcap-dev \
+    git \
+    make \
+    && rm -rf /var/lib/apt/lists/*
+
+# isolate をビルド
+RUN git clone https://github.com/ioi/isolate.git /tmp/isolate \
+    && cd /tmp/isolate \
+    && make install \
+    && rm -rf /tmp/isolate
+
+COPY --from=builder /app/judge-service /usr/local/bin/
+
+EXPOSE 8081
+
+CMD ["judge-service"]
 ```
 
-### Kubernetes（本番環境）
+## デプロイ手順
 
-- DaemonSet または Deployment で複数ノードに配置
-- HPA（Horizontal Pod Autoscaler）で負荷に応じてスケール
-- 専用ノードプールで隔離
+### 1. ECR リポジトリ作成
 
-## 今後の拡張
+```bash
+aws ecr create-repository \
+  --repository-name judge-service-dev \
+  --region ap-northeast-1
+```
 
-1. **言語追加**: Python, Java, C++, Rust など
-2. **スペシャルジャッジ**: カスタム比較関数対応
-3. **インタラクティブ問題**: 双方向通信対応
-4. **並列実行**: 複数テストケースの同時実行
-5. **キャッシュ**: 同一コードの再判定をスキップ
+### 2. Docker イメージビルド & プッシュ
+
+```bash
+# ログイン
+aws ecr get-login-password --region ap-northeast-1 | \
+  docker login --username AWS --password-stdin 127214181395.dkr.ecr.ap-northeast-1.amazonaws.com
+
+# ビルド & プッシュ
+docker build -t judge-service-dev .
+docker tag judge-service-dev:latest 127214181395.dkr.ecr.ap-northeast-1.amazonaws.com/judge-service-dev:latest
+docker push 127214181395.dkr.ecr.ap-northeast-1.amazonaws.com/judge-service-dev:latest
+```
+
+### 3. ECS サービス作成
+
+```bash
+# タスク定義登録
+aws ecs register-task-definition --cli-input-json file://task-definition.json
+
+# サービス作成
+aws ecs create-service \
+  --cluster j15-backend-cluster-dev \
+  --service-name judge-service-dev \
+  --task-definition judge-service-dev \
+  --desired-count 1 \
+  --launch-type FARGATE \
+  --network-configuration "awsvpcConfiguration={subnets=[subnet-0b92bd0152e3cae6a],securityGroups=[sg-0bcda1559b9fdde75],assignPublicIp=ENABLED}"
+```
+
+### 4. セキュリティグループ更新
+
+Main Backend から Judge Service への通信を許可:
+
+```bash
+aws ec2 authorize-security-group-ingress \
+  --group-id sg-0bcda1559b9fdde75 \
+  --protocol tcp \
+  --port 8081 \
+  --source-group sg-0bcda1559b9fdde75
+```
 
 ## メインバックエンドとの連携
 
 ```
-Main Backend                          Judge Service
+Main Backend (ECS)                    Judge Service (ECS)
      │                                      │
      │  POST /api/judge                     │
      │  {code, language, testCases, ...}    │
      │ ─────────────────────────────────────▶│
      │                                      │
      │                                      │ コンパイル
-     │                                      │ 実行
+     │                                      │ 実行 (isolate)
      │                                      │ 比較
      │                                      │
      │  {results: [{verdict, time, ...}]}   │
@@ -263,6 +381,26 @@ Main Backend                          Judge Service
      │  スコア計算                           │
      ▼                                      ▼
 ```
+
+### Main Backend 設定
+
+`application.yml`:
+
+```yaml
+judge-service:
+  base-url: http://judge-service.local:8081 # Cloud Map 使用時
+  # または ECS Service Discovery / 固定IP
+  timeout: 30000
+```
+
+## 今後の拡張
+
+1. **言語追加**: Python, Java, C++, Rust など
+2. **スペシャルジャッジ**: カスタム比較関数対応
+3. **インタラクティブ問題**: 双方向通信対応
+4. **並列実行**: 複数テストケースの同時実行
+5. **キャッシュ**: 同一コードの再判定をスキップ
+6. **Auto Scaling**: 負荷に応じた自動スケーリング
 
 ## 参考
 
