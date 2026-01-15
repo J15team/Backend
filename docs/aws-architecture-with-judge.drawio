@@ -1,112 +1,167 @@
 <mxfile host="app.diagrams.net" modified="2026-01-15T10:00:00.000Z" agent="Mozilla/5.0" version="22.1.0" type="device">
   <diagram name="AWS Architecture" id="aws-architecture">
-    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="800" math="0" shadow="0">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         
         <!-- Title -->
-        <mxCell id="title" value="J15 Backend - AWS Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1" vertex="1" parent="1">
-          <mxGeometry x="450" y="20" width="300" height="30" as="geometry" />
+        <mxCell id="title" value="J15 Backend - AWS Architecture with Judge Service" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="500" height="30" as="geometry" />
         </mxCell>
         
-        <!-- Users -->
-        <mxCell id="users" value="Users" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3E;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.users;" vertex="1" parent="1">
-          <mxGeometry x="80" y="200" width="50" height="50" as="geometry" />
+        <!-- ========== ROW 1: Users ========== -->
+        <mxCell id="users" value="Users&#xa;(Frontend)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3E;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.users;" vertex="1" parent="1">
+          <mxGeometry x="120" y="100" width="60" height="60" as="geometry" />
         </mxCell>
         
-        <!-- API Gateway -->
-        <mxCell id="apigw" value="API Gateway&#xa;(HTTP API)&#xa;HTTPS" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#E7157B;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.api_gateway;" vertex="1" parent="1">
-          <mxGeometry x="230" y="200" width="50" height="50" as="geometry" />
+        <!-- ========== ROW 2: API Gateway ========== -->
+        <mxCell id="apigw" value="API Gateway&#xa;(HTTP API)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#E7157B;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.api_gateway;" vertex="1" parent="1">
+          <mxGeometry x="120" y="250" width="60" height="60" as="geometry" />
         </mxCell>
         
-        <!-- VPC Box -->
-        <mxCell id="vpc-box" value="VPC (10.0.0.0/16)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#248814;strokeWidth=2;verticalAlign=top;fontSize=11;fontStyle=1;fontColor=#248814;" vertex="1" parent="1">
-          <mxGeometry x="340" y="80" width="540" height="400" as="geometry" />
+        <!-- ========== VPC ========== -->
+        <mxCell id="vpc" value="VPC: j15-backend-vpc-dev (10.0.0.0/16)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#248814;strokeWidth=3;verticalAlign=top;align=left;spacingLeft=10;fontSize=12;fontStyle=1;fontColor=#248814;" vertex="1" parent="1">
+          <mxGeometry x="280" y="80" width="1000" height="520" as="geometry" />
         </mxCell>
         
         <!-- Public Subnet -->
-        <mxCell id="public-subnet" value="Public Subnet" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F3E6;strokeColor=#7AA116;verticalAlign=top;fontSize=10;fontColor=#248814;" vertex="1" parent="1">
-          <mxGeometry x="360" y="120" width="280" height="200" as="geometry" />
+        <mxCell id="public-subnet" value="Public Subnet (10.0.1.0/24) - ap-northeast-1a" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F3E6;strokeColor=#7AA116;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=10;fontSize=11;fontColor=#248814;" vertex="1" parent="1">
+          <mxGeometry x="310" y="120" width="440" height="240" as="geometry" />
         </mxCell>
         
-        <!-- ECS Main Backend -->
-        <mxCell id="ecs-main" value="ECS&#xa;Main Backend&#xa;(Spring Boot)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#D45B07;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.ecs_service;" vertex="1" parent="1">
-          <mxGeometry x="400" y="180" width="50" height="50" as="geometry" />
+        <!-- ECS Cluster -->
+        <mxCell id="ecs-cluster-label" value="ECS Cluster: j15-backend-cluster-dev" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1;fontColor=#D45B07;" vertex="1" parent="1">
+          <mxGeometry x="330" y="145" width="220" height="20" as="geometry" />
         </mxCell>
         
-        <!-- ECS Judge Service -->
-        <mxCell id="ecs-judge" value="ECS&#xa;Judge Service&#xa;(Go) [NEW]" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#D45B07;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.ecs_service;" vertex="1" parent="1">
-          <mxGeometry x="540" y="180" width="50" height="50" as="geometry" />
+        <!-- Main Backend -->
+        <mxCell id="main-backend" value="Main Backend&#xa;(Spring Boot)&#xa;Port 8080" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#D45B07;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.ecs_service;" vertex="1" parent="1">
+          <mxGeometry x="360" y="200" width="60" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Judge Service -->
+        <mxCell id="judge-service" value="Judge Service&#xa;(Go + isolate)&#xa;Port 8081 [NEW]" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#D45B07;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.ecs_service;" vertex="1" parent="1">
+          <mxGeometry x="560" y="200" width="60" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Sandbox -->
+        <mxCell id="sandbox" value="Sandbox&#xa;(Docker/isolate)&#xa;Privileged" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="545" y="290" width="90" height="50" as="geometry" />
         </mxCell>
         
         <!-- Private Subnet -->
-        <mxCell id="private-subnet" value="Private Subnet (Multi-AZ)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F2F8;strokeColor=#147EBA;verticalAlign=top;fontSize=10;fontColor=#147EBA;" vertex="1" parent="1">
-          <mxGeometry x="680" y="120" width="180" height="200" as="geometry" />
+        <mxCell id="private-subnet" value="Private Subnet (10.0.11.0/24, 10.0.12.0/24) - Multi-AZ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F2F8;strokeColor=#147EBA;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=10;fontSize=11;fontColor=#147EBA;" vertex="1" parent="1">
+          <mxGeometry x="800" y="120" width="450" height="240" as="geometry" />
         </mxCell>
         
         <!-- RDS -->
-        <mxCell id="rds" value="RDS&#xa;PostgreSQL" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#2E73B8;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.rds_postgresql_instance;" vertex="1" parent="1">
-          <mxGeometry x="745" y="180" width="50" height="50" as="geometry" />
+        <mxCell id="rds" value="RDS PostgreSQL&#xa;j15-backend-db-dev&#xa;db.t3.micro" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#2E73B8;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.rds_postgresql_instance;" vertex="1" parent="1">
+          <mxGeometry x="995" y="200" width="60" height="60" as="geometry" />
         </mxCell>
         
-        <!-- AWS Services Row -->
-        <mxCell id="ecr" value="ECR" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#D45B07;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.ecr;" vertex="1" parent="1">
-          <mxGeometry x="380" y="380" width="40" height="40" as="geometry" />
+        <!-- ========== AWS Services (Bottom) ========== -->
+        <mxCell id="services-label" value="AWS Services" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="310" y="400" width="100" height="20" as="geometry" />
         </mxCell>
         
-        <mxCell id="s3" value="S3" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#277116;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.s3;" vertex="1" parent="1">
-          <mxGeometry x="460" y="380" width="40" height="40" as="geometry" />
+        <mxCell id="ecr" value="ECR&#xa;j15-backend-dev" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#D45B07;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.ecr;" vertex="1" parent="1">
+          <mxGeometry x="330" y="440" width="50" height="50" as="geometry" />
         </mxCell>
         
-        <mxCell id="secrets" value="Secrets&#xa;Manager" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#BC1356;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.secrets_manager;" vertex="1" parent="1">
-          <mxGeometry x="540" y="380" width="40" height="40" as="geometry" />
+        <mxCell id="s3" value="S3&#xa;j15-backend-images" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#277116;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.s3;" vertex="1" parent="1">
+          <mxGeometry x="440" y="440" width="50" height="50" as="geometry" />
         </mxCell>
         
-        <mxCell id="cloudwatch" value="CloudWatch" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#BC1356;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.cloudwatch;" vertex="1" parent="1">
-          <mxGeometry x="620" y="380" width="40" height="40" as="geometry" />
+        <mxCell id="secrets" value="Secrets Manager&#xa;(RDS, OAuth, Admin)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#BC1356;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.secrets_manager;" vertex="1" parent="1">
+          <mxGeometry x="550" y="440" width="50" height="50" as="geometry" />
         </mxCell>
         
-        <!-- Simple Arrows -->
-        <!-- Users to API GW -->
-        <mxCell id="arrow1" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#232F3E;" edge="1" parent="1" source="users" target="apigw">
+        <mxCell id="cloudwatch" value="CloudWatch Logs&#xa;/ecs/j15-backend-dev" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#BC1356;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.cloudwatch;" vertex="1" parent="1">
+          <mxGeometry x="660" y="440" width="50" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- ========== ARROWS (Simple vertical/horizontal) ========== -->
+        
+        <!-- 1. Users → API Gateway (vertical) -->
+        <mxCell id="arrow1" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#232F3E;entryX=0.5;entryY=0;exitX=0.5;exitY=1;" edge="1" parent="1" source="users" target="apigw">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow1-label" value="HTTPS" style="text;html=1;strokeColor=none;fillColor=#ffffff;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="160" y="190" width="40" height="15" as="geometry" />
+        </mxCell>
+        
+        <!-- 2. API Gateway → Main Backend (horizontal) -->
+        <mxCell id="arrow2" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#E7157B;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" edge="1" parent="1" source="apigw" target="main-backend">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow2-label" value="HTTP Proxy" style="text;html=1;strokeColor=none;fillColor=#ffffff;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontStyle=1;fontColor=#E7157B" vertex="1" parent="1">
+          <mxGeometry x="230" y="260" width="60" height="15" as="geometry" />
+        </mxCell>
+        
+        <!-- 3. Main Backend → Judge Service (horizontal) -->
+        <mxCell id="arrow3" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#D45B07;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" edge="1" parent="1" source="main-backend" target="judge-service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow3-label" value="POST /api/judge" style="text;html=1;strokeColor=none;fillColor=#ffffff;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontStyle=1;fontColor=#D45B07" vertex="1" parent="1">
+          <mxGeometry x="450" y="210" width="80" height="15" as="geometry" />
+        </mxCell>
+        
+        <!-- 4. Judge Service → Sandbox (vertical) -->
+        <mxCell id="arrow4" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#d6b656;entryX=0.5;entryY=0;exitX=0.5;exitY=1;" edge="1" parent="1" source="judge-service" target="sandbox">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         
-        <!-- API GW to Main Backend -->
-        <mxCell id="arrow2" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#E7157B;" edge="1" parent="1" source="apigw" target="ecs-main">
-          <mxGeometry relative="1" as="geometry" />
+        <!-- 5. Main Backend → RDS (horizontal) -->
+        <mxCell id="arrow5" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#2E73B8;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" edge="1" parent="1" source="main-backend" target="rds">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="750" y="230" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow5-label" value="PostgreSQL:5432" style="text;html=1;strokeColor=none;fillColor=#ffffff;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontStyle=1;fontColor=#2E73B8" vertex="1" parent="1">
+          <mxGeometry x="850" y="210" width="90" height="15" as="geometry" />
         </mxCell>
         
-        <!-- Main Backend to Judge -->
-        <mxCell id="arrow3" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#D45B07;" edge="1" parent="1" source="ecs-main" target="ecs-judge">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
+        <!-- ========== Info Boxes ========== -->
         
-        <!-- Main Backend to RDS -->
-        <mxCell id="arrow4" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#2E73B8;" edge="1" parent="1" source="ecs-main" target="rds">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        
-        <!-- Legend -->
-        <mxCell id="legend" value="[NEW] = Judge Service (新規追加予定)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=2" vertex="1" parent="1">
-          <mxGeometry x="920" y="140" width="200" height="20" as="geometry" />
-        </mxCell>
-        
-        <!-- Flow Description -->
+        <!-- Request Flow -->
         <mxCell id="flow-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
-          <mxGeometry x="340" y="520" width="540" height="100" as="geometry" />
+          <mxGeometry x="40" y="640" width="380" height="130" as="geometry" />
         </mxCell>
-        <mxCell id="flow-title" value="Request Flow" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1" vertex="1" parent="1">
-          <mxGeometry x="350" y="525" width="100" height="20" as="geometry" />
+        <mxCell id="flow-title" value="Request Flow" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="50" y="645" width="100" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="flow-text" value="1. Users → API Gateway (HTTPS)&#xa;2. API Gateway → Main Backend (HTTP Proxy)&#xa;3. Main Backend → Judge Service (コード判定)&#xa;4. Main Backend → RDS (データ保存)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="350" y="545" width="300" height="70" as="geometry" />
+        <mxCell id="flow-text" value="1. Users → API Gateway (HTTPS)&#xa;2. API Gateway → Main Backend (HTTP Proxy)&#xa;3. Main Backend → RDS (データ保存)&#xa;4. Main Backend → Judge Service (コード判定)&#xa;5. Judge Service → Sandbox (コンパイル・実行)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="50" y="670" width="360" height="90" as="geometry" />
+        </mxCell>
+        
+        <!-- Judge Service Info -->
+        <mxCell id="judge-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="450" y="640" width="300" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="judge-title" value="Judge Service [NEW]" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="460" y="645" width="150" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="judge-text" value="• Go + Gin/Echo&#xa;• isolate (IOI公式サンドボックス)&#xa;• Docker Privileged Mode&#xa;• C言語コンパイル・実行&#xa;• 時間/メモリ制限付き実行" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="460" y="670" width="280" height="90" as="geometry" />
+        </mxCell>
+        
+        <!-- Current Resources -->
+        <mxCell id="current-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="780" y="640" width="280" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="current-title" value="Current Resources ✓" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="790" y="645" width="150" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="current-text" value="• VPC + Subnets (Public/Private)&#xa;• ECS Cluster + Service&#xa;• API Gateway (HTTP API)&#xa;• RDS PostgreSQL (db.t3.micro)&#xa;• ECR, S3, Secrets Manager, CloudWatch" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="790" y="670" width="260" height="90" as="geometry" />
         </mxCell>
         
         <!-- Endpoint -->
-        <mxCell id="endpoint" value="Endpoint: https://zu9mkxoir4.execute-api.ap-northeast-1.amazonaws.com" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontColor=#666666;" vertex="1" parent="1">
-          <mxGeometry x="550" y="545" width="320" height="20" as="geometry" />
+        <mxCell id="endpoint" value="API Endpoint: https://zu9mkxoir4.execute-api.ap-northeast-1.amazonaws.com" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#666666;fontStyle=2" vertex="1" parent="1">
+          <mxGeometry x="40" y="790" width="450" height="20" as="geometry" />
         </mxCell>
         
       </root>
