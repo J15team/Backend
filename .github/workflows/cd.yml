@@ -15,6 +15,7 @@ env:
   ECS_TASK_FAMILY: j15-backend-dev
   API_GATEWAY_ID: zu9mkxoir4
   AWS_S3_BUCKET_NAME: j15-backend-images
+  JUDGE_SERVICE_BASE_URL: http://10.0.1.33:8081
 
 jobs:
   deploy:
@@ -103,14 +104,16 @@ jobs:
             --arg AWS_REGION "${{ env.AWS_REGION }}" \
             --arg AWS_S3_BUCKET_NAME "${{ env.AWS_S3_BUCKET_NAME }}" \
             --arg DEV_API_KEY "${{ secrets.DEV_API_KEY }}" \
+            --arg JUDGE_SERVICE_BASE_URL "${{ env.JUDGE_SERVICE_BASE_URL }}" \
             '.containerDefinitions[0].image = $IMAGE |
              .containerDefinitions[0].environment = (
                (.containerDefinitions[0].environment // []) |
-               map(select(.name != "AWS_ACCESS_KEY_ID" and .name != "AWS_SECRET_ACCESS_KEY" and .name != "AWS_REGION" and .name != "AWS_S3_BUCKET_NAME" and .name != "DEV_API_KEY")) +
+               map(select(.name != "AWS_ACCESS_KEY_ID" and .name != "AWS_SECRET_ACCESS_KEY" and .name != "AWS_REGION" and .name != "AWS_S3_BUCKET_NAME" and .name != "DEV_API_KEY" and .name != "JUDGE_SERVICE_BASE_URL")) +
                [
                  {name: "AWS_REGION", value: $AWS_REGION},
                  {name: "AWS_S3_BUCKET_NAME", value: $AWS_S3_BUCKET_NAME},
-                 {name: "DEV_API_KEY", value: $DEV_API_KEY}
+                 {name: "DEV_API_KEY", value: $DEV_API_KEY},
+                 {name: "JUDGE_SERVICE_BASE_URL", value: $JUDGE_SERVICE_BASE_URL}
                ]
              ) |
              del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' \
