@@ -4,8 +4,11 @@ import com.j15.backend.domain.model.assignment.*
 import com.j15.backend.domain.model.user.UserId
 import com.j15.backend.domain.repository.AssignmentSectionRepository
 import com.j15.backend.domain.repository.SubmissionRepository
+import com.j15.backend.infrastructure.client.JudgeServiceClient
+import com.j15.backend.infrastructure.client.JudgeServiceUnavailableException
 import java.time.Instant
 import java.util.UUID
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -14,8 +17,10 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class SubmissionUseCase(
         private val submissionRepository: SubmissionRepository,
-        private val assignmentSectionRepository: AssignmentSectionRepository
+        private val assignmentSectionRepository: AssignmentSectionRepository,
+        private val judgeServiceClient: JudgeServiceClient
 ) {
+        private val logger = LoggerFactory.getLogger(SubmissionUseCase::class.java)
 
         /**
          * コードを提出
@@ -46,17 +51,50 @@ class SubmissionUseCase(
                         throw IllegalArgumentException("このセクションには課題がありません")
                 }
 
-                // 新しい提出を作成（INSERT only）
+                // テストケースをパース
+                val testCases = TestCase.parseFromJson(section.testCases!!)
+
+                // Judge Serviceで判定
+                val (status, score, passedCount) =
+                        try {
+                                val results =
+                                        judgeServiceClient.judge(
+                                                code = code,
+                                                language = language,
+                                                testCases = testCases,
+                                                timeLimit = section.timeLimit
+                                                                ?: AssignmentSection
+                                                                        .DEFAULT_TIME_LIMIT,
+                                                memoryLimit = section.memoryLimit
+                                                                ?: AssignmentSection
+                                                                        .DEFAULT_MEMORY_LIMIT
+                                        )
+
+                                val passed = results.count { it.verdict == Verdict.AC }
+                                val total = results.size
+                                val calculatedScore = calculateScore(passed, total)
+                                val finalStatus = SubmissionStatus.COMPLETED
+
+                                Triple(finalStatus, calculatedScore, passed)
+                        } catch (e: JudgeServiceUnavailableException) {
+                                logger.error("Judge Service unavailable", e)
+                                Triple(SubmissionStatus.PENDING, null, null)
+                        }
+
+                // 提出を作成
                 val submission =
                         Submission(
-                                id = null, // 自動採番
+                                id = null,
                                 userId = UserId(userId),
                                 assignmentSubjectId = subjectId,
                                 sectionId = secId,
                                 code = code,
                                 language = language,
                                 submittedAt = Instant.now(),
-                                status = SubmissionStatus.PENDING
+                                status = status,
+                                score = score,
+                                totalTestCases = testCases.size,
+                                passedTestCases = passedCount
                         )
 
                 return submissionRepository.save(submission)
