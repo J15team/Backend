@@ -1,5 +1,9 @@
 package com.j15.backend.presentation.exception
 
+import com.j15.backend.domain.exception.AssignmentNotFoundException
+import com.j15.backend.domain.exception.NoAssignmentException
+import com.j15.backend.domain.exception.SectionNotFoundException
+import com.j15.backend.infrastructure.client.JudgeServiceUnavailableException
 import com.j15.backend.infrastructure.service.GitHubOAuthException
 import com.j15.backend.infrastructure.service.GoogleOAuthException
 import com.j15.backend.presentation.dto.response.ErrorResponse
@@ -129,6 +133,64 @@ class GlobalExceptionHandler {
                                 ErrorResponse(
                                         message = "ファイルサイズが上限を超えています（最大5MB）",
                                         status = HttpStatus.BAD_REQUEST.value()
+                                )
+                        )
+        }
+
+        // 課題題材が見つからない
+        @ExceptionHandler(AssignmentNotFoundException::class)
+        fun handleAssignmentNotFoundException(
+                ex: AssignmentNotFoundException
+        ): ResponseEntity<ErrorResponse> {
+                logger.warn("Assignment not found: {}", ex.message)
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(
+                                ErrorResponse(
+                                        message = ex.message ?: "課題題材が見つかりません",
+                                        status = HttpStatus.NOT_FOUND.value()
+                                )
+                        )
+        }
+
+        // セクションが見つからない
+        @ExceptionHandler(SectionNotFoundException::class)
+        fun handleSectionNotFoundException(
+                ex: SectionNotFoundException
+        ): ResponseEntity<ErrorResponse> {
+                logger.warn("Section not found: {}", ex.message)
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(
+                                ErrorResponse(
+                                        message = ex.message ?: "セクションが見つかりません",
+                                        status = HttpStatus.NOT_FOUND.value()
+                                )
+                        )
+        }
+
+        // 課題なしセクションへの提出
+        @ExceptionHandler(NoAssignmentException::class)
+        fun handleNoAssignmentException(ex: NoAssignmentException): ResponseEntity<ErrorResponse> {
+                logger.warn("No assignment in section: {}", ex.message)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(
+                                ErrorResponse(
+                                        message = ex.message ?: "このセクションには課題がありません",
+                                        status = HttpStatus.BAD_REQUEST.value()
+                                )
+                        )
+        }
+
+        // Judge Service利用不可
+        @ExceptionHandler(JudgeServiceUnavailableException::class)
+        fun handleJudgeServiceUnavailableException(
+                ex: JudgeServiceUnavailableException
+        ): ResponseEntity<ErrorResponse> {
+                logger.error("Judge Service unavailable: {}", ex.message)
+                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                        .body(
+                                ErrorResponse(
+                                        message = ex.message ?: "判定サービスが利用できません",
+                                        status = HttpStatus.SERVICE_UNAVAILABLE.value()
                                 )
                         )
         }
