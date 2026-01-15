@@ -34,6 +34,17 @@ class SubmissionRepositoryImpl(
                 .map { converter.toDomain(it) }
     }
 
+    override fun findByUserAndSubject(
+            userId: UserId,
+            subjectId: AssignmentSubjectId
+    ): List<Submission> {
+        return jpaRepository.findByUserIdAndAssignmentSubjectIdOrderBySubmittedAtDesc(
+                        userId.value,
+                        subjectId.value
+                )
+                .map { converter.toDomain(it) }
+    }
+
     override fun findBySection(
             subjectId: AssignmentSubjectId,
             sectionId: AssignmentSectionId

@@ -8,14 +8,19 @@ import org.springframework.stereotype.Repository
 @Repository
 interface JpaSubmissionRepository : JpaRepository<SubmissionJpaEntity, Long> {
 
-    fun findByUserIdAndAssignmentSubjectIdAndSectionIdOrderBySubmittedAtDesc(
-            userId: UUID,
-            assignmentSubjectId: Long,
-            sectionId: Int
-    ): List<SubmissionJpaEntity>
+        fun findByUserIdAndAssignmentSubjectIdAndSectionIdOrderBySubmittedAtDesc(
+                userId: UUID,
+                assignmentSubjectId: Long,
+                sectionId: Int
+        ): List<SubmissionJpaEntity>
 
-    fun findByAssignmentSubjectIdAndSectionIdOrderBySubmittedAtDesc(
-            assignmentSubjectId: Long,
-            sectionId: Int
-    ): List<SubmissionJpaEntity>
+        fun findByUserIdAndAssignmentSubjectIdOrderBySubmittedAtDesc(
+                userId: UUID,
+                assignmentSubjectId: Long
+        ): List<SubmissionJpaEntity>
+
+        fun findByAssignmentSubjectIdAndSectionIdOrderBySubmittedAtDesc(
+                assignmentSubjectId: Long,
+                sectionId: Int
+        ): List<SubmissionJpaEntity>
 }

@@ -8,18 +8,20 @@ import com.j15.backend.domain.model.user.UserId
 
 /** 提出リポジトリ（ドメイン層のインターフェース） INSERT only（更新・削除メソッドなし） */
 interface SubmissionRepository {
-    fun findById(id: SubmissionId): Submission?
+        fun findById(id: SubmissionId): Submission?
 
-    fun findByUserAndSection(
-            userId: UserId,
-            subjectId: AssignmentSubjectId,
-            sectionId: AssignmentSectionId
-    ): List<Submission>
+        fun findByUserAndSection(
+                userId: UserId,
+                subjectId: AssignmentSubjectId,
+                sectionId: AssignmentSectionId
+        ): List<Submission>
 
-    fun findBySection(
-            subjectId: AssignmentSubjectId,
-            sectionId: AssignmentSectionId
-    ): List<Submission>
+        fun findByUserAndSubject(userId: UserId, subjectId: AssignmentSubjectId): List<Submission>
 
-    fun save(submission: Submission): Submission
+        fun findBySection(
+                subjectId: AssignmentSubjectId,
+                sectionId: AssignmentSectionId
+        ): List<Submission>
+
+        fun save(submission: Submission): Submission
 }
