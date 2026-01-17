@@ -8,17 +8,18 @@ import com.j15.backend.domain.model.user.UserId
 
 /** ユーザー完了記録リポジトリ（ドメイン層のインターフェース） */
 interface UserClearedSectionRepository {
-    fun save(userClearedSection: UserClearedSection): UserClearedSection
-    fun findById(id: UserClearedSectionId): UserClearedSection?
-    fun findByUserIdAndSubjectId(userId: UserId, subjectId: SubjectId): List<UserClearedSection>
-    fun existsByUserIdAndSubjectIdAndSectionId(
-            userId: UserId,
-            subjectId: SubjectId,
-            sectionId: SectionId
-    ): Boolean
-    fun deleteByUserIdAndSubjectIdAndSectionId(
-            userId: UserId,
-            subjectId: SubjectId,
-            sectionId: SectionId
-    )
+        fun save(userClearedSection: UserClearedSection): UserClearedSection
+        fun findById(id: UserClearedSectionId): UserClearedSection?
+        fun findAll(): List<UserClearedSection>
+        fun findByUserIdAndSubjectId(userId: UserId, subjectId: SubjectId): List<UserClearedSection>
+        fun existsByUserIdAndSubjectIdAndSectionId(
+                userId: UserId,
+                subjectId: SubjectId,
+                sectionId: SectionId
+        ): Boolean
+        fun deleteByUserIdAndSubjectIdAndSectionId(
+                userId: UserId,
+                subjectId: SubjectId,
+                sectionId: SectionId
+        )
 }
