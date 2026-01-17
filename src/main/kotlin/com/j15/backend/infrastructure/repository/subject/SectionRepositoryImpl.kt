@@ -1,4 +1,4 @@
-package com.j15.backend.infrastructure.persistence.repository
+package com.j15.backend.infrastructure.repository.subject
 
 import com.j15.backend.domain.model.section.Section
 import com.j15.backend.domain.model.section.SectionId
@@ -39,7 +39,8 @@ class SectionRepositoryImpl(private val jpaSectionRepository: JpaSectionReposito
     }
 
     override fun deleteById(subjectId: SubjectId, sectionId: SectionId) {
-        val sectionEntity = jpaSectionRepository.findBySubjectIdAndSectionId(subjectId.value, sectionId.value)
+        val sectionEntity =
+                jpaSectionRepository.findBySubjectIdAndSectionId(subjectId.value, sectionId.value)
         sectionEntity?.let { jpaSectionRepository.delete(it) }
     }
 

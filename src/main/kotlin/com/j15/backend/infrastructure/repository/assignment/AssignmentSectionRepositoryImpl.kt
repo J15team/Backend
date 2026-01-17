@@ -1,4 +1,4 @@
-package com.j15.backend.infrastructure.repository
+package com.j15.backend.infrastructure.repository.assignment
 
 import com.j15.backend.domain.model.assignment.AssignmentSection
 import com.j15.backend.domain.model.assignment.AssignmentSectionId

@@ -1,9 +1,9 @@
 package com.j15.backend.application.usecase.admin
 
-import com.j15.backend.domain.repository.AssignmentSectionRepository
-import com.j15.backend.domain.repository.AssignmentSubjectRepository
-import com.j15.backend.domain.repository.SubmissionRepository
-import com.j15.backend.domain.repository.UserRepository
+import com.j15.backend.domain.repository.assignment.AssignmentSectionRepository
+import com.j15.backend.domain.repository.assignment.AssignmentSubjectRepository
+import com.j15.backend.domain.repository.assignment.SubmissionRepository
+import com.j15.backend.domain.repository.user.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

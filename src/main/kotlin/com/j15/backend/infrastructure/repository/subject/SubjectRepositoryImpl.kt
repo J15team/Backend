@@ -1,4 +1,4 @@
-package com.j15.backend.infrastructure.repository
+package com.j15.backend.infrastructure.repository.subject
 
 import com.j15.backend.domain.model.subject.Subject
 import com.j15.backend.domain.model.subject.SubjectId

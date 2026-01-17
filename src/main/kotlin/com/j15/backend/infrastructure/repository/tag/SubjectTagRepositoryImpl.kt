@@ -1,4 +1,4 @@
-package com.j15.backend.infrastructure.repository
+package com.j15.backend.infrastructure.repository.tag
 
 import com.j15.backend.domain.model.subject.SubjectId
 import com.j15.backend.domain.model.tag.Tag

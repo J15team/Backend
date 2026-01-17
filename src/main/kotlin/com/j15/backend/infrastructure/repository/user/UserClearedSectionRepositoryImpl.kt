@@ -1,4 +1,4 @@
-package com.j15.backend.infrastructure.persistence.repository
+package com.j15.backend.infrastructure.repository.user
 
 import com.j15.backend.domain.model.progress.UserClearedSection
 import com.j15.backend.domain.model.progress.UserClearedSectionId
