@@ -2,8 +2,8 @@ package com.j15.backend.application.usecase.assignment
 
 import com.j15.backend.domain.model.assignment.*
 import com.j15.backend.domain.model.user.UserId
-import com.j15.backend.domain.repository.AssignmentSectionRepository
-import com.j15.backend.domain.repository.SubmissionRepository
+import com.j15.backend.domain.repository.assignment.AssignmentSectionRepository
+import com.j15.backend.domain.repository.assignment.SubmissionRepository
 import com.j15.backend.infrastructure.client.JudgeResultDto
 import com.j15.backend.infrastructure.client.JudgeServiceClient
 
@@ -34,6 +34,8 @@ class TestMockSubmissionRepository : SubmissionRepository {
             emptyList<Submission>()
     override fun findBySection(subjectId: AssignmentSubjectId, sectionId: AssignmentSectionId) =
             emptyList<Submission>()
+    override fun findBySubject(subjectId: AssignmentSubjectId) = emptyList<Submission>()
+    override fun findAll() = emptyList<Submission>()
     override fun save(submission: Submission) = submission
 }
 
@@ -86,6 +88,8 @@ class TestTrackingSubmissionRepository : SubmissionRepository {
             emptyList<Submission>()
     override fun findBySection(subjectId: AssignmentSubjectId, sectionId: AssignmentSectionId) =
             emptyList<Submission>()
+    override fun findBySubject(subjectId: AssignmentSubjectId) = emptyList<Submission>()
+    override fun findAll() = emptyList<Submission>()
     override fun save(submission: Submission): Submission {
         _savedCount++
         return submission.copy(id = SubmissionId(_savedCount.toLong()))
@@ -134,6 +138,16 @@ class TestInMemorySubmissionRepository : SubmissionRepository {
         return submissions
                 .filter { it.assignmentSubjectId == subjectId && it.sectionId == sectionId }
                 .sortedByDescending { it.submittedAt }
+    }
+
+    override fun findBySubject(subjectId: AssignmentSubjectId): List<Submission> {
+        return submissions.filter { it.assignmentSubjectId == subjectId }.sortedByDescending {
+            it.submittedAt
+        }
+    }
+
+    override fun findAll(): List<Submission> {
+        return submissions.sortedByDescending { it.submittedAt }
     }
 
     override fun save(submission: Submission): Submission {

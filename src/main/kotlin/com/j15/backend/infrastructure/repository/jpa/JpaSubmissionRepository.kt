@@ -23,4 +23,8 @@ interface JpaSubmissionRepository : JpaRepository<SubmissionJpaEntity, Long> {
                 assignmentSubjectId: Long,
                 sectionId: Int
         ): List<SubmissionJpaEntity>
+
+        fun findByAssignmentSubjectIdOrderBySubmittedAtDesc(
+                assignmentSubjectId: Long
+        ): List<SubmissionJpaEntity>
 }

@@ -4,8 +4,8 @@ import com.j15.backend.domain.model.tag.Tag
 import com.j15.backend.domain.model.tag.TagId
 import com.j15.backend.domain.model.tag.TagName
 import com.j15.backend.domain.model.tag.TagType
-import com.j15.backend.domain.repository.SubjectTagRepository
-import com.j15.backend.domain.repository.TagRepository
+import com.j15.backend.domain.repository.tag.SubjectTagRepository
+import com.j15.backend.domain.repository.tag.TagRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldBeSortedWith

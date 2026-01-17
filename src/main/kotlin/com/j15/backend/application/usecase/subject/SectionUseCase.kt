@@ -3,8 +3,8 @@ package com.j15.backend.application.usecase.subject
 import com.j15.backend.domain.model.section.Section
 import com.j15.backend.domain.model.section.SectionId
 import com.j15.backend.domain.model.subject.SubjectId
-import com.j15.backend.domain.repository.SectionRepository
-import com.j15.backend.domain.repository.SubjectRepository
+import com.j15.backend.domain.repository.subject.SectionRepository
+import com.j15.backend.domain.repository.subject.SubjectRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

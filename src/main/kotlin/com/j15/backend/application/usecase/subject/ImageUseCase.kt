@@ -4,8 +4,8 @@ import com.j15.backend.domain.model.image.Image
 import com.j15.backend.domain.model.image.ImageId
 import com.j15.backend.domain.model.section.SectionId
 import com.j15.backend.domain.model.subject.SubjectId
-import com.j15.backend.domain.repository.ImageRepository
-import com.j15.backend.domain.repository.SectionRepository
+import com.j15.backend.domain.repository.image.ImageRepository
+import com.j15.backend.domain.repository.subject.SectionRepository
 import com.j15.backend.infrastructure.service.S3UploadService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

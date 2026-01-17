@@ -3,7 +3,7 @@ package com.j15.backend.application.usecase.auth
 import com.j15.backend.domain.model.auth.AuthTokens
 import com.j15.backend.domain.model.user.Email
 import com.j15.backend.domain.model.user.User
-import com.j15.backend.domain.repository.UserRepository
+import com.j15.backend.domain.repository.user.UserRepository
 import com.j15.backend.domain.service.JwtTokenService
 import com.j15.backend.domain.service.PasswordHashService
 import java.time.Instant

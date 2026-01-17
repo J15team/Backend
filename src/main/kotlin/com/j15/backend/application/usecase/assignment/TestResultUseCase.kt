@@ -3,7 +3,7 @@ package com.j15.backend.application.usecase.assignment
 import com.j15.backend.domain.model.assignment.SubmissionId
 import com.j15.backend.domain.model.assignment.TestResult
 import com.j15.backend.domain.model.assignment.Verdict
-import com.j15.backend.domain.repository.TestResultRepository
+import com.j15.backend.domain.repository.assignment.TestResultRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

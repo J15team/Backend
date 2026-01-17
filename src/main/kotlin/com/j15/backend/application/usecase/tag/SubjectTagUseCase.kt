@@ -4,9 +4,9 @@ import com.j15.backend.domain.model.subject.Subject
 import com.j15.backend.domain.model.subject.SubjectId
 import com.j15.backend.domain.model.tag.Tag
 import com.j15.backend.domain.model.tag.TagName
-import com.j15.backend.domain.repository.SubjectRepository
-import com.j15.backend.domain.repository.SubjectTagRepository
-import com.j15.backend.domain.repository.TagRepository
+import com.j15.backend.domain.repository.subject.SubjectRepository
+import com.j15.backend.domain.repository.tag.SubjectTagRepository
+import com.j15.backend.domain.repository.tag.TagRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

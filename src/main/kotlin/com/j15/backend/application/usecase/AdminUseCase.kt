@@ -6,7 +6,7 @@ import com.j15.backend.domain.model.user.User
 import com.j15.backend.domain.model.user.UserId
 import com.j15.backend.domain.model.user.UserRole
 import com.j15.backend.domain.model.user.Username
-import com.j15.backend.domain.repository.UserRepository
+import com.j15.backend.domain.repository.user.UserRepository
 import jakarta.annotation.PostConstruct
 import java.security.MessageDigest
 import org.slf4j.LoggerFactory

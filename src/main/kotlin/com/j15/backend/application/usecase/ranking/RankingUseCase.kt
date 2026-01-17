@@ -7,10 +7,10 @@ import com.j15.backend.domain.model.ranking.TagView
 import com.j15.backend.domain.model.subject.SubjectId
 import com.j15.backend.domain.model.tag.TagId
 import com.j15.backend.domain.model.user.UserId
-import com.j15.backend.domain.repository.SubjectRepository
-import com.j15.backend.domain.repository.SubjectViewRepository
-import com.j15.backend.domain.repository.TagRepository
-import com.j15.backend.domain.repository.TagViewRepository
+import com.j15.backend.domain.repository.subject.SubjectRepository
+import com.j15.backend.domain.repository.subject.SubjectViewRepository
+import com.j15.backend.domain.repository.tag.TagRepository
+import com.j15.backend.domain.repository.tag.TagViewRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

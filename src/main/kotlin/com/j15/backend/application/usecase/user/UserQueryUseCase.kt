@@ -4,7 +4,7 @@ import com.j15.backend.application.query.UserQueryPort
 import com.j15.backend.domain.model.user.Email
 import com.j15.backend.domain.model.user.User
 import com.j15.backend.domain.model.user.UserId
-import com.j15.backend.domain.repository.UserRepository
+import com.j15.backend.domain.repository.user.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
