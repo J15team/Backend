@@ -1,8 +1,8 @@
-package com.j15.backend.infrastructure.repository
+package com.j15.backend.infrastructure.repository.subject
 
 import com.j15.backend.domain.model.subject.Subject
 import com.j15.backend.domain.model.subject.SubjectId
-import com.j15.backend.domain.repository.SubjectRepository
+import com.j15.backend.domain.repository.subject.SubjectRepository
 import com.j15.backend.infrastructure.converter.SubjectConverter
 import com.j15.backend.infrastructure.repository.jpa.JpaSubjectRepository
 import org.springframework.stereotype.Repository

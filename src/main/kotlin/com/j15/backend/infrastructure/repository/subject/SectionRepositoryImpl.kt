@@ -1,9 +1,9 @@
-package com.j15.backend.infrastructure.persistence.repository
+package com.j15.backend.infrastructure.repository.subject
 
 import com.j15.backend.domain.model.section.Section
 import com.j15.backend.domain.model.section.SectionId
 import com.j15.backend.domain.model.subject.SubjectId
-import com.j15.backend.domain.repository.SectionRepository
+import com.j15.backend.domain.repository.subject.SectionRepository
 import com.j15.backend.infrastructure.persistence.converter.SectionConverter
 import com.j15.backend.infrastructure.persistence.jpa.JpaSectionRepository
 import org.springframework.stereotype.Repository
@@ -39,7 +39,8 @@ class SectionRepositoryImpl(private val jpaSectionRepository: JpaSectionReposito
     }
 
     override fun deleteById(subjectId: SubjectId, sectionId: SectionId) {
-        val sectionEntity = jpaSectionRepository.findBySubjectIdAndSectionId(subjectId.value, sectionId.value)
+        val sectionEntity =
+                jpaSectionRepository.findBySubjectIdAndSectionId(subjectId.value, sectionId.value)
         sectionEntity?.let { jpaSectionRepository.delete(it) }
     }
 

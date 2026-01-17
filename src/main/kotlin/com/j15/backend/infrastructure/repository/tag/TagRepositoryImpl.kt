@@ -1,10 +1,10 @@
-package com.j15.backend.infrastructure.repository
+package com.j15.backend.infrastructure.repository.tag
 
 import com.j15.backend.domain.model.tag.Tag
 import com.j15.backend.domain.model.tag.TagId
 import com.j15.backend.domain.model.tag.TagName
 import com.j15.backend.domain.model.tag.TagType
-import com.j15.backend.domain.repository.TagRepository
+import com.j15.backend.domain.repository.tag.TagRepository
 import com.j15.backend.infrastructure.converter.TagConverter
 import com.j15.backend.infrastructure.repository.jpa.JpaTagRepository
 import org.springframework.stereotype.Repository

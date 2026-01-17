@@ -1,18 +1,16 @@
-package com.j15.backend.infrastructure.persistence.repository
+package com.j15.backend.infrastructure.repository.image
 
 import com.j15.backend.domain.model.image.Image
 import com.j15.backend.domain.model.image.ImageId
 import com.j15.backend.domain.model.section.SectionId
 import com.j15.backend.domain.model.subject.SubjectId
-import com.j15.backend.domain.repository.ImageRepository
+import com.j15.backend.domain.repository.image.ImageRepository
 import com.j15.backend.infrastructure.persistence.converter.ImageConverter
 import com.j15.backend.infrastructure.persistence.jpa.JpaImageRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 
-/**
- * 画像リポジトリ実装
- */
+/** 画像リポジトリ実装 */
 @Repository
 class ImageRepositoryImpl(private val jpaImageRepository: JpaImageRepository) : ImageRepository {
 
@@ -21,9 +19,11 @@ class ImageRepositoryImpl(private val jpaImageRepository: JpaImageRepository) : 
     }
 
     override fun findAllBySectionId(subjectId: SubjectId, sectionId: SectionId): List<Image> {
-        return jpaImageRepository
-            .findBySubjectIdAndSectionIdOrderByCreatedAtAsc(subjectId.value, sectionId.value)
-            .map { ImageConverter.toDomain(it) }
+        return jpaImageRepository.findBySubjectIdAndSectionIdOrderByCreatedAtAsc(
+                        subjectId.value,
+                        sectionId.value
+                )
+                .map { ImageConverter.toDomain(it) }
     }
 
     override fun findAllBySubjectId(subjectId: SubjectId): List<Image> {
@@ -51,7 +51,8 @@ class ImageRepositoryImpl(private val jpaImageRepository: JpaImageRepository) : 
     }
 
     override fun countBySectionId(subjectId: SubjectId, sectionId: SectionId): Int {
-        return jpaImageRepository.countBySubjectIdAndSectionId(subjectId.value, sectionId.value)
-            .toInt()
+        return jpaImageRepository
+                .countBySubjectIdAndSectionId(subjectId.value, sectionId.value)
+                .toInt()
     }
 }

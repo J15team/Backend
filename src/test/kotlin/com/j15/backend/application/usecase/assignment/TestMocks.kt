@@ -2,8 +2,8 @@ package com.j15.backend.application.usecase.assignment
 
 import com.j15.backend.domain.model.assignment.*
 import com.j15.backend.domain.model.user.UserId
-import com.j15.backend.domain.repository.AssignmentSectionRepository
-import com.j15.backend.domain.repository.SubmissionRepository
+import com.j15.backend.domain.repository.assignment.AssignmentSectionRepository
+import com.j15.backend.domain.repository.assignment.SubmissionRepository
 import com.j15.backend.infrastructure.client.JudgeResultDto
 import com.j15.backend.infrastructure.client.JudgeServiceClient
 
@@ -146,7 +146,9 @@ class TestInMemorySubmissionRepository : SubmissionRepository {
         }
     }
 
-    override fun findAll(): List<Submission> = submissions.toList()
+    override fun findAll(): List<Submission> {
+        return submissions.sortedByDescending { it.submittedAt }
+    }
 
     override fun save(submission: Submission): Submission {
         submissions.add(submission)

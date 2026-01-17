@@ -1,12 +1,13 @@
-package com.j15.backend.infrastructure.persistence.repository
+package com.j15.backend.infrastructure.repository.user
 
 import com.j15.backend.domain.model.user.Email
 import com.j15.backend.domain.model.user.OAuthProvider
 import com.j15.backend.domain.model.user.User
 import com.j15.backend.domain.model.user.UserId
 import com.j15.backend.domain.model.user.Username
-import com.j15.backend.domain.repository.UserRepository
+import com.j15.backend.domain.repository.user.UserRepository
 import com.j15.backend.infrastructure.persistence.converter.UserConverter
+import com.j15.backend.infrastructure.persistence.repository.JpaUserRepository
 import org.springframework.stereotype.Repository
 
 /** ユーザーリポジトリ実装（インフラ層） */
