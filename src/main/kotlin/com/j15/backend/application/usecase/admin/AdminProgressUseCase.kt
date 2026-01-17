@@ -3,6 +3,9 @@ package com.j15.backend.application.usecase.admin
 import com.j15.backend.domain.repository.assignment.AssignmentSectionRepository
 import com.j15.backend.domain.repository.assignment.AssignmentSubjectRepository
 import com.j15.backend.domain.repository.assignment.SubmissionRepository
+import com.j15.backend.domain.repository.subject.SectionRepository
+import com.j15.backend.domain.repository.subject.SubjectRepository
+import com.j15.backend.domain.repository.user.UserClearedSectionRepository
 import com.j15.backend.domain.repository.user.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -13,20 +16,24 @@ import org.springframework.transaction.annotation.Transactional
 class AdminProgressUseCase(
         private val userRepository: UserRepository,
         private val submissionRepository: SubmissionRepository,
-        private val subjectRepository: AssignmentSubjectRepository,
-        private val sectionRepository: AssignmentSectionRepository
+        private val assignmentSubjectRepository: AssignmentSubjectRepository,
+        private val assignmentSectionRepository: AssignmentSectionRepository,
+        private val subjectRepository: SubjectRepository,
+        private val sectionRepository: SectionRepository,
+        private val clearedSectionRepository: UserClearedSectionRepository
 ) {
 
         /** 全ユーザーの課題題材進捗を取得 */
         fun getAllAssignmentProgress(): AdminAssignmentProgressResponse {
                 val users = userRepository.findAll()
-                val subjects = subjectRepository.findAll()
+                val subjects = assignmentSubjectRepository.findAll()
                 val allSubmissions = submissionRepository.findAll()
 
                 // 題材ごとの課題ありセクションを取得
                 val subjectSections =
                         subjects.associate { subject ->
-                                val sections = sectionRepository.findBySubjectId(subject.id)
+                                val sections =
+                                        assignmentSectionRepository.findBySubjectId(subject.id)
                                 subject.id.value to sections.filter { it.hasAssignment }
                         }
 
@@ -42,7 +49,7 @@ class AdminProgressUseCase(
                                                                 ?: emptyList()
 
                                                 if (assignmentSections.isEmpty()) {
-                                                        SubjectProgressSummary(
+                                                        AssignmentSubjectProgressSummary(
                                                                 subjectId = subject.id.value,
                                                                 title = subject.title,
                                                                 progressPercent = 100,
@@ -81,7 +88,7 @@ class AdminProgressUseCase(
                                                                 (clearedCount * 100) /
                                                                         assignmentSections.size
 
-                                                        SubjectProgressSummary(
+                                                        AssignmentSubjectProgressSummary(
                                                                 subjectId = subject.id.value,
                                                                 title = subject.title,
                                                                 progressPercent = progressPercent,
@@ -96,7 +103,7 @@ class AdminProgressUseCase(
                                                 }
                                         }
 
-                                UserProgressSummary(
+                                AssignmentUserProgressSummary(
                                         userId = user.userId.value.toString(),
                                         username = user.username.value,
                                         email = user.email.value,
@@ -106,20 +113,109 @@ class AdminProgressUseCase(
 
                 return AdminAssignmentProgressResponse(users = userProgresses)
         }
+
+        /** 全ユーザーの通常題材進捗を取得 */
+        fun getAllSubjectProgress(): AdminSubjectProgressResponse {
+                val users = userRepository.findAll()
+                val subjects = subjectRepository.findAll()
+                val allClearedSections = clearedSectionRepository.findAll()
+
+                // 題材ごとのセクション数を取得
+                val subjectSectionCounts =
+                        subjects.associate { subject ->
+                                subject.subjectId.value to
+                                        sectionRepository.countBySubjectId(subject.subjectId)
+                        }
+
+                val userProgresses =
+                        users.map { user ->
+                                val userClearedSections =
+                                        allClearedSections.filter { it.userId == user.userId }
+
+                                val subjectProgresses =
+                                        subjects.map { subject ->
+                                                val totalSections =
+                                                        subjectSectionCounts[
+                                                                subject.subjectId.value]
+                                                                ?: 0
+
+                                                if (totalSections == 0) {
+                                                        SubjectProgressSummary(
+                                                                subjectId = subject.subjectId.value,
+                                                                title = subject.title,
+                                                                progressPercent = 100,
+                                                                clearedSections = 0,
+                                                                totalSections = 0,
+                                                                isCleared = true
+                                                        )
+                                                } else {
+                                                        val clearedCount =
+                                                                userClearedSections.count {
+                                                                        it.subjectId ==
+                                                                                subject.subjectId
+                                                                }
+
+                                                        val progressPercent =
+                                                                (clearedCount * 100) / totalSections
+
+                                                        SubjectProgressSummary(
+                                                                subjectId = subject.subjectId.value,
+                                                                title = subject.title,
+                                                                progressPercent = progressPercent,
+                                                                clearedSections = clearedCount,
+                                                                totalSections = totalSections,
+                                                                isCleared =
+                                                                        clearedCount ==
+                                                                                totalSections
+                                                        )
+                                                }
+                                        }
+
+                                UserSubjectProgressSummary(
+                                        userId = user.userId.value.toString(),
+                                        username = user.username.value,
+                                        email = user.email.value,
+                                        subjects = subjectProgresses
+                                )
+                        }
+
+                return AdminSubjectProgressResponse(users = userProgresses)
+        }
 }
 
 /** 管理者向け課題進捗レスポンス */
-data class AdminAssignmentProgressResponse(val users: List<UserProgressSummary>)
+data class AdminAssignmentProgressResponse(val users: List<AssignmentUserProgressSummary>)
 
-/** ユーザー進捗サマリー */
-data class UserProgressSummary(
+/** 課題題材ユーザー進捗サマリー */
+data class AssignmentUserProgressSummary(
+        val userId: String,
+        val username: String,
+        val email: String,
+        val subjects: List<AssignmentSubjectProgressSummary>
+)
+
+/** 課題題材進捗サマリー */
+data class AssignmentSubjectProgressSummary(
+        val subjectId: Long,
+        val title: String,
+        val progressPercent: Int,
+        val clearedSections: Int,
+        val totalSections: Int,
+        val isCleared: Boolean
+)
+
+/** 管理者向け通常題材進捗レスポンス */
+data class AdminSubjectProgressResponse(val users: List<UserSubjectProgressSummary>)
+
+/** 通常題材ユーザー進捗サマリー */
+data class UserSubjectProgressSummary(
         val userId: String,
         val username: String,
         val email: String,
         val subjects: List<SubjectProgressSummary>
 )
 
-/** 題材進捗サマリー */
+/** 通常題材進捗サマリー */
 data class SubjectProgressSummary(
         val subjectId: Long,
         val title: String,

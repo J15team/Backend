@@ -15,51 +15,57 @@ class UserClearedSectionRepositoryImpl(
         private val jpaUserClearedSectionRepository: JpaUserClearedSectionRepository
 ) : UserClearedSectionRepository {
 
-    override fun save(userClearedSection: UserClearedSection): UserClearedSection {
-        val entity = UserClearedSectionConverter.toEntity(userClearedSection)
-        val saved = jpaUserClearedSectionRepository.save(entity)
-        return UserClearedSectionConverter.toDomain(saved)
-    }
+        override fun save(userClearedSection: UserClearedSection): UserClearedSection {
+                val entity = UserClearedSectionConverter.toEntity(userClearedSection)
+                val saved = jpaUserClearedSectionRepository.save(entity)
+                return UserClearedSectionConverter.toDomain(saved)
+        }
 
-    override fun findById(id: UserClearedSectionId): UserClearedSection? {
-        return jpaUserClearedSectionRepository
-                .findById(id.value)
-                .map { UserClearedSectionConverter.toDomain(it) }
-                .orElse(null)
-    }
+        override fun findById(id: UserClearedSectionId): UserClearedSection? {
+                return jpaUserClearedSectionRepository
+                        .findById(id.value)
+                        .map { UserClearedSectionConverter.toDomain(it) }
+                        .orElse(null)
+        }
 
-    override fun findByUserIdAndSubjectId(
-            userId: UserId,
-            subjectId: SubjectId
-    ): List<UserClearedSection> {
-        return jpaUserClearedSectionRepository.findByUserIdAndSubjectId(
+        override fun findAll(): List<UserClearedSection> {
+                return jpaUserClearedSectionRepository.findAll().map {
+                        UserClearedSectionConverter.toDomain(it)
+                }
+        }
+
+        override fun findByUserIdAndSubjectId(
+                userId: UserId,
+                subjectId: SubjectId
+        ): List<UserClearedSection> {
+                return jpaUserClearedSectionRepository.findByUserIdAndSubjectId(
+                                userId.value,
+                                subjectId.value
+                        )
+                        .map { UserClearedSectionConverter.toDomain(it) }
+        }
+
+        override fun existsByUserIdAndSubjectIdAndSectionId(
+                userId: UserId,
+                subjectId: SubjectId,
+                sectionId: SectionId
+        ): Boolean {
+                return jpaUserClearedSectionRepository.existsByUserIdAndSubjectIdAndSectionId(
                         userId.value,
-                        subjectId.value
+                        subjectId.value,
+                        sectionId.value
                 )
-                .map { UserClearedSectionConverter.toDomain(it) }
-    }
+        }
 
-    override fun existsByUserIdAndSubjectIdAndSectionId(
-            userId: UserId,
-            subjectId: SubjectId,
-            sectionId: SectionId
-    ): Boolean {
-        return jpaUserClearedSectionRepository.existsByUserIdAndSubjectIdAndSectionId(
-                userId.value,
-                subjectId.value,
-                sectionId.value
-        )
-    }
-
-    override fun deleteByUserIdAndSubjectIdAndSectionId(
-            userId: UserId,
-            subjectId: SubjectId,
-            sectionId: SectionId
-    ) {
-        jpaUserClearedSectionRepository.deleteByUserIdAndSubjectIdAndSectionId(
-                userId.value,
-                subjectId.value,
-                sectionId.value
-        )
-    }
+        override fun deleteByUserIdAndSubjectIdAndSectionId(
+                userId: UserId,
+                subjectId: SubjectId,
+                sectionId: SectionId
+        ) {
+                jpaUserClearedSectionRepository.deleteByUserIdAndSubjectIdAndSectionId(
+                        userId.value,
+                        subjectId.value,
+                        sectionId.value
+                )
+        }
 }
