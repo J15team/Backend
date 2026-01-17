@@ -2,7 +2,7 @@ package com.j15.backend.domain.service
 
 import com.j15.backend.domain.model.user.Email
 import com.j15.backend.domain.model.user.Username
-import com.j15.backend.domain.repository.UserRepository
+import com.j15.backend.domain.repository.user.UserRepository
 
 // ユーザー重複チェックを担当するドメインサービス
 class UserDuplicationCheckService(private val userRepository: UserRepository) {

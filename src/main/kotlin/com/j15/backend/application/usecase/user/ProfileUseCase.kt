@@ -3,7 +3,7 @@ package com.j15.backend.application.usecase.user
 import com.j15.backend.domain.model.user.User
 import com.j15.backend.domain.model.user.UserId
 import com.j15.backend.domain.model.user.Username
-import com.j15.backend.domain.repository.UserRepository
+import com.j15.backend.domain.repository.user.UserRepository
 import com.j15.backend.domain.service.UserDuplicationCheckService
 import com.j15.backend.infrastructure.service.S3UploadService
 import org.springframework.stereotype.Service

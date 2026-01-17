@@ -2,8 +2,8 @@ package com.j15.backend.application.usecase.assignment
 
 import com.j15.backend.domain.model.assignment.AssignmentSubjectId
 import com.j15.backend.domain.model.user.UserId
-import com.j15.backend.domain.repository.AssignmentSectionRepository
-import com.j15.backend.domain.repository.SubmissionRepository
+import com.j15.backend.domain.repository.assignment.AssignmentSectionRepository
+import com.j15.backend.domain.repository.assignment.SubmissionRepository
 import java.util.UUID
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

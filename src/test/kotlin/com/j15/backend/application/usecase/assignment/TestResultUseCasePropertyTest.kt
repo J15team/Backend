@@ -4,7 +4,7 @@ import com.j15.backend.domain.model.assignment.SubmissionId
 import com.j15.backend.domain.model.assignment.TestResult
 import com.j15.backend.domain.model.assignment.TestResultId
 import com.j15.backend.domain.model.assignment.Verdict
-import com.j15.backend.domain.repository.TestResultRepository
+import com.j15.backend.domain.repository.assignment.TestResultRepository
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
