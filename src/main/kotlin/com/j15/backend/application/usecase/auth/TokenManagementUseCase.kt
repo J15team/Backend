@@ -2,7 +2,7 @@ package com.j15.backend.application.usecase.auth
 
 import com.j15.backend.domain.model.auth.AuthTokens
 import com.j15.backend.domain.model.auth.RefreshToken
-import com.j15.backend.domain.repository.UserRepository
+import com.j15.backend.domain.repository.user.UserRepository
 import com.j15.backend.domain.service.JwtTokenService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

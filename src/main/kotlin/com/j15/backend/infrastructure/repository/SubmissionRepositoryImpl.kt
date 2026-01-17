@@ -5,7 +5,7 @@ import com.j15.backend.domain.model.assignment.AssignmentSubjectId
 import com.j15.backend.domain.model.assignment.Submission
 import com.j15.backend.domain.model.assignment.SubmissionId
 import com.j15.backend.domain.model.user.UserId
-import com.j15.backend.domain.repository.SubmissionRepository
+import com.j15.backend.domain.repository.assignment.SubmissionRepository
 import com.j15.backend.infrastructure.converter.SubmissionConverter
 import com.j15.backend.infrastructure.repository.jpa.JpaSubmissionRepository
 import org.springframework.stereotype.Repository

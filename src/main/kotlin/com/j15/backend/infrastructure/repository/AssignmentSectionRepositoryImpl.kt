@@ -3,7 +3,7 @@ package com.j15.backend.infrastructure.repository
 import com.j15.backend.domain.model.assignment.AssignmentSection
 import com.j15.backend.domain.model.assignment.AssignmentSectionId
 import com.j15.backend.domain.model.assignment.AssignmentSubjectId
-import com.j15.backend.domain.repository.AssignmentSectionRepository
+import com.j15.backend.domain.repository.assignment.AssignmentSectionRepository
 import com.j15.backend.infrastructure.converter.AssignmentSectionConverter
 import com.j15.backend.infrastructure.entity.AssignmentSectionEntityId
 import com.j15.backend.infrastructure.repository.jpa.JpaAssignmentSectionRepository

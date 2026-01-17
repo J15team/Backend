@@ -3,7 +3,7 @@ package com.j15.backend.infrastructure.repository
 import com.j15.backend.domain.model.ranking.SubjectView
 import com.j15.backend.domain.model.subject.SubjectId
 import com.j15.backend.domain.model.user.UserId
-import com.j15.backend.domain.repository.SubjectViewRepository
+import com.j15.backend.domain.repository.subject.SubjectViewRepository
 import com.j15.backend.infrastructure.entity.SubjectViewJpaEntity
 import com.j15.backend.infrastructure.repository.jpa.JpaSubjectViewRepository
 import org.springframework.stereotype.Repository

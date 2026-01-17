@@ -3,7 +3,7 @@ package com.j15.backend.infrastructure.repository
 import com.j15.backend.domain.model.ranking.TagView
 import com.j15.backend.domain.model.tag.TagId
 import com.j15.backend.domain.model.user.UserId
-import com.j15.backend.domain.repository.TagViewRepository
+import com.j15.backend.domain.repository.tag.TagViewRepository
 import com.j15.backend.infrastructure.entity.TagViewJpaEntity
 import com.j15.backend.infrastructure.repository.jpa.JpaTagViewRepository
 import org.springframework.stereotype.Repository

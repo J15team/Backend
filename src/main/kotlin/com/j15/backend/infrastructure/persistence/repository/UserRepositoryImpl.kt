@@ -5,7 +5,7 @@ import com.j15.backend.domain.model.user.OAuthProvider
 import com.j15.backend.domain.model.user.User
 import com.j15.backend.domain.model.user.UserId
 import com.j15.backend.domain.model.user.Username
-import com.j15.backend.domain.repository.UserRepository
+import com.j15.backend.domain.repository.user.UserRepository
 import com.j15.backend.infrastructure.persistence.converter.UserConverter
 import org.springframework.stereotype.Repository
 

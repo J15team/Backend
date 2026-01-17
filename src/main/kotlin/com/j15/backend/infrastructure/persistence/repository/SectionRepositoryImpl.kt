@@ -3,7 +3,7 @@ package com.j15.backend.infrastructure.persistence.repository
 import com.j15.backend.domain.model.section.Section
 import com.j15.backend.domain.model.section.SectionId
 import com.j15.backend.domain.model.subject.SubjectId
-import com.j15.backend.domain.repository.SectionRepository
+import com.j15.backend.domain.repository.subject.SectionRepository
 import com.j15.backend.infrastructure.persistence.converter.SectionConverter
 import com.j15.backend.infrastructure.persistence.jpa.JpaSectionRepository
 import org.springframework.stereotype.Repository

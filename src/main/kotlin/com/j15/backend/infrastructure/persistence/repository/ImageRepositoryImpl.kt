@@ -4,7 +4,7 @@ import com.j15.backend.domain.model.image.Image
 import com.j15.backend.domain.model.image.ImageId
 import com.j15.backend.domain.model.section.SectionId
 import com.j15.backend.domain.model.subject.SubjectId
-import com.j15.backend.domain.repository.ImageRepository
+import com.j15.backend.domain.repository.image.ImageRepository
 import com.j15.backend.infrastructure.persistence.converter.ImageConverter
 import com.j15.backend.infrastructure.persistence.jpa.JpaImageRepository
 import org.springframework.data.repository.findByIdOrNull

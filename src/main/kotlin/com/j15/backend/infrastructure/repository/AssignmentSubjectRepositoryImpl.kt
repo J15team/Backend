@@ -2,7 +2,7 @@ package com.j15.backend.infrastructure.repository
 
 import com.j15.backend.domain.model.assignment.AssignmentSubject
 import com.j15.backend.domain.model.assignment.AssignmentSubjectId
-import com.j15.backend.domain.repository.AssignmentSubjectRepository
+import com.j15.backend.domain.repository.assignment.AssignmentSubjectRepository
 import com.j15.backend.infrastructure.converter.AssignmentSubjectConverter
 import com.j15.backend.infrastructure.repository.jpa.JpaAssignmentSubjectRepository
 import org.springframework.stereotype.Repository

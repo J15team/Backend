@@ -5,9 +5,9 @@ import com.j15.backend.domain.model.progress.UserProgress
 import com.j15.backend.domain.model.section.SectionId
 import com.j15.backend.domain.model.subject.SubjectId
 import com.j15.backend.domain.model.user.UserId
-import com.j15.backend.domain.repository.SectionRepository
-import com.j15.backend.domain.repository.SubjectRepository
-import com.j15.backend.domain.repository.UserClearedSectionRepository
+import com.j15.backend.domain.repository.subject.SectionRepository
+import com.j15.backend.domain.repository.subject.SubjectRepository
+import com.j15.backend.domain.repository.user.UserClearedSectionRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

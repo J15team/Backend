@@ -5,7 +5,7 @@ import com.j15.backend.domain.model.progress.UserClearedSectionId
 import com.j15.backend.domain.model.section.SectionId
 import com.j15.backend.domain.model.subject.SubjectId
 import com.j15.backend.domain.model.user.UserId
-import com.j15.backend.domain.repository.UserClearedSectionRepository
+import com.j15.backend.domain.repository.user.UserClearedSectionRepository
 import com.j15.backend.infrastructure.persistence.converter.UserClearedSectionConverter
 import com.j15.backend.infrastructure.persistence.jpa.JpaUserClearedSectionRepository
 import org.springframework.stereotype.Repository

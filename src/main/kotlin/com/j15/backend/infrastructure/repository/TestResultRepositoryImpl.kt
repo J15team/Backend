@@ -2,7 +2,7 @@ package com.j15.backend.infrastructure.repository
 
 import com.j15.backend.domain.model.assignment.SubmissionId
 import com.j15.backend.domain.model.assignment.TestResult
-import com.j15.backend.domain.repository.TestResultRepository
+import com.j15.backend.domain.repository.assignment.TestResultRepository
 import com.j15.backend.infrastructure.converter.TestResultConverter
 import com.j15.backend.infrastructure.repository.jpa.JpaTestResultRepository
 import org.springframework.stereotype.Repository

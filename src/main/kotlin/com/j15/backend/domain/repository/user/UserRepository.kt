@@ -1,4 +1,4 @@
-package com.j15.backend.domain.repository
+package com.j15.backend.domain.repository.user
 
 import com.j15.backend.domain.model.user.Email
 import com.j15.backend.domain.model.user.OAuthProvider
@@ -6,7 +6,7 @@ import com.j15.backend.domain.model.user.User
 import com.j15.backend.domain.model.user.UserId
 import com.j15.backend.domain.model.user.Username
 
-// ユーザーリポジトリインターフェース(ドメイン層)
+/** ユーザーリポジトリインターフェース(ドメイン層) */
 interface UserRepository {
     fun findById(id: UserId): User?
     fun findByEmail(email: Email): User?

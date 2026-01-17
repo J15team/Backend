@@ -1,4 +1,4 @@
-package com.j15.backend.domain.repository
+package com.j15.backend.domain.repository.assignment
 
 import com.j15.backend.domain.model.assignment.AssignmentSubject
 import com.j15.backend.domain.model.assignment.AssignmentSubjectId
