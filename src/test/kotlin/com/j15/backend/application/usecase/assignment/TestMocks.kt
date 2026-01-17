@@ -34,6 +34,8 @@ class TestMockSubmissionRepository : SubmissionRepository {
             emptyList<Submission>()
     override fun findBySection(subjectId: AssignmentSubjectId, sectionId: AssignmentSectionId) =
             emptyList<Submission>()
+    override fun findBySubject(subjectId: AssignmentSubjectId) = emptyList<Submission>()
+    override fun findAll() = emptyList<Submission>()
     override fun save(submission: Submission) = submission
 }
 
@@ -86,6 +88,8 @@ class TestTrackingSubmissionRepository : SubmissionRepository {
             emptyList<Submission>()
     override fun findBySection(subjectId: AssignmentSubjectId, sectionId: AssignmentSectionId) =
             emptyList<Submission>()
+    override fun findBySubject(subjectId: AssignmentSubjectId) = emptyList<Submission>()
+    override fun findAll() = emptyList<Submission>()
     override fun save(submission: Submission): Submission {
         _savedCount++
         return submission.copy(id = SubmissionId(_savedCount.toLong()))
@@ -135,6 +139,14 @@ class TestInMemorySubmissionRepository : SubmissionRepository {
                 .filter { it.assignmentSubjectId == subjectId && it.sectionId == sectionId }
                 .sortedByDescending { it.submittedAt }
     }
+
+    override fun findBySubject(subjectId: AssignmentSubjectId): List<Submission> {
+        return submissions.filter { it.assignmentSubjectId == subjectId }.sortedByDescending {
+            it.submittedAt
+        }
+    }
+
+    override fun findAll(): List<Submission> = submissions.toList()
 
     override fun save(submission: Submission): Submission {
         submissions.add(submission)

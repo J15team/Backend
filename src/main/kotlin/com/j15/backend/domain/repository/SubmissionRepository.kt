@@ -23,5 +23,9 @@ interface SubmissionRepository {
                 sectionId: AssignmentSectionId
         ): List<Submission>
 
+        fun findBySubject(subjectId: AssignmentSubjectId): List<Submission>
+
+        fun findAll(): List<Submission>
+
         fun save(submission: Submission): Submission
 }

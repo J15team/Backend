@@ -17,48 +17,60 @@ class SubmissionRepositoryImpl(
         private val converter: SubmissionConverter
 ) : SubmissionRepository {
 
-    override fun findById(id: SubmissionId): Submission? {
-        return jpaRepository.findById(id.value).map { converter.toDomain(it) }.orElse(null)
-    }
+        override fun findById(id: SubmissionId): Submission? {
+                return jpaRepository.findById(id.value).map { converter.toDomain(it) }.orElse(null)
+        }
 
-    override fun findByUserAndSection(
-            userId: UserId,
-            subjectId: AssignmentSubjectId,
-            sectionId: AssignmentSectionId
-    ): List<Submission> {
-        return jpaRepository.findByUserIdAndAssignmentSubjectIdAndSectionIdOrderBySubmittedAtDesc(
-                        userId.value,
-                        subjectId.value,
-                        sectionId.value
-                )
-                .map { converter.toDomain(it) }
-    }
+        override fun findByUserAndSection(
+                userId: UserId,
+                subjectId: AssignmentSubjectId,
+                sectionId: AssignmentSectionId
+        ): List<Submission> {
+                return jpaRepository
+                        .findByUserIdAndAssignmentSubjectIdAndSectionIdOrderBySubmittedAtDesc(
+                                userId.value,
+                                subjectId.value,
+                                sectionId.value
+                        )
+                        .map { converter.toDomain(it) }
+        }
 
-    override fun findByUserAndSubject(
-            userId: UserId,
-            subjectId: AssignmentSubjectId
-    ): List<Submission> {
-        return jpaRepository.findByUserIdAndAssignmentSubjectIdOrderBySubmittedAtDesc(
-                        userId.value,
-                        subjectId.value
-                )
-                .map { converter.toDomain(it) }
-    }
+        override fun findByUserAndSubject(
+                userId: UserId,
+                subjectId: AssignmentSubjectId
+        ): List<Submission> {
+                return jpaRepository.findByUserIdAndAssignmentSubjectIdOrderBySubmittedAtDesc(
+                                userId.value,
+                                subjectId.value
+                        )
+                        .map { converter.toDomain(it) }
+        }
 
-    override fun findBySection(
-            subjectId: AssignmentSubjectId,
-            sectionId: AssignmentSectionId
-    ): List<Submission> {
-        return jpaRepository.findByAssignmentSubjectIdAndSectionIdOrderBySubmittedAtDesc(
-                        subjectId.value,
-                        sectionId.value
-                )
-                .map { converter.toDomain(it) }
-    }
+        override fun findBySection(
+                subjectId: AssignmentSubjectId,
+                sectionId: AssignmentSectionId
+        ): List<Submission> {
+                return jpaRepository.findByAssignmentSubjectIdAndSectionIdOrderBySubmittedAtDesc(
+                                subjectId.value,
+                                sectionId.value
+                        )
+                        .map { converter.toDomain(it) }
+        }
 
-    override fun save(submission: Submission): Submission {
-        val entity = converter.toEntity(submission)
-        val saved = jpaRepository.save(entity)
-        return converter.toDomain(saved)
-    }
+        override fun findBySubject(subjectId: AssignmentSubjectId): List<Submission> {
+                return jpaRepository.findByAssignmentSubjectIdOrderBySubmittedAtDesc(
+                                subjectId.value
+                        )
+                        .map { converter.toDomain(it) }
+        }
+
+        override fun findAll(): List<Submission> {
+                return jpaRepository.findAll().map { converter.toDomain(it) }
+        }
+
+        override fun save(submission: Submission): Submission {
+                val entity = converter.toEntity(submission)
+                val saved = jpaRepository.save(entity)
+                return converter.toDomain(saved)
+        }
 }
