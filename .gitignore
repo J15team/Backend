@@ -44,3 +44,4 @@ scripts/
 .aws-infrastructure-ids
 docs/admin-credentials.md
 .env
+scripts/aws-dev.sh
