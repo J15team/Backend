@@ -19,59 +19,110 @@ class JudgeServiceClientImpl(
         webClientBuilder: WebClient.Builder
 ) : JudgeServiceClient {
 
-    private val logger = LoggerFactory.getLogger(JudgeServiceClientImpl::class.java)
+        private val logger = LoggerFactory.getLogger(JudgeServiceClientImpl::class.java)
 
-    private val webClient: WebClient = webClientBuilder.baseUrl(properties.baseUrl).build()
+        private val webClient: WebClient = webClientBuilder.baseUrl(properties.baseUrl).build()
 
-    override fun judge(
-            code: String,
-            language: Language,
-            testCases: List<TestCase>,
-            timeLimit: Int,
-            memoryLimit: Int
-    ): List<JudgeResultDto> {
-        val request =
-                JudgeRequest(
-                        code = code,
-                        language = language.name.lowercase(),
-                        testCases =
-                                testCases.map { tc ->
-                                    JudgeTestCase(input = tc.input, expected = tc.expected)
-                                },
-                        timeLimit = timeLimit,
-                        memoryLimit = memoryLimit
-                )
+        override fun judge(
+                code: String,
+                language: Language,
+                testCases: List<TestCase>,
+                timeLimit: Int,
+                memoryLimit: Int
+        ): List<JudgeResultDto> {
+                val request =
+                        JudgeRequest(
+                                code = code,
+                                language = language.name.lowercase(),
+                                testCases =
+                                        testCases.map { tc ->
+                                                JudgeTestCase(
+                                                        input = tc.input,
+                                                        expected = tc.expected
+                                                )
+                                        },
+                                timeLimit = timeLimit,
+                                memoryLimit = memoryLimit
+                        )
 
-        return try {
-            val response =
-                    webClient
-                            .post()
-                            .uri("/api/judge")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .bodyValue(request)
-                            .retrieve()
-                            .bodyToMono(JudgeResponse::class.java)
-                            .block(Duration.ofMillis(properties.timeout))
+                return try {
+                        val response =
+                                webClient
+                                        .post()
+                                        .uri("/api/judge")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .bodyValue(request)
+                                        .retrieve()
+                                        .bodyToMono(JudgeResponse::class.java)
+                                        .block(Duration.ofMillis(properties.timeout))
 
-            response?.results?.mapIndexed { index, result ->
-                JudgeResultDto(
-                        index = index,
-                        verdict = Verdict.valueOf(result.verdict.uppercase()),
-                        executionTime = result.executionTime,
-                        memoryUsed = result.memoryUsed,
-                        actualOutput = result.actualOutput,
-                        errorMessage = result.errorMessage
-                )
-            }
-                    ?: emptyList()
-        } catch (e: WebClientResponseException) {
-            logger.error("Judge Service error: ${e.statusCode} - ${e.responseBodyAsString}")
-            throw JudgeServiceUnavailableException("Judge Serviceからエラーが返されました: ${e.statusCode}")
-        } catch (e: Exception) {
-            logger.error("Judge Service connection error", e)
-            throw JudgeServiceUnavailableException("Judge Serviceに接続できません")
+                        response?.results?.mapIndexed { index, result ->
+                                JudgeResultDto(
+                                        index = index,
+                                        verdict = Verdict.valueOf(result.verdict.uppercase()),
+                                        executionTime = result.executionTime,
+                                        memoryUsed = result.memoryUsed,
+                                        actualOutput = result.actualOutput,
+                                        errorMessage = result.errorMessage
+                                )
+                        }
+                                ?: emptyList()
+                } catch (e: WebClientResponseException) {
+                        logger.error(
+                                "Judge Service error: ${e.statusCode} - ${e.responseBodyAsString}"
+                        )
+                        throw JudgeServiceUnavailableException(
+                                "Judge Serviceからエラーが返されました: ${e.statusCode}"
+                        )
+                } catch (e: Exception) {
+                        logger.error("Judge Service connection error", e)
+                        throw JudgeServiceUnavailableException("Judge Serviceに接続できません")
+                }
         }
-    }
+
+        override fun run(
+                code: String,
+                language: Language,
+                input: String,
+                timeLimit: Int
+        ): RunResultDto {
+                val request =
+                        RunRequest(
+                                code = code,
+                                language = language.name.lowercase(),
+                                input = input,
+                                timeLimit = timeLimit
+                        )
+
+                return try {
+                        val response =
+                                webClient
+                                        .post()
+                                        .uri("/api/run")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .bodyValue(request)
+                                        .retrieve()
+                                        .bodyToMono(RunResponse::class.java)
+                                        .block(Duration.ofMillis(properties.timeout))
+
+                        RunResultDto(
+                                output = response?.output,
+                                executionTime = response?.executionTime,
+                                status = response?.status ?: "ERROR",
+                                errorMessage = response?.errorMessage
+                        )
+                } catch (e: WebClientResponseException) {
+                        logger.error(
+                                "Judge Service run error: ${e.statusCode} - ${e.responseBodyAsString}"
+                        )
+                        throw JudgeServiceUnavailableException(
+                                "Judge Serviceからエラーが返されました: ${e.statusCode}"
+                        )
+                } catch (e: Exception) {
+                        logger.error("Judge Service run connection error", e)
+                        throw JudgeServiceUnavailableException("Judge Serviceに接続できません")
+                }
+        }
 }
 
 /** Judge Serviceリクエスト */
@@ -100,3 +151,19 @@ private data class JudgeResultItem(
 
 /** Judge Service利用不可例外 */
 class JudgeServiceUnavailableException(message: String) : RuntimeException(message)
+
+/** コード実行リクエスト */
+private data class RunRequest(
+        val code: String,
+        val language: String,
+        val input: String,
+        val timeLimit: Int
+)
+
+/** コード実行レスポンス */
+private data class RunResponse(
+        val output: String?,
+        val executionTime: Int?,
+        val status: String,
+        val errorMessage: String?
+)

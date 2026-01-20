@@ -6,6 +6,7 @@ import com.j15.backend.domain.repository.assignment.AssignmentSectionRepository
 import com.j15.backend.domain.repository.assignment.SubmissionRepository
 import com.j15.backend.infrastructure.client.JudgeResultDto
 import com.j15.backend.infrastructure.client.JudgeServiceClient
+import com.j15.backend.infrastructure.client.RunResultDto
 
 /** テスト用モックJudgeServiceClient */
 class TestMockJudgeServiceClient : JudgeServiceClient {
@@ -19,6 +20,20 @@ class TestMockJudgeServiceClient : JudgeServiceClient {
         return testCases.mapIndexed { index, _ ->
             JudgeResultDto(index = index, verdict = Verdict.AC, executionTime = 100)
         }
+    }
+
+    override fun run(
+            code: String,
+            language: Language,
+            input: String,
+            timeLimit: Int
+    ): RunResultDto {
+        return RunResultDto(
+                output = "Hello\n",
+                executionTime = 100,
+                status = "SUCCESS",
+                errorMessage = null
+        )
     }
 }
 
