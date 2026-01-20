@@ -98,7 +98,7 @@ class JudgeServiceClientImpl(
                         val response =
                                 webClient
                                         .post()
-                                        .uri("/api/run")
+                                        .uri("/api/code/preview")
                                         .contentType(MediaType.APPLICATION_JSON)
                                         .bodyValue(request)
                                         .retrieve()
